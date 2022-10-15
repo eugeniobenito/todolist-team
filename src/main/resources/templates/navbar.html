@@ -1,9 +1,9 @@
-<div th:fragment="navbar">
-    <div th:if="${session.idUsuarioLogeado == null}">
+<div id="navbar-menu" th:fragment="navbar">
+    <div id="default-navbar" th:if="${usuario == null}">
         <div th:insert="navbarDefault :: navbar"></div>
     </div>
 
-    <div th:unless="${session.idUsuarioLogeado == null}">
+    <div id="logged-navbar" th:unless="${usuario == null}">
         <div th:insert="navbarLogged :: navbar"></div>
     </div>
     <br />
