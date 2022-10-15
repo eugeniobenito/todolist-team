@@ -10,14 +10,14 @@
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           <a class="dropdown-item" href="">Cuenta</a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="./logout">Cerrar sesion <th:block th:text="${usuario.getNombre()}" /></a>
+          <a class="dropdown-item" href="@{/logout}">Cerrar sesion <th:block th:text="${usuario.getNombre()}" /></a>
         </div>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="./">Tareas</a>
+        <a class="nav-link" th:href="@{/usuarios/{id}/tareas(id=${session.idUsuarioLogeado})}">Tareas</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="./about">ToDoList</a>
+        <a class="nav-link" th:href="@{/about}">ToDoList</a>
       </li>
     </ul>
   </div>
