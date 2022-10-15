@@ -2,6 +2,7 @@
     <div th:if="${session.idUsuarioLogeado == null}">
         <div th:insert="navbarDefault :: navbar"></div>
     </div>
+
     <div th:unless="${session.idUsuarioLogeado == null}">
         <div th:insert="navbarLogged :: navbar"></div>
     </div>
