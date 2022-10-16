@@ -176,7 +176,7 @@ public class UsuarioServiceTest {
         Iterable<Usuario> usuarios = usuarioService.findAll();
         // hay un usuario
         assertThat(size(usuarios)).isEqualTo(1);
-        
+
         for (Usuario u : usuarios){
             assertThat(u.getId()).isEqualTo(usuarioId);
             assertThat(u.getEmail()).isEqualTo("user@ua");

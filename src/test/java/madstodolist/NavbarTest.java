@@ -128,4 +128,17 @@ public class NavbarTest {
                         containsString("<div id=\"logged-navbar\"")))));
 
     }
+
+    @Test
+    public void registradosContainsNavbar() throws Exception{
+        Long usuarioId = addUsuarioTareasBD();
+        String url = "/registrados";
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuarioId);
+
+        this.mockMvc.perform(get(url))
+                .andExpect((content().string(allOf(containsString("<div id=\"navbar-menu\""),
+                        containsString("<div id=\"logged-navbar\"")))));
+
+    }
 }
