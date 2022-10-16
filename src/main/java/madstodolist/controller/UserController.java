@@ -16,7 +16,7 @@ public class UserController {
 
     @Autowired
     ManagerUserSession managerUserSession;
-    
+
     @GetMapping("/registrados")
     public String registrados(Model model){
         Iterable<Usuario> usuarios = usuarioService.findAll();
