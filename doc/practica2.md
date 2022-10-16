@@ -58,4 +58,28 @@ Se ha creado la excepción *UsuarioNotFoundException* que devuelve un código de
 ### Tests
 Se han creado los siguientes test en la clase *RegistradosWebTest*:
 1. Cuando no existe el usuario la respuesta es un mensaje 404
-2. Se comprueba que de un usuario registrado se muestra toda la información excepto la contraseña, incluidas las tareas. 
+2. Se comprueba que de un usuario registrado se muestra toda la información excepto la contraseña, incluidas las tareas.
+
+# 005 Usuario administrador
+Se pretende crear un usuario administrador, que se pueda crear desde el registro y que al iniciar sesión se acceda a /registrados
+### Modelo
+El modelo Usuario ahora incorpora la variable booleana isAdmin
+> private boolean isAdmin;
+
+### Vistas
+Se ha modificado la vista de *registroForm*, ya que a través del parámetro del modelo *existsAnyAdmin* mostrará o no el checkbox del formulario. ```` th:if="${!existsAnyAdmin}" ````
+### Data
+La clase RegistroData ha sido modificada. Ahora contiene un nuevo parámetro isAdmin, que será el que se vincule en la template con el checkbox. Además este template se ha inicializado a *false* debido de que si no encuentra en la plantilla la checkbox interprete que es falso.
+### Controladores
+- Ahora el controlador que controla el ````GET /registro````, hace uso del método de la clase *UsuarioService.existsAnyAdmin()*, y lo inyecta en la template.
+- El controlador `````POST /registro````` obtiene el elemento isAdmin agregado al data del formulario y lo asocia al usuario.
+- El controlador ````POST /login```` revisa si el usuario que se está logeando es administrador y si es así lo reedirige a ```/registrados```
+### Servicios
+La clase UsuarioService ahora incorpora el metodo existsAnyAdmin que devolverá *true* en caso de que exista un usuario con la variable isAdmin = true en la base de datos y false al contrario.
+### Repositorio
+La clase UsuarioRepository implementa un método findByIsAdmin que a partir del parámetro si es true o false devuelve una lista con usuarios con los cuales cumple la condición. Este método sirve para ser llamado desde el UsuarioService y comprobar existen usuarios con el isAdmin true.
+### Tests
+- En la clase *UsuarioTest* se añaden 2 métodos donde comprueban el método de UserRepository.findByIsAdmin devuelve una lista vacía o con el usuario según si existe un usuario administrador en base de datos
+- En la clase *UsuarioServiceTest* se añade 1 método para comprobar que el método existsAnyAdmin devuelve lo esperado
+- Se crea la clase *RegistroWebTest* donde se añaden dos test para revisar si el checkbox se oculta cuando existe un administrador. Esto se hace gracias al texto del checkbox ``El usuario será administrador``
+- Se añade en la clase *UsuarioWebTest* un método para comprobar que se hace la reedirección a la página ````/registrados```` si el usuario que se logea es administrador.
