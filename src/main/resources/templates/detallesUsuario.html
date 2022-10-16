@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: head (titulo='Detalles del usuario')"></head>
+
+<body>
+<div th:insert="navbar :: navbar"></div>
+<div class="container-fluid">
+
+    <h2>Detalles del usuario</h2>
+
+
+    <div class="col-6">
+        <div>
+            <b>Id: </b> <th:block th:text="${usuarioDetalles.id}" />
+        </div>
+        <div>
+            <b>Nombre: </b> <th:block th:text="${usuarioDetalles.nombre}" />
+        </div>
+        <div>
+            <b>Email: </b> <th:block th:text="${usuarioDetalles.email}" />
+        </div>
+        <div>
+            <b>Fecha de nacimiento: </b> <th:block th:text="${usuarioDetalles.fechaNacimiento}" />
+        </div>
+        <div>
+            <b>Tareas: </b> <br />
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Tarea</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="tarea: ${usuarioDetalles.tareas}">
+                    <td th:text="${tarea.id}"></td>
+                    <td th:text="${tarea.titulo}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+<div th:replace="fragments::javascript"/>
+
+</body>
+</html>
