@@ -46,6 +46,8 @@ public class LoginController {
 
             managerUserSession.logearUsuario(usuario.getId());
 
+            if(usuario.getIsAdmin()){ return "redirect:/registrados"; }
+
             return "redirect:/usuarios/" + usuario.getId() + "/tareas";
         } else if (loginStatus == UsuarioService.LoginStatus.USER_NOT_FOUND) {
             model.addAttribute("error", "No existe usuario");
@@ -54,6 +56,7 @@ public class LoginController {
             model.addAttribute("error", "Contraseña incorrecta");
             return "formLogin";
         }
+
         return "formLogin";
     }
 
