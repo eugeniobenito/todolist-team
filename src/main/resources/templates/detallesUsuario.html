@@ -12,16 +12,16 @@
 
     <div class="col-6">
         <div>
-            <b>Id: </b> <th:block th:text="${usuario.id}" />
+            <b>Id: </b> <th:block th:text="${usuarioDetalles.id}" />
         </div>
         <div>
-            <b>Nombre: </b> <th:block th:text="${usuario.nombre}" />
+            <b>Nombre: </b> <th:block th:text="${usuarioDetalles.nombre}" />
         </div>
         <div>
-            <b>Email: </b> <th:block th:text="${usuario.email}" />
+            <b>Email: </b> <th:block th:text="${usuarioDetalles.email}" />
         </div>
         <div>
-            <b>Fecha de nacimiento: </b> <th:block th:text="${usuario.fechaNacimiento}" />
+            <b>Fecha de nacimiento: </b> <th:block th:text="${usuarioDetalles.fechaNacimiento}" />
         </div>
         <div>
             <b>Tareas: </b> <br />
@@ -33,7 +33,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="tarea: ${usuario.tareas}">
+                <tr th:each="tarea: ${usuarioDetalles.tareas}">
                     <td th:text="${tarea.id}"></td>
                     <td th:text="${tarea.titulo}"></td>
                 </tr>

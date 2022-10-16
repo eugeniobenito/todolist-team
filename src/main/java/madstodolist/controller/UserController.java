@@ -32,7 +32,7 @@ public class UserController {
         return "listaRegistrados";
     }
 
-    @GetMapping("/registrados/{id}/")
+    @GetMapping("/registrados/{id}")
     public String detallesUsuario(@PathVariable(value="id") Long idUsuario, Model model){
         Usuario usuario = usuarioService.findById(idUsuario);
 
@@ -40,7 +40,13 @@ public class UserController {
             throw new UsuarioNotFoundException();
         }
 
-        model.addAttribute("usuario", usuario); 
+        Long idUser = managerUserSession.usuarioLogeado();
+        if (idUser != null) {
+            Usuario user = usuarioService.findById(idUser);
+            model.addAttribute("usuario", user);
+        }
+        
+        model.addAttribute("usuarioDetalles", usuario);
 
         return "detallesUsuario";
     }
