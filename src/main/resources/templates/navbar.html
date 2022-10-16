@@ -1,0 +1,10 @@
+<div id="navbar-menu" th:fragment="navbar">
+    <div id="default-navbar" th:if="${usuario == null}">
+        <div th:insert="navbarDefault :: navbar"></div>
+    </div>
+
+    <div id="logged-navbar" th:unless="${usuario == null}">
+        <div th:insert="navbarLogged :: navbar"></div>
+    </div>
+    <br />
+</div>
