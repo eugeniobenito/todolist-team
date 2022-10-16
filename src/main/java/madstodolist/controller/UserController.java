@@ -1,5 +1,6 @@
 package madstodolist.controller;
 
+import madstodolist.model.Usuario;
 import madstodolist.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,7 +15,8 @@ public class UserController {
 
     @GetMapping("/registrados")
     public String registrados(Model model){
-
+        Iterable<Usuario> usuarios = usuarioService.findAll();
+        model.addAttribute("usuarios", usuarios);
         return "listaRegistrados";
     }
 }
