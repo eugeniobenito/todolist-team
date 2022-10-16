@@ -175,4 +175,26 @@ public class UsuarioTest {
 
         assertThat(usuarioBD.getNombre()).isEqualTo("Usuario Ejemplo");
     }
+
+    @Test
+    public void findByIsAdmin(){
+        Usuario usuario = new Usuario("user@ua");
+        usuario.setNombre("Usuario Ejemplo");
+        usuario.setIsAdmin(false);
+        usuarioRepository.save(usuario);
+
+        assertThat(usuarioRepository.findByIsAdmin(true).size()).isEqualTo(0);
+        assertThat(usuarioRepository.findByIsAdmin(false).size()).isEqualTo(1);
+    }
+
+    @Test
+    public void findByIsAdminC2(){
+        Usuario usuario = new Usuario("user@ua");
+        usuario.setNombre("Usuario Ejemplo");
+        usuario.setIsAdmin(true);
+        usuarioRepository.save(usuario);
+
+        assertThat(usuarioRepository.findByIsAdmin(true).size()).isEqualTo(1);
+        assertThat(usuarioRepository.findByIsAdmin(false).size()).isEqualTo(0);
+    }
 }
