@@ -92,4 +92,23 @@ public class UsuarioWebTest {
                         .param("password","000"))
                 .andExpect(content().string(containsString("Contraseña incorrecta")));
     }
+
+    @Test
+    public void loginAdminGoesToRegistrados() throws Exception{
+        Usuario anaGarcia = new Usuario("ana.garcia@gmail.com");
+        anaGarcia.setIsAdmin(true);
+        anaGarcia.setId(1L);
+
+        when(usuarioService.login("ana.garcia@gmail.com", "12345678"))
+                .thenReturn(UsuarioService.LoginStatus.LOGIN_OK);
+        when(usuarioService.findByEmail("ana.garcia@gmail.com"))
+                .thenReturn(anaGarcia);
+
+        
+        this.mockMvc.perform(post("/login")
+                        .param("eMail", "ana.garcia@gmail.com")
+                        .param("password", "12345678"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/registrados"));
+    }
 }
