@@ -58,6 +58,9 @@ public class UsuarioService {
         return usuarioRepository.findById(usuarioId).orElse(null);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Iterable<Usuario> findAll() { return usuarioRepository.findAll(); }
+
+    @Transactional(readOnly = true)
+    public boolean existsAnyAdmin() { return (usuarioRepository.findByIsAdmin(true) != null && usuarioRepository.findByIsAdmin(true).size() > 0); }
 }

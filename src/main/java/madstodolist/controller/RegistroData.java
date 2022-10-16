@@ -1,5 +1,6 @@
 package madstodolist.controller;
 
+import net.bytebuddy.implementation.bind.annotation.Default;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Email;
@@ -12,6 +13,8 @@ public class RegistroData {
     private String nombre;
     @DateTimeFormat(pattern = "dd-MM-yyyy")
     private Date fechaNacimiento;
+
+    private boolean isAdmin = false;
 
     public String geteMail() {
         return eMail;
@@ -44,4 +47,8 @@ public class RegistroData {
     public void setFechaNacimiento(Date fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
     }
+
+    public boolean getIsAdmin() { return isAdmin; }
+
+    public void setIsAdmin(boolean isAdmin) { this.isAdmin = isAdmin; }
 }

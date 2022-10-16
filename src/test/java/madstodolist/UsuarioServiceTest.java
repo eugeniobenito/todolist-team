@@ -184,4 +184,16 @@ public class UsuarioServiceTest {
         }
 
     }
+
+    @Test
+    public void existsAnyAdmin(){
+        assertThat(usuarioService.existsAnyAdmin()).isEqualTo(false);
+        Usuario usuario = new Usuario("user@ua");
+        usuario.setNombre("Usuario Ejemplo");
+        usuario.setPassword("123");
+        usuario.setIsAdmin(true);
+        usuario = usuarioService.registrar(usuario);
+
+        assertThat(usuarioService.existsAnyAdmin()).isEqualTo(true);
+    }
 }
