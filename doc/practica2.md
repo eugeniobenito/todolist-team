@@ -79,7 +79,7 @@ La clase UsuarioService ahora incorpora el metodo existsAnyAdmin que devolverá 
 ### Repositorio
 La clase UsuarioRepository implementa un método findByIsAdmin que a partir del parámetro si es true o false devuelve una lista con usuarios con los cuales cumple la condición. Este método sirve para ser llamado desde el UsuarioService y comprobar existen usuarios con el isAdmin true.
 ### Tests
-- En la clase *UsuarioTest* se añaden 2 métodos donde comprueban el método de UserRepository.findByIsAdmin devuelve una lista vacía o con el usuario según si existe un usuario administrador en base de datos
-- En la clase *UsuarioServiceTest* se añade 1 método para comprobar que el método existsAnyAdmin devuelve lo esperado
-- Se crea la clase *RegistroWebTest* donde se añaden dos test para revisar si el checkbox se oculta cuando existe un administrador. Esto se hace gracias al texto del checkbox ``El usuario será administrador``
-- Se añade en la clase *UsuarioWebTest* un método para comprobar que se hace la reedirección a la página ````/registrados```` si el usuario que se logea es administrador.
+- *UsuarioTest.java:* Se añaden 2 métodos donde comprueban el método de UserRepository.findByIsAdmin devuelve una lista vacía o con el usuario según si existe un usuario administrador en base de datos
+- *UsuarioServiceTest.java:* Se añade 1 método para comprobar que el método existsAnyAdmin devuelve lo esperado
+- *RegistroWebTest.java:* Se crea la clase y se añaden dos test para revisar si el checkbox se oculta cuando existe un administrador. Esto se hace gracias al texto del checkbox ``El usuario será administrador``
+- *UsuarioWebTest.java*: Se añade un método para comprobar que se hace la reedirección a la página ````/registrados```` si el usuario que se logea es administrador.
