@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.util.Iterator;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
@@ -155,5 +157,31 @@ public class UsuarioServiceTest {
         assertThat(usuario.getId()).isEqualTo(usuarioId);
         assertThat(usuario.getEmail()).isEqualTo("user@ua");
         assertThat(usuario.getNombre()).isEqualTo("Usuario Ejemplo");
+    }
+
+    private int size(Iterable<?> it){
+        int i = 0;
+        for (Object obj : it) i++;
+        return i;
+    }
+    @Test
+    public void serviciofindAllDevuelve0() {
+        assertThat(size(usuarioService.findAll())).isEqualTo(0);
+    }
+
+    @Test
+    public void serviciofindAllDevuelveLosRegistrados(){
+        Long usuarioId = addUsuarioBD();
+
+        Iterable<Usuario> usuarios = usuarioService.findAll();
+        // hay un usuario
+        assertThat(size(usuarios)).isEqualTo(1);
+
+        for (Usuario u : usuarios){
+            assertThat(u.getId()).isEqualTo(usuarioId);
+            assertThat(u.getEmail()).isEqualTo("user@ua");
+            assertThat(u.getNombre()).isEqualTo("Usuario Ejemplo");
+        }
+
     }
 }

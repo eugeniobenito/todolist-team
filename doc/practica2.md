@@ -21,3 +21,22 @@ Se ha pasado la variable usuario en el controlador del /about
 >  this.mockMvc.perform(get(url))
 .andExpect((content().string(allOf(containsString("<div id=\"navbar-menu\""),
 containsString("<div id=\"logged-navbar\"")))));
+
+# 003 Listado de usuarios
+Para mostrar la vista de usuarios se añadido un nuevo controlador, una vista y un método en la clase usuarioService.
+### Vistas
+Se ha añadido la vista listadoRegistrados. En ella se incluye la barra de navegación. Para mostrar los usuarios se ha realizado una tabla y gracias a *Thymeleaf* y la instrucción
+```th:each``` se ha modelado la información a través de la variable *usuarios* que recibe el modelo.
+
+### Servicios
+Se ha añadido el método *findAll* a la clase *UsuarioService*. Este método simplemente llama al método findAll del repositorio de la clase Usuario que implementa el framework y devuelve un objeto Iterable con todos los usuarios.
+
+### Controladores
+Se ha añadido la clase *UserController*, en ella se ha implementado el método 
+``` GET /registrados```. El controlador hace uso del método UserService.findAll() y envía a la vista listaRegistrados los usuarios. Además si hay un usuario logeado, le envía la información a la vista también
+
+### Test
+Se han añadido los siguientes test: 
+- *NavbarTest.java*: Método *registradosContainsNavbar* para comprobar que existe la barra de navegación en esta ruta
+- *UsuarioServiceTest.java*: Se han creado 2 métodos, uno para revisar que el método findAll devuelve 0 resultados y otro para comprobar que devuelve el único usuario en la base de datos
+- *RegistradosWebTest.java*: Se han creado 2 métodos. El primero comprueba que se muestra la vista y el segundo que se muestran los datos de los 2 usuarios añadidos.
