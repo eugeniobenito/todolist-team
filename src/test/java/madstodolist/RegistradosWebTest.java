@@ -167,13 +167,13 @@ public class RegistradosWebTest {
         Usuario usuario = createDefaultUser();
         AssertionsForClassTypes.assertThat(usuario.getBlocked()).isEqualTo(false);
 
-        this.mockMvc.perform(post("/block/" + usuario.getId())).andExpect(status().is3xxRedirection())
+        this.mockMvc.perform(post("/usuarios/" + usuario.getId() + "/block")).andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/registrados"));
 
         usuario = usuarioService.findById(usuario.getId());
         Assertions.assertThat(usuario.getBlocked()).isEqualTo(true);
 
-        this.mockMvc.perform(post("/unblock/" + usuario.getId())).andExpect(status().is3xxRedirection())
+        this.mockMvc.perform(post("/usuarios/" + usuario.getId() + "/unblock")).andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/registrados"));
 
         usuario = usuarioService.findById(usuario.getId());

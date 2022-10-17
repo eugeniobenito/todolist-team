@@ -62,7 +62,7 @@ public class UserController {
         return "detallesUsuario";
     }
 
-    @PostMapping("/block/{id}")
+    @PostMapping("/usuarios/{id}/block")
     public String bloquearUsuario(@PathVariable(value = "id") Long idUsuario, Model model){
         Usuario usuario = usuarioService.findById(idUsuario);
 
@@ -77,7 +77,7 @@ public class UserController {
 
     }
 
-    @PostMapping("/unblock/{id}")
+    @PostMapping("/usuarios/{id}/unblock")
     public String desbloquearUsuario(@PathVariable(value = "id") Long idUsuario, Model model){
         Usuario usuario = usuarioService.findById(idUsuario);
 
