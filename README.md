@@ -21,7 +21,7 @@ También puedes generar un `jar` y ejecutarlo:
 
 ```
 $ ./mvnw package
-$ java -jar target/mads-todolist-sergiobaeza-1.1.0-SNAPSHOT.jar 
+$ java -jar target/mads-todolist-sergiobaeza-1.1.0.jar 
 ```
 
 Una vez lanzada la aplicación puedes abrir un navegador y probar la página de inicio:
