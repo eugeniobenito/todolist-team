@@ -29,6 +29,8 @@ public class Usuario implements Serializable {
     private Date fechaNacimiento;
     private Boolean isAdmin = false; // valor por defecto
 
+    private Boolean blocked = false // valor x defecto
+
 
     // Definimos el tipo de fetch como EAGER para que
     // cualquier consulta que devuelve un usuario rellene automáticamente
