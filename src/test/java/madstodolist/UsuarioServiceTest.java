@@ -7,7 +7,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Iterator;
 
@@ -27,6 +29,7 @@ public class UsuarioServiceTest {
         Usuario usuario = new Usuario("user@ua");
         usuario.setNombre("Usuario Ejemplo");
         usuario.setPassword("123");
+        usuario.setBlocked(false);
         usuario = usuarioService.registrar(usuario);
         return usuario.getId();
     }
@@ -207,5 +210,16 @@ public class UsuarioServiceTest {
         usuario = usuarioService.registrar(usuario);
 
         assertThat(usuarioService.existsAnyAdmin()).isEqualTo(true);
+    }
+
+    @Test
+    public void userGetsBlocked(){
+        Long idUser = addUsuarioBD();
+        Usuario usuario = usuarioService.findById(idUser);
+        assertThat(usuario.getBlocked()).isEqualTo(false);
+        usuarioService.blockUser(idUser);
+
+        usuario = usuarioService.findById(idUser);
+        assertThat(usuario.getBlocked()).isEqualTo(true);
     }
 }

@@ -21,6 +21,18 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Transactional
+    public Usuario blockUser(Long idUser){
+        logger.debug("Bloqueando al usuario " + idUser + "...");
+        Usuario usuario = usuarioRepository.findById(idUser).orElse(null);
+        if(usuario == null){
+            throw new UsuarioServiceException("No existe usuario con id " + idUser);
+        }
+        usuario.setBlocked(true);
+        usuarioRepository.save(usuario);
+        return usuario;
+    }
+
     @Transactional(readOnly = true)
     public LoginStatus login(String eMail, String password) {
         Optional<Usuario> usuario = usuarioRepository.findByEmail(eMail);
@@ -67,13 +79,4 @@ public class UsuarioService {
     @Transactional(readOnly = true)
     public boolean existsAnyAdmin() { return (usuarioRepository.findByIsAdmin(true) != null && usuarioRepository.findByIsAdmin(true).size() > 0); }
 
-    @Transactional
-    public void blockUser(Long idUser){
-        logger.debug("Bloqueando al usuario " + idUser + "...");
-        Usuario usuario = usuarioRepository.findById(idUser).orElse(null);
-        if(usuario != null){
-            usuario.setBlocked(true);
-            usuarioRepository.save(usuario); 
-        }
-    }
 }

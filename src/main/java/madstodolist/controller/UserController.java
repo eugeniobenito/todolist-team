@@ -73,6 +73,7 @@ public class UserController {
         if(usuario == null){
             throw new UsuarioNotFoundException();
         }
+        return "";
 
     }
 }
