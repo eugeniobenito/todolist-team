@@ -22,7 +22,7 @@ public class UserController {
     @Autowired
     ManagerUserSession managerUserSession;
 
-    private void checkUserAdmin(){
+    private void checkUserAdmin(Model model){
         Long idUser = managerUserSession.usuarioLogeado();
         Usuario user = usuarioService.findById(idUser);
         if(user == null){
@@ -41,7 +41,7 @@ public class UserController {
         Iterable<Usuario> usuarios = usuarioService.findAll();
         model.addAttribute("usuarios", usuarios);
 
-        checkUserAdmin();
+        checkUserAdmin(model);
 
 
         return "listaRegistrados";
@@ -55,7 +55,7 @@ public class UserController {
             throw new UsuarioNotFoundException();
         }
 
-        checkUserAdmin();
+        checkUserAdmin(model);
         
         model.addAttribute("usuarioDetalles", usuario);
 
@@ -69,7 +69,7 @@ public class UserController {
         if(usuario == null){
             throw new UsuarioNotFoundException();
         }
-        checkUserAdmin();
+        checkUserAdmin(model);
 
         usuarioService.blockUser(idUsuario);
 
@@ -84,7 +84,7 @@ public class UserController {
         if(usuario == null){
             throw new UsuarioNotFoundException();
         }
-        checkUserAdmin();
+        checkUserAdmin(model);
 
         usuarioService.unblockUser(idUsuario);
 

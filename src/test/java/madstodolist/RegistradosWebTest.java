@@ -7,6 +7,7 @@ import madstodolist.model.Usuario;
 import madstodolist.service.TareaService;
 import madstodolist.service.UsuarioService;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -29,7 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -51,13 +53,15 @@ public class RegistradosWebTest {
         Usuario usuario = new Usuario("user@ua");
         usuario.setPassword("123");
         usuario.setIsAdmin(true);
+        usuario.setBlocked(false);
         return usuarioService.registrar(usuario);
     }
 
     private Usuario createDefaultUser(){
-        Usuario usuario = new Usuario("user@ua");
+        Usuario usuario = new Usuario("user2@ua");
         usuario.setPassword("123");
         usuario.setIsAdmin(false);
+        usuario.setBlocked(false);
         return usuarioService.registrar(usuario);
     }
 
@@ -152,5 +156,28 @@ public class RegistradosWebTest {
         when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
         MockHttpServletResponse response = this.mockMvc.perform(get("/registrados")).andReturn().getResponse();
         Assertions.assertThat(response.getStatus()).isEqualTo(401);
+    }
+
+    @Test
+    public void adminCanBlockAndUnblock() throws Exception{
+        Usuario admin = createAdmin();
+        when(managerUserSession.usuarioLogeado()).thenReturn(admin.getId());
+
+
+        Usuario usuario = createDefaultUser();
+        AssertionsForClassTypes.assertThat(usuario.getBlocked()).isEqualTo(false);
+
+        this.mockMvc.perform(post("/block/" + usuario.getId())).andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/registrados"));
+
+        usuario = usuarioService.findById(usuario.getId());
+        Assertions.assertThat(usuario.getBlocked()).isEqualTo(true);
+
+        this.mockMvc.perform(post("/unblock/" + usuario.getId())).andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/registrados"));
+
+        usuario = usuarioService.findById(usuario.getId());
+        Assertions.assertThat(usuario.getBlocked()).isEqualTo(false);
+
     }
 }
