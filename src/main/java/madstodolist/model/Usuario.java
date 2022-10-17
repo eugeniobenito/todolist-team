@@ -93,6 +93,10 @@ public class Usuario implements Serializable {
 
     public void setIsAdmin(boolean isAdmin) { this.isAdmin = isAdmin; }
 
+    public boolean getBlocked() {return this.blocked; }
+
+    public void setBlocked(boolean blocked) { this.blocked = blocked; }
+
     public Set<Tarea> getTareas() {
         return tareas;
     }
