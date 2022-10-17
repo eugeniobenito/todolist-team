@@ -1,5 +1,6 @@
 package madstodolist;
 
+import madstodolist.authentication.ManagerUserSession;
 import madstodolist.controller.exception.UsuarioNotFoundException;
 import madstodolist.model.Tarea;
 import madstodolist.model.Usuario;
@@ -10,7 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
@@ -22,11 +25,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Sql(scripts = "/clean-db.sql", executionPhase = AFTER_TEST_METHOD)
 public class RegistradosWebTest {
     @Autowired
     private TareaService tareaService;
@@ -37,20 +43,45 @@ public class RegistradosWebTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @MockBean
+    private ManagerUserSession managerUserSession;
+
+    private Usuario createAdmin(){
+        Usuario usuario = new Usuario("user@ua");
+        usuario.setPassword("123");
+        usuario.setIsAdmin(true);
+        return usuarioService.registrar(usuario);
+    }
+
+    private Usuario createDefaultUser(){
+        Usuario usuario = new Usuario("user@ua");
+        usuario.setPassword("123");
+        usuario.setIsAdmin(false);
+        return usuarioService.registrar(usuario);
+    }
+
+
+
+
     @Test
-    public void muestraTemplateListadoRegistradosVacio() throws Exception{
+    public void muestraTemplateListadoRegistradosVacioIsAdmin() throws Exception{
+        Usuario usuario = createAdmin();
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+
         this.mockMvc.perform(get("/registrados"))
                 .andExpect(content().string
                         (containsString("Listado de usuarios registrados")));
     }
 
     @Test
-    public void getRegistradosReturnUsers() throws Exception {
+    public void getRegistradosReturnUsersWhenIsAdmin() throws Exception {
         Usuario u1 = new Usuario("prueba@gmail.com");
         u1.setPassword("123");
         Usuario u2 = new Usuario("prueba2@gmail.com");
         u2.setPassword("1234");
 
+        Usuario usuario = createAdmin();
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
 
         usuarioService.registrar(u1);
         usuarioService.registrar(u2);
@@ -70,7 +101,10 @@ public class RegistradosWebTest {
 
     @Test
     public void listarDetalles() throws Exception {
-        Usuario usuario = new Usuario("user@ua");
+        Usuario usuario = createAdmin();
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+
+        usuario = new Usuario("user2@ua");
         usuario.setPassword("123");
         usuario.setNombre("usuario de la ua");
         usuario.setFechaNacimiento(new Date());
