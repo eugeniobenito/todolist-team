@@ -34,6 +34,15 @@ public class UsuarioServiceTest {
         return usuario.getId();
     }
 
+    Long addUsuarioBlockedBD() {
+        Usuario usuario = new Usuario("dos@ua");
+        usuario.setNombre("Usuario Ejemplo");
+        usuario.setPassword("123");
+        usuario.setBlocked(true);
+        usuario = usuarioService.registrar(usuario);
+        return usuario.getId();
+    }
+
     Long addBlockedUsuarioBD() {
         Usuario usuario = new Usuario("blocked@ua");
         usuario.setNombre("Usuario Ejemplo");
@@ -221,5 +230,16 @@ public class UsuarioServiceTest {
 
         usuario = usuarioService.findById(idUser);
         assertThat(usuario.getBlocked()).isEqualTo(true);
+    }
+
+    @Test
+    public void userGetsUnblocked(){
+        Long idUser = addUsuarioBlockedBD();
+        Usuario usuario = usuarioService.findById(idUser);
+        assertThat(usuario.getBlocked()).isEqualTo(true);
+        usuarioService.unblockUser(idUser);
+
+        usuario = usuarioService.findById(idUser);
+        assertThat(usuario.getBlocked()).isEqualTo(false);
     }
 }
