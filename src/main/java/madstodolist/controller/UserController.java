@@ -49,8 +49,14 @@ public class UserController {
         }
 
         Long idUser = managerUserSession.usuarioLogeado();
-        if (idUser != null) {
+        if(idUser == null){
+            throw new UsuarioNoLogeadoException();
+        }
+        else {
             Usuario user = usuarioService.findById(idUser);
+            if(!user.getIsAdmin()){
+                throw new UsuarioNoAdminException();
+            }
             model.addAttribute("usuario", user);
         }
         
