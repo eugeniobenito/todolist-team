@@ -1,6 +1,7 @@
 package madstodolist.model;
 
 import net.bytebuddy.implementation.bind.annotation.Default;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -26,7 +27,7 @@ public class Usuario implements Serializable {
     @Column(name = "fecha_nacimiento")
     @Temporal(TemporalType.DATE)
     private Date fechaNacimiento;
-    private Boolean isAdmin;
+    private Boolean isAdmin = false; // valor por defecto
 
 
     // Definimos el tipo de fetch como EAGER para que
