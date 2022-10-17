@@ -29,6 +29,8 @@ public class Usuario implements Serializable {
     private Date fechaNacimiento;
     private Boolean isAdmin = false; // valor por defecto
 
+    private Boolean blocked = false; // valor x defecto
+
 
     // Definimos el tipo de fetch como EAGER para que
     // cualquier consulta que devuelve un usuario rellene automáticamente
@@ -90,6 +92,10 @@ public class Usuario implements Serializable {
     public boolean getIsAdmin(){ return this.isAdmin; }
 
     public void setIsAdmin(boolean isAdmin) { this.isAdmin = isAdmin; }
+
+    public boolean getBlocked() { return this.blocked; }
+
+    public void setBlocked(boolean blocked) { this.blocked = blocked; }
 
     public Set<Tarea> getTareas() {
         return tareas;

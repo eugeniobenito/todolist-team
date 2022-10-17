@@ -16,10 +16,34 @@ public class UsuarioService {
 
     Logger logger = LoggerFactory.getLogger(UsuarioService.class);
 
-    public enum LoginStatus {LOGIN_OK, USER_NOT_FOUND, ERROR_PASSWORD}
+    public enum LoginStatus {LOGIN_OK, USER_NOT_FOUND, ERROR_PASSWORD, USER_BLOCKED }
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Transactional
+    public Usuario blockUser(Long idUser){
+        logger.debug("Bloqueando al usuario " + idUser + "...");
+        Usuario usuario = usuarioRepository.findById(idUser).orElse(null);
+        if(usuario == null){
+            throw new UsuarioServiceException("No existe usuario con id " + idUser);
+        }
+        usuario.setBlocked(true);
+        usuarioRepository.save(usuario);
+        return usuario;
+    }
+
+    @Transactional
+    public Usuario unblockUser(Long idUser){
+        logger.debug("Desbloqueando al usuario " + idUser + "...");
+        Usuario usuario = usuarioRepository.findById(idUser).orElse(null);
+        if(usuario == null){
+            throw new UsuarioServiceException("No existe usuario con id " + idUser);
+        }
+        usuario.setBlocked(false);
+        usuarioRepository.save(usuario);
+        return usuario;
+    }
 
     @Transactional(readOnly = true)
     public LoginStatus login(String eMail, String password) {
@@ -28,7 +52,10 @@ public class UsuarioService {
             return LoginStatus.USER_NOT_FOUND;
         } else if (!usuario.get().getPassword().equals(password)) {
             return LoginStatus.ERROR_PASSWORD;
-        } else {
+        } else if (usuario.get().getBlocked()){
+            return LoginStatus.USER_BLOCKED; 
+        }
+        else {
             return LoginStatus.LOGIN_OK;
         }
     }
@@ -63,4 +90,5 @@ public class UsuarioService {
 
     @Transactional(readOnly = true)
     public boolean existsAnyAdmin() { return (usuarioRepository.findByIsAdmin(true) != null && usuarioRepository.findByIsAdmin(true).size() > 0); }
+
 }

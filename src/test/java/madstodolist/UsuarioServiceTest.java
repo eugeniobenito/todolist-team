@@ -7,7 +7,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Iterator;
 
@@ -27,6 +29,25 @@ public class UsuarioServiceTest {
         Usuario usuario = new Usuario("user@ua");
         usuario.setNombre("Usuario Ejemplo");
         usuario.setPassword("123");
+        usuario.setBlocked(false);
+        usuario = usuarioService.registrar(usuario);
+        return usuario.getId();
+    }
+
+    Long addUsuarioBlockedBD() {
+        Usuario usuario = new Usuario("dos@ua");
+        usuario.setNombre("Usuario Ejemplo");
+        usuario.setPassword("123");
+        usuario.setBlocked(true);
+        usuario = usuarioService.registrar(usuario);
+        return usuario.getId();
+    }
+
+    Long addBlockedUsuarioBD() {
+        Usuario usuario = new Usuario("blocked@ua");
+        usuario.setNombre("Usuario Ejemplo");
+        usuario.setPassword("123");
+        usuario.setBlocked(true);
         usuario = usuarioService.registrar(usuario);
         return usuario.getId();
     }
@@ -37,7 +58,7 @@ public class UsuarioServiceTest {
         // Un usuario en la BD
 
         addUsuarioBD();
-
+        addBlockedUsuarioBD();
         // WHEN
         // intentamos logear un usuario y contraseña correctos
         UsuarioService.LoginStatus loginStatus1 = usuarioService.login("user@ua", "123");
@@ -48,6 +69,7 @@ public class UsuarioServiceTest {
         // intentamos logear un usuario que no existe,
         UsuarioService.LoginStatus loginStatus3 = usuarioService.login("pepito.perez@gmail.com", "12345678");
 
+        UsuarioService.LoginStatus loginStatus4= usuarioService.login("blocked@ua", "123");
         // THEN
 
         // el valor devuelto por el primer login es LOGIN_OK,
@@ -58,6 +80,8 @@ public class UsuarioServiceTest {
 
         // y el valor devuelto por el tercer login es USER_NOT_FOUND.
         assertThat(loginStatus3).isEqualTo(UsuarioService.LoginStatus.USER_NOT_FOUND);
+
+        assertThat(loginStatus4).isEqualTo(UsuarioService.LoginStatus.USER_BLOCKED);
     }
 
     @Test
@@ -195,5 +219,27 @@ public class UsuarioServiceTest {
         usuario = usuarioService.registrar(usuario);
 
         assertThat(usuarioService.existsAnyAdmin()).isEqualTo(true);
+    }
+
+    @Test
+    public void userGetsBlocked(){
+        Long idUser = addUsuarioBD();
+        Usuario usuario = usuarioService.findById(idUser);
+        assertThat(usuario.getBlocked()).isEqualTo(false);
+        usuarioService.blockUser(idUser);
+
+        usuario = usuarioService.findById(idUser);
+        assertThat(usuario.getBlocked()).isEqualTo(true);
+    }
+
+    @Test
+    public void userGetsUnblocked(){
+        Long idUser = addUsuarioBlockedBD();
+        Usuario usuario = usuarioService.findById(idUser);
+        assertThat(usuario.getBlocked()).isEqualTo(true);
+        usuarioService.unblockUser(idUser);
+
+        usuario = usuarioService.findById(idUser);
+        assertThat(usuario.getBlocked()).isEqualTo(false);
     }
 }
