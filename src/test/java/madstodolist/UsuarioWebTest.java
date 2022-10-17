@@ -63,6 +63,33 @@ public class UsuarioWebTest {
     }
 
     @Test
+    public void servicioLoginUsuarioBlocked() throws Exception {
+        // GIVEN
+        // Moqueamos la llamada a usuarioService.login para que
+        // devuelva un LOGIN_OK y la llamada a usuarioServicie.findByEmail
+        // para que devuelva un usuario determinado.
+
+        Usuario anaGarcia = new Usuario("ana.garcia@gmail.com");
+        anaGarcia.setBlocked(true);
+        anaGarcia.setId(1L);
+
+        when(usuarioService.login("ana.garcia@gmail.com", "12345678"))
+                .thenReturn(UsuarioService.LoginStatus.USER_BLOCKED);
+        when(usuarioService.findByEmail("ana.garcia@gmail.com"))
+                .thenReturn(anaGarcia);
+
+        // WHEN, THEN
+        // Realizamos una petición POST al login pasando los datos
+        // esperados en el mock, la petición devolverá una redirección a la
+        // URL con las tareas del usuario
+
+        this.mockMvc.perform(post("/login")
+                        .param("eMail", "ana.garcia@gmail.com")
+                        .param("password", "12345678"))
+                .andExpect(content().string(containsString("Usuario bloqueado en el sistema")));
+    }
+
+    @Test
     public void servicioLoginUsuarioNotFound() throws Exception {
         // GIVEN
         // Moqueamos el método usuarioService.login para que devuelva
@@ -95,6 +122,8 @@ public class UsuarioWebTest {
                         .param("password","000"))
                 .andExpect(content().string(containsString("Contraseña incorrecta")));
     }
+
+
 
     @Test
     public void loginAdminGoesToRegistrados() throws Exception{
