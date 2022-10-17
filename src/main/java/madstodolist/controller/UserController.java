@@ -27,11 +27,11 @@ public class UserController {
         model.addAttribute("usuarios", usuarios);
 
         Long idUser = managerUserSession.usuarioLogeado();
-        if(idUser == null){
+        Usuario user = usuarioService.findById(idUser);
+        if(user == null){
             throw new UsuarioNoLogeadoException();
         }
         else {
-            Usuario user = usuarioService.findById(idUser);
             if(!user.getIsAdmin()){
                 throw new UsuarioNoAdminException(); 
             }
@@ -49,11 +49,11 @@ public class UserController {
         }
 
         Long idUser = managerUserSession.usuarioLogeado();
-        if(idUser == null){
+        Usuario user = usuarioService.findById(idUser);
+        if(user == null){
             throw new UsuarioNoLogeadoException();
         }
         else {
-            Usuario user = usuarioService.findById(idUser);
             if(!user.getIsAdmin()){
                 throw new UsuarioNoAdminException();
             }

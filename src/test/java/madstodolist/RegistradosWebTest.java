@@ -16,6 +16,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.web.client.HttpStatusCodeException;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -124,5 +125,32 @@ public class RegistradosWebTest {
                 )));
     }
 
+    @Test
+    public void listarRegistradosReturnsUnauthorizedWithoutUserLogged() throws Exception {
+        MockHttpServletResponse response = this.mockMvc.perform(get("/registrados")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(401);
+    }
 
+    @Test
+    public void listarDetallesRegistradoReturnsUnauthorizedWithoutUserLogged() throws Exception {
+        Usuario u = createDefaultUser();
+        MockHttpServletResponse response = this.mockMvc.perform(get("/registrados/" + u.getId())).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(401);
+    }
+
+    @Test
+    public void listarDetallesRegistradoReturnsUnauthorizedWithUserLogged() throws Exception {
+        Usuario usuario = createDefaultUser();
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        MockHttpServletResponse response = this.mockMvc.perform(get("/registrados/" + usuario.getId())).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(401);
+    }
+
+    @Test
+    public void listarRegistradosReturnsUnauthorizedWithUserLogged() throws Exception {
+        Usuario usuario = createDefaultUser();
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        MockHttpServletResponse response = this.mockMvc.perform(get("/registrados")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(401);
+    }
 }
