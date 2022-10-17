@@ -1,3 +1,13 @@
+# 001 Acerca de
+Se trata de crear una página en la ruta `/about` que contenga la información del proyecto como el nombre del autor, la versión y su fecha...
+### Vistas
+- *about*: Se ha añadido la plantilla about que contiene la información del proyecto
+- *formLogin*: Se ha añadido un enlace a la ruta ``/about``
+### Controladores
+- *HomeController*: Se ha creado en el home controller el método *about* para gestionar las peticiones `GET /about`. Devuelve la plantilla about.
+
+### Tests
+- Se ha creado la clase *AcercaDeWebTest* que contiene 1 método revisando que la ruta `/about` contiene la cadena `ToDoList`
 # 002 Menú de navegación
 Para el menú de navegación se ha implementado una navbar de Bootstrap. Para hacerlo posible, se ha añadido lo siguiente:
 
