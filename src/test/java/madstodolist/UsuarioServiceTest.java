@@ -31,13 +31,22 @@ public class UsuarioServiceTest {
         return usuario.getId();
     }
 
+    Long addBlockedUsuarioBD() {
+        Usuario usuario = new Usuario("blocked@ua");
+        usuario.setNombre("Usuario Ejemplo");
+        usuario.setPassword("123");
+        usuario.setBlocked(true);
+        usuario = usuarioService.registrar(usuario);
+        return usuario.getId();
+    }
+
     @Test
     public void servicioLoginUsuario() {
         // GIVEN
         // Un usuario en la BD
 
         addUsuarioBD();
-
+        addBlockedUsuarioBD();
         // WHEN
         // intentamos logear un usuario y contraseña correctos
         UsuarioService.LoginStatus loginStatus1 = usuarioService.login("user@ua", "123");
@@ -48,6 +57,7 @@ public class UsuarioServiceTest {
         // intentamos logear un usuario que no existe,
         UsuarioService.LoginStatus loginStatus3 = usuarioService.login("pepito.perez@gmail.com", "12345678");
 
+        UsuarioService.LoginStatus loginStatus4= usuarioService.login("blocked@ua", "123");
         // THEN
 
         // el valor devuelto por el primer login es LOGIN_OK,
@@ -58,6 +68,8 @@ public class UsuarioServiceTest {
 
         // y el valor devuelto por el tercer login es USER_NOT_FOUND.
         assertThat(loginStatus3).isEqualTo(UsuarioService.LoginStatus.USER_NOT_FOUND);
+
+        assertThat(loginStatus4).isEqualTo(UsuarioService.LoginStatus.USER_BLOCKED);
     }
 
     @Test

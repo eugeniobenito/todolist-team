@@ -29,7 +29,7 @@ public class Usuario implements Serializable {
     private Date fechaNacimiento;
     private Boolean isAdmin = false; // valor por defecto
 
-    private Boolean blocked = false // valor x defecto
+    private Boolean blocked = false; // valor x defecto
 
 
     // Definimos el tipo de fetch como EAGER para que
@@ -93,7 +93,7 @@ public class Usuario implements Serializable {
 
     public void setIsAdmin(boolean isAdmin) { this.isAdmin = isAdmin; }
 
-    public boolean getBlocked() {return this.blocked; }
+    public boolean getBlocked() { return this.blocked; }
 
     public void setBlocked(boolean blocked) { this.blocked = blocked; }
 

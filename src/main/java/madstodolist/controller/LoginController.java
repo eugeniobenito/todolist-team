@@ -58,7 +58,7 @@ public class LoginController {
         }
         else if (loginStatus == UsuarioService.LoginStatus.USER_BLOCKED) {
             model.addAttribute("error", "Usuario bloqueado en el sistema");
-            return "formLogin"; 
+            return "formLogin";
         }
 
         return "formLogin";
