@@ -83,3 +83,21 @@ La clase UsuarioRepository implementa un método findByIsAdmin que a partir del 
 - *UsuarioServiceTest.java:* Se añade 1 método para comprobar que el método existsAnyAdmin devuelve lo esperado
 - *RegistroWebTest.java:* Se crea la clase y se añaden dos test para revisar si el checkbox se oculta cuando existe un administrador. Esto se hace gracias al texto del checkbox ``El usuario será administrador``
 - *UsuarioWebTest.java*: Se añade un método para comprobar que se hace la reedirección a la página ````/registrados```` si el usuario que se logea es administrador.
+
+# 006 Protección de listado de usuario y descripción de usuario
+Se trata de que las páginas ```/registrados``` y ````/registrados/{id}```` sólo permitan el acceso al usuario Administrador y de no ser así devolver un ```401 Unauthorized```
+
+### Modelos
+Se ha añadido que la variable isAdmin sea false por defecto
+### Excepciones
+Se ha creado la excepcion UsuarioNoAdminException con el código de HTTP ````401 Unauthorized```` para lanzarla en caso de que el usuario no sea administrador
+### Controladores
+- En la clase *User Controller* se ha añadido la lógica para comprobar si un usuario es administrador en el controlador de listar registrados y listar detalles. La lógica es la siguiente:
+>  if(!user.getIsAdmin()){
+throw new UsuarioNoAdminException();
+}
+
+### Tests
+1. En primer lugar se han actualizado todos los tests de la clae RegistradosWebTest, haciendo uso de un mock para simular que hay un administrador logeado.
+2. Además se han añadido nuevos tests que consisten en comprobar que el código de la respuesta HTTP es 401 cuando el usuario no es administrador o no está logeado.
+3. Se han actualizado también simulando los tests de la navbar un usuario logeado con rol Administrador

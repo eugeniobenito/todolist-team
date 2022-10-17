@@ -1,6 +1,8 @@
 package madstodolist.controller;
 
 import madstodolist.authentication.ManagerUserSession;
+import madstodolist.controller.exception.UsuarioNoAdminException;
+import madstodolist.controller.exception.UsuarioNoLogeadoException;
 import madstodolist.controller.exception.UsuarioNotFoundException;
 import madstodolist.model.Usuario;
 import madstodolist.service.UsuarioService;
@@ -25,8 +27,14 @@ public class UserController {
         model.addAttribute("usuarios", usuarios);
 
         Long idUser = managerUserSession.usuarioLogeado();
-        if (idUser != null) {
-            Usuario user = usuarioService.findById(idUser);
+        Usuario user = usuarioService.findById(idUser);
+        if(user == null){
+            throw new UsuarioNoLogeadoException();
+        }
+        else {
+            if(!user.getIsAdmin()){
+                throw new UsuarioNoAdminException(); 
+            }
             model.addAttribute("usuario", user);
         }
         return "listaRegistrados";
@@ -41,8 +49,14 @@ public class UserController {
         }
 
         Long idUser = managerUserSession.usuarioLogeado();
-        if (idUser != null) {
-            Usuario user = usuarioService.findById(idUser);
+        Usuario user = usuarioService.findById(idUser);
+        if(user == null){
+            throw new UsuarioNoLogeadoException();
+        }
+        else {
+            if(!user.getIsAdmin()){
+                throw new UsuarioNoAdminException();
+            }
             model.addAttribute("usuario", user);
         }
         

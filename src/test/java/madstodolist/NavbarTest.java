@@ -48,6 +48,15 @@ public class NavbarTest {
         return usuario.getId();
     }
 
+    private long addAdminToBd() {
+        Usuario usuario = new Usuario("admin@ua");
+        usuario.setPassword("123");
+        usuario.setIsAdmin(true);
+        usuario = usuarioService.registrar(usuario);
+
+        return usuario.getId();
+    }
+
 
     @Test
     public void loginNotContainsNavbar() throws Exception{
@@ -131,7 +140,7 @@ public class NavbarTest {
 
     @Test
     public void registradosContainsNavbar() throws Exception{
-        Long usuarioId = addUsuarioTareasBD();
+        Long usuarioId = addAdminToBd();
         String url = "/registrados";
 
         when(managerUserSession.usuarioLogeado()).thenReturn(usuarioId);
