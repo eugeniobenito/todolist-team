@@ -33,6 +33,18 @@ public class UsuarioService {
         return usuario;
     }
 
+    @Transactional
+    public Usuario unblockUser(Long idUser){
+        logger.debug("Desbloqueando al usuario " + idUser + "...");
+        Usuario usuario = usuarioRepository.findById(idUser).orElse(null);
+        if(usuario == null){
+            throw new UsuarioServiceException("No existe usuario con id " + idUser);
+        }
+        usuario.setBlocked(false);
+        usuarioRepository.save(usuario);
+        return usuario;
+    }
+
     @Transactional(readOnly = true)
     public LoginStatus login(String eMail, String password) {
         Optional<Usuario> usuario = usuarioRepository.findByEmail(eMail);
