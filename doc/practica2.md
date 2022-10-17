@@ -100,3 +100,4 @@ throw new UsuarioNoAdminException();
 ### Tests
 1. En primer lugar se han actualizado todos los tests de la clae RegistradosWebTest, haciendo uso de un mock para simular que hay un administrador logeado.
 2. Además se han añadido nuevos tests que consisten en comprobar que el código de la respuesta HTTP es 401 cuando el usuario no es administrador o no está logeado.
+3. Se han actualizado también simulando los tests de la navbar un usuario logeado con rol Administrador
