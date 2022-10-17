@@ -86,7 +86,7 @@ public class UsuarioWebTest {
         this.mockMvc.perform(post("/login")
                         .param("eMail", "ana.garcia@gmail.com")
                         .param("password", "12345678"))
-                .andExpect(content().string(containsString("Usuario bloqueado en el sistema")));
+                .andExpect(content().string(containsString("Usuario bloqueado en el sistem")));
     }
 
     @Test

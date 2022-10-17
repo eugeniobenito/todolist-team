@@ -66,4 +66,14 @@ public class UsuarioService {
 
     @Transactional(readOnly = true)
     public boolean existsAnyAdmin() { return (usuarioRepository.findByIsAdmin(true) != null && usuarioRepository.findByIsAdmin(true).size() > 0); }
+
+    @Transactional
+    public void blockUser(Long idUser){
+        logger.debug("Bloqueando al usuario " + idUser + "...");
+        Usuario usuario = usuarioRepository.findById(idUser).orElse(null);
+        if(usuario != null){
+            usuario.setBlocked(true);
+            usuarioRepository.save(usuario); 
+        }
+    }
 }
