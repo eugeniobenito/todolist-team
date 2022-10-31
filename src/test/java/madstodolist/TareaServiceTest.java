@@ -104,7 +104,7 @@ public class TareaServiceTest {
         // al buscar por el identificador en la base de datos se devuelve la tarea modificada
 
         Tarea tareaBD = tareaService.findById(tareaId);
-        assertThat(tareaBD.getTitulo()).isEqualTo("Limpiar los cristales del coche");
+        assertThat(tareaBD.getTitulo()).isEqualTo("Limpiar losss cristales del coche");
 
         // y el usuario tiene también esa tarea modificada.
         Usuario usuarioBD = usuarioService.findById(usuarioId);
