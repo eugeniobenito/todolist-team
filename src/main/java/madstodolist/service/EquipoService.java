@@ -52,6 +52,6 @@ public class EquipoService {
     public List<Usuario> usuariosEquipo(Long equipoId) {
         Equipo e = equipoRepository.findById(equipoId).orElse(null);
         List<Usuario> l = new ArrayList<>(e.getUsuarios());
-        return l; 
+        return l;
     }
 }
