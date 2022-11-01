@@ -30,7 +30,7 @@
                 </thead>
                 <tbody>
                 <th:block th:if="${usuarios.size() == 0}">
-                    No existen usuarios
+                    El equipo no tiene usuarios que le pertenecen
                 </th:block>
                 <tr th:each="usuario: ${usuarios}">
                     <td th:text="${usuario.id}"></td>

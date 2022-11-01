@@ -17,6 +17,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.when;
@@ -69,6 +70,48 @@ public class EquipoWebTest {
     public void usuarioNoLogeadoNoVeEquipos() throws Exception {
         MockHttpServletResponse response = this.mockMvc.perform(get("/equipos")).andReturn().getResponse();
         Assertions.assertThat(response.getStatus()).isEqualTo(401);
+    }
+
+    @Test
+    public void usuarioNoLogeadoNoVeInfoEquipos() throws Exception {
+        Equipo e1 = equipoService.crearEquipo("PruebaEquipo1");
+
+        MockHttpServletResponse response = this.mockMvc.perform(get("/equipos/" + e1.getId().toString())).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(401);
+    }
+
+    @Test
+    public void getInfoEquipoSinMiembros() throws Exception{
+
+        Equipo e1 = equipoService.crearEquipo("PruebaEquipo1");
+
+        Usuario usuario = createUser();
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        this.mockMvc.perform(get("/equipos/" + e1.getId().toString()))
+                .andExpect(content().string
+                        (allOf(containsString(e1.getNombre()),
+                                containsString(e1.getId().toString()),
+                                containsString("El equipo no tiene usuarios que le pertenecen"))));
+    }
+
+    @Test
+    @Transactional
+    public void getInfoEquipoConMiembros() throws Exception{
+
+        Equipo e1 = equipoService.crearEquipo("PruebaEquipo1");
+
+        Usuario usuario = createUser();
+        e1.addUsuario(usuario);
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        this.mockMvc.perform(get("/equipos/" + e1.getId().toString()))
+                .andExpect(content().string
+                        (allOf(containsString(e1.getNombre()),
+                                containsString(e1.getId().toString()),
+                                not(containsString("El equipo no tiene usuarios que le pertenecen")))));
     }
 
 }
