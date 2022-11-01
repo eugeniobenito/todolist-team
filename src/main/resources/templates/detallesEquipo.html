@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: head (titulo='Detalles del equipo')"></head>
+
+<body>
+<div th:insert="navbar :: navbar"></div>
+<div class="container-fluid">
+
+    <h2>Detalles del equipo</h2>
+
+
+    <div class="col-6">
+        <div>
+            <b>Id: </b> <th:block th:text="${equipo.id}" />
+        </div>
+        <div>
+            <b>Nombre: </b> <th:block th:text="${equipo.nombre}" />
+        </div>
+        <div>
+            <b>Usuarios: </b> <br />
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <th:block th:if="${usuarios.size() == 0}">
+                    El equipo no tiene usuarios que le pertenecen
+                </th:block>
+                <tr th:each="usuario: ${usuarios}">
+                    <td th:text="${usuario.id}"></td>
+                    <td th:text="${usuario.nombre}"></td>
+                    <td th:text="${usuario.email}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+
+</body>
+</html>
