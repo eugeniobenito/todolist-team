@@ -81,6 +81,17 @@ public class EquipoWebTest {
     }
 
     @Test
+    public void equipoNoExiste() throws Exception {
+
+        Usuario usuario = createUser();
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        MockHttpServletResponse response = this.mockMvc.perform(get("/equipos/100")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(404);
+    }
+
+    @Test
     public void getInfoEquipoSinMiembros() throws Exception{
 
         Equipo e1 = equipoService.crearEquipo("PruebaEquipo1");
