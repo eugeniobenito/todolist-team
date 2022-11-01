@@ -28,8 +28,6 @@
                 <tr th:each="equipo: ${equipos}">
                     <td th:text="${equipo.id}"></td>
                     <td th:text="${equipo.nombre}"></td>
-                    <td><a class="btn btn-primary btn-xs" th:href="@{/equipos/{id}/(id=${equipo.id})}"/>Detalles</a>
-                    </td>
                 </tr>
                 </tbody>
             </table>

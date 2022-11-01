@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
+import java.lang.ref.ReferenceQueue;
 import java.util.List;
 
 @Controller
@@ -59,4 +60,19 @@ public class EquipoController {
         model.addAttribute("equipos", equipos);
         return "listaEquipos";
     }
+
+    @GetMapping("/equipos/{id}")
+    public String detallesEquipo(@PathVariable(value="id") Long idEquipo, Model model){
+        isAnyUserLogged();
+        Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
+
+        Usuario usuario = usuarioService.findById(idUsuarioLogeado);
+        Equipo equipo = equipoService.recuperarEquipo(idEquipo);
+        List<Usuario> usuarios = equipoService.usuariosEquipo(idEquipo);
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("equipo", equipo);
+        model.addAttribute("usuarios", usuarios);
+        return "detallesEquipo";
+    }
+
 }
