@@ -19,6 +19,8 @@ public class Equipo {
         this.nombre = nombre;
     }
 
+    public Equipo(){}
+
     public String getNombre(){
         return this.nombre;
     }
