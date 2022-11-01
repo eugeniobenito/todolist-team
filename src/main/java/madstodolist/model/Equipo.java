@@ -1,7 +1,9 @@
 package madstodolist.model;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "equipos")
@@ -27,6 +29,11 @@ public class Equipo {
 
     public void setId(Long id){ this.id = id; }
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "equipo_usuario", joinColumns = { @JoinColumn(name = "fk_equipo") },
+            inverseJoinColumns = {@JoinColumn(name = "fk_usuario")})
+    Set<Usuario> usuarios = new HashSet<>();
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -42,5 +49,14 @@ public class Equipo {
     public int hashCode() {
         // Generamos un hash basado en los campos obligatorios
         return Objects.hash(id);
+    }
+
+    public Set<Usuario> getUsuarios() {
+        return usuarios;
+    }
+
+    public void addUsuario(Usuario usuario) {
+        this.getUsuarios().add(usuario);
+        usuario.getEquipos().add(this);
     }
 }
