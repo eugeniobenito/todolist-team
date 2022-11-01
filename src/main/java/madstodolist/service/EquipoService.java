@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class EquipoService {
     Logger logger = LoggerFactory.getLogger(EquipoService.class);
@@ -25,5 +27,10 @@ public class EquipoService {
     @Transactional(readOnly = true)
     public Equipo recuperarEquipo(Long id) {
         return equipoRepository.findById(id).orElse(null);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Equipo> findAllOrderedByName(){
+        return equipoRepository.findAllByOrderByNombreAsc();
     }
 }
