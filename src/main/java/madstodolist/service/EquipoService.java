@@ -35,10 +35,7 @@ public class EquipoService {
     @Transactional(readOnly = true)
     public Equipo recuperarEquipo(Long id) {
 
-        Equipo e = equipoRepository.findById(id).orElse(null);
-        if(e == null)
-            throw new EquipoServiceException("No existe equipo con el id " + id.toString());
-        return e;
+        return equipoRepository.findById(id).orElse(null);
     }
 
     @Transactional(readOnly = true)
@@ -50,6 +47,7 @@ public class EquipoService {
     public void addUsuarioEquipo(Long userId, Long equipoId) {
         Usuario user = usuarioRepository.findById(userId).orElse(null);
         Equipo equipo = equipoRepository.findById(equipoId).orElse(null);
+        if(equipo == null) throw new EquipoServiceException("No existe el equipo con id 20");
         equipo.addUsuario(user);
     }
 
