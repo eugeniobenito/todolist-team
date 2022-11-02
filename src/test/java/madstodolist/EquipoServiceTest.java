@@ -116,4 +116,10 @@ public class EquipoServiceTest {
         EquipoServiceException e = assertThrows(EquipoServiceException.class, () -> equipoService.crearEquipo(""));
         assertThat(e.getMessage()).isEqualTo("El nombre del equipo no puede estar vacio");
     }
+
+    @Test
+    public void recuperarEquipoIfNotExistsThrowException(){
+        EquipoServiceException e = assertThrows(EquipoServiceException.class, () -> equipoService.recuperarEquipo(Long.parseLong("100")));
+        assertThat(e.getMessage()).isEqualTo("No existe equipo con el id 100");
+    }
 }
