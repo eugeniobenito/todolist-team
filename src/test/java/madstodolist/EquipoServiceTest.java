@@ -3,6 +3,7 @@ package madstodolist;
 import madstodolist.model.Equipo;
 import madstodolist.model.Usuario;
 import madstodolist.service.EquipoService;
+import madstodolist.service.EquipoServiceException;
 import madstodolist.service.UsuarioService;
 import org.hibernate.LazyInitializationException;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 @SpringBootTest
@@ -107,5 +109,11 @@ public class EquipoServiceTest {
         // Se recuperan también los equipos del usuario,
         // porque la relación entre usuarios y equipos es EAGER
         assertThat(usuarioBD.getEquipos()).hasSize(1);
+    }
+
+    @Test
+    public void crearEquipoServiceNoPuedeSerVacio(){
+        EquipoServiceException e = assertThrows(EquipoServiceException.class, () -> equipoService.crearEquipo(""));
+        assertThat(e.getMessage()).isEqualTo("El nombre del equipo no puede estar vacio");
     }
 }

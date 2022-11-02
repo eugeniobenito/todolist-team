@@ -26,6 +26,7 @@ public class EquipoService {
 
     @Transactional
     public Equipo crearEquipo(String nombre) {
+        if(nombre == "") throw new EquipoServiceException("El nombre del equipo no puede estar vacio");
         Equipo e = new Equipo(nombre);
         equipoRepository.save(e);
         return e;
