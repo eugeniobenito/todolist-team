@@ -123,4 +123,12 @@ public class EquipoServiceTest {
         assertThat(e.getMessage()).isEqualTo("No existe el equipo con id 20");
 
     }
+
+    @Test
+    public void addUsuarioToEquipoWhoUsuarioNotExistsException() {
+        Equipo equipo = equipoService.crearEquipo("don");
+        EquipoServiceException e = assertThrows(EquipoServiceException.class, () -> equipoService.addUsuarioEquipo(new Long(20), equipo.getId()));
+        assertThat(e.getMessage()).isEqualTo("No existe el usuario con id 20");
+
+    }
 }
