@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 @SpringBootTest
-@Sql(scripts = "/clean-db.sql")
+@Sql(scripts = "/clean-db.sql", executionPhase = AFTER_TEST_METHOD)
 public class EquipoServiceTest {
 
     @Autowired
@@ -119,7 +119,7 @@ public class EquipoServiceTest {
 
     @Test
     public void addUsuarioToEquipoWhoNotExistsException() {
-        EquipoServiceException e = assertThrows(EquipoServiceException.class, () -> equipoService.addUsuarioEquipo(new Long(1), new Long(20)));
+        EquipoServiceException e = assertThrows(EquipoServiceException.class, () -> equipoService.addUsuarioEquipo(new Long(1), new Long( 20)));
         assertThat(e.getMessage()).isEqualTo("No existe el equipo con id 20");
 
     }
