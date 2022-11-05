@@ -131,4 +131,23 @@ public class EquipoServiceTest {
         assertThat(e.getMessage()).isEqualTo("No existe el usuario con id 20");
 
     }
+
+    @Test
+    public void comprobarRelacionUsuarioEquipos2() {
+
+        Equipo equipo = equipoService.crearEquipo("Proyecto 1");
+        Usuario usuario = new Usuario("user@ua");
+        usuario.setPassword("123");
+        usuario = usuarioService.registrar(usuario);
+
+        equipoService.addUsuarioEquipo(usuario.getId(), equipo.getId());
+        Usuario usuarioBD = usuarioService.findById(usuario.getId());
+
+        assertThat(usuarioBD.getEquipos()).hasSize(1);
+
+        equipoService.removeUsuarioEquipo(usuario.getId(), equipo.getId());
+
+        usuarioBD = usuarioService.findById(usuario.getId());
+        assertThat(usuarioBD.getEquipos()).hasSize(0);
+    }
 }

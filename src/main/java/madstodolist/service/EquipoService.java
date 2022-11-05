@@ -52,6 +52,13 @@ public class EquipoService {
         equipo.addUsuario(user);
     }
 
+    @Transactional
+    public void removeUsuarioEquipo(Long userId, Long equipoId){
+        Usuario user = usuarioRepository.findById(userId).orElse(null);
+        Equipo equipo = equipoRepository.findById(equipoId).orElse(null);
+        equipo.removeUsuario(user);
+    }
+
     @Transactional(readOnly = true)
     public List<Usuario> usuariosEquipo(Long equipoId) {
         Equipo e = equipoRepository.findById(equipoId).orElse(null);
