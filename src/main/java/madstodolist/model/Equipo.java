@@ -61,4 +61,9 @@ public class Equipo {
         this.getUsuarios().add(usuario);
         usuario.getEquipos().add(this);
     }
+
+    public void removeUsuario(Usuario usuario){
+        this.getUsuarios().remove(usuario);
+        usuario.getEquipos().remove(usuario);
+    }
 }
