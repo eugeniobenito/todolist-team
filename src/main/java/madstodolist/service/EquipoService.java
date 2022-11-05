@@ -56,6 +56,8 @@ public class EquipoService {
     public void removeUsuarioEquipo(Long userId, Long equipoId){
         Usuario user = usuarioRepository.findById(userId).orElse(null);
         Equipo equipo = equipoRepository.findById(equipoId).orElse(null);
+        if(equipo == null) throw new EquipoServiceException("No existe el equipo con id " + equipoId);
+        if(user == null) throw new EquipoServiceException("No existe el usuario con id " + userId);
         equipo.removeUsuario(user);
     }
 

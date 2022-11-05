@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -149,5 +150,14 @@ public class EquipoServiceTest {
 
         usuarioBD = usuarioService.findById(usuario.getId());
         assertThat(usuarioBD.getEquipos()).hasSize(0);
+    }
+
+    @Test
+    public void removeUsuarioFromEquipoThrowsExceptionWhenObjectNotFound(){
+        EquipoServiceException e = assertThrows(EquipoServiceException.class, () -> equipoService.removeUsuarioEquipo(new Long(1), new Long( 20)));
+        assertThat(e.getMessage()).isEqualTo("No existe el equipo con id 20");
+        Equipo equipo = equipoService.crearEquipo("don");
+        e = assertThrows(EquipoServiceException.class, () -> equipoService.removeUsuarioEquipo(new Long(20), equipo.getId()));
+        assertThat(e.getMessage()).isEqualTo("No existe el usuario con id 20");
     }
 }
