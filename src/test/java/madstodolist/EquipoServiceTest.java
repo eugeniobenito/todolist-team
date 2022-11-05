@@ -3,17 +3,20 @@ package madstodolist;
 import madstodolist.model.Equipo;
 import madstodolist.model.Usuario;
 import madstodolist.service.EquipoService;
+import madstodolist.service.EquipoServiceException;
 import madstodolist.service.UsuarioService;
 import org.hibernate.LazyInitializationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 @SpringBootTest
@@ -107,5 +110,54 @@ public class EquipoServiceTest {
         // Se recuperan también los equipos del usuario,
         // porque la relación entre usuarios y equipos es EAGER
         assertThat(usuarioBD.getEquipos()).hasSize(1);
+    }
+
+    @Test
+    public void crearEquipoServiceNoPuedeSerVacio(){
+        EquipoServiceException e = assertThrows(EquipoServiceException.class, () -> equipoService.crearEquipo(""));
+        assertThat(e.getMessage()).isEqualTo("El nombre del equipo no puede estar vacio");
+    }
+
+    @Test
+    public void addUsuarioToEquipoWhoNotExistsException() {
+        EquipoServiceException e = assertThrows(EquipoServiceException.class, () -> equipoService.addUsuarioEquipo(new Long(1), new Long( 20)));
+        assertThat(e.getMessage()).isEqualTo("No existe el equipo con id 20");
+
+    }
+
+    @Test
+    public void addUsuarioToEquipoWhoUsuarioNotExistsException() {
+        Equipo equipo = equipoService.crearEquipo("don");
+        EquipoServiceException e = assertThrows(EquipoServiceException.class, () -> equipoService.addUsuarioEquipo(new Long(20), equipo.getId()));
+        assertThat(e.getMessage()).isEqualTo("No existe el usuario con id 20");
+
+    }
+
+    @Test
+    public void comprobarRelacionUsuarioEquipos2() {
+
+        Equipo equipo = equipoService.crearEquipo("Proyecto 1");
+        Usuario usuario = new Usuario("user@ua");
+        usuario.setPassword("123");
+        usuario = usuarioService.registrar(usuario);
+
+        equipoService.addUsuarioEquipo(usuario.getId(), equipo.getId());
+        Usuario usuarioBD = usuarioService.findById(usuario.getId());
+
+        assertThat(usuarioBD.getEquipos()).hasSize(1);
+
+        equipoService.removeUsuarioEquipo(usuario.getId(), equipo.getId());
+
+        usuarioBD = usuarioService.findById(usuario.getId());
+        assertThat(usuarioBD.getEquipos()).hasSize(0);
+    }
+
+    @Test
+    public void removeUsuarioFromEquipoThrowsExceptionWhenObjectNotFound(){
+        EquipoServiceException e = assertThrows(EquipoServiceException.class, () -> equipoService.removeUsuarioEquipo(new Long(1), new Long( 20)));
+        assertThat(e.getMessage()).isEqualTo("No existe el equipo con id 20");
+        Equipo equipo = equipoService.crearEquipo("don");
+        e = assertThrows(EquipoServiceException.class, () -> equipoService.removeUsuarioEquipo(new Long(20), equipo.getId()));
+        assertThat(e.getMessage()).isEqualTo("No existe el usuario con id 20");
     }
 }

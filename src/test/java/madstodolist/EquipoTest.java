@@ -105,6 +105,7 @@ public class EquipoTest {
         assertThat(equipo.getUsuarios()).hasSize(1);
         assertThat(equipo.getUsuarios()).contains(usuario);
         assertThat(usuario.getEquipos()).hasSize(1);
+        assertThat(usuario.getEquipos()).hasSize(1);
         assertThat(usuario.getEquipos()).contains(equipo);
     }
 
@@ -121,5 +122,15 @@ public class EquipoTest {
 
         // THEN
         assertThat(equipos).hasSize(2);
+    }
+
+    @Test
+    public void removeUsuario() {
+        Equipo equipo = new Equipo("prueba");
+        Usuario usuario = new Usuario("user@ua");
+        equipo.addUsuario(usuario);
+        assertThat(equipo.getUsuarios().size()).isEqualTo(1);
+        equipo.removeUsuario(usuario);
+        assertThat(equipo.getUsuarios().size()).isEqualTo(0);
     }
 }
