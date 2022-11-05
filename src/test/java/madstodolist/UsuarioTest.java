@@ -1,7 +1,9 @@
 package madstodolist;
 
+import madstodolist.model.Equipo;
 import madstodolist.model.Usuario;
 import madstodolist.model.UsuarioRepository;
+import net.bytebuddy.implementation.bytecode.assign.Assigner;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -196,5 +198,15 @@ public class UsuarioTest {
 
         assertThat(usuarioRepository.findByIsAdmin(true).size()).isEqualTo(1);
         assertThat(usuarioRepository.findByIsAdmin(false).size()).isEqualTo(0);
+    }
+
+    @Test
+    public void usuarioPerteneceEquipo(){
+        Usuario usuario = new Usuario("prueba@a");
+        Equipo e = new Equipo("aa");
+        assertThat(usuario.perteneceEquipo(e)).isEqualTo(false);
+        e.addUsuario(usuario);
+        assertThat(usuario.perteneceEquipo(e)).isEqualTo(true);
+
     }
 }

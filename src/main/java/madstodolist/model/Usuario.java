@@ -127,4 +127,8 @@ public class Usuario implements Serializable {
         // Generamos un hash basado en los campos obligatorios
         return Objects.hash(email);
     }
+
+    public boolean perteneceEquipo(Equipo e){
+        return getEquipos().contains(e);
+    }
 }
