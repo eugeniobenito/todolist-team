@@ -244,6 +244,15 @@ public class EquipoWebTest {
 
     }
 
+    @Test
+    public void errorAlCrearEquipoVacio() throws Exception {
+        Usuario u = createUser();
+        when(managerUserSession.usuarioLogeado()).thenReturn(u.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+        MockHttpServletResponse response = this.mockMvc.perform(post("/equipos").param("nombre", "")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(400);
+    }
+
 
 
 }

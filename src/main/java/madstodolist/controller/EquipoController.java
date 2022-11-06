@@ -2,6 +2,7 @@ package madstodolist.controller;
 
 import madstodolist.authentication.ManagerUserSession;
 import madstodolist.controller.exception.EquipoNotFoundException;
+import madstodolist.controller.exception.FormErrorException;
 import madstodolist.controller.exception.UsuarioNoLogeadoException;
 import madstodolist.model.Equipo;
 import madstodolist.model.Tarea;
@@ -114,7 +115,7 @@ public class EquipoController {
 
 
         isAnyUserLogged();
-
+        if(equipoData.getNombre() == "") throw new FormErrorException();
         Equipo e = equipoService.crearEquipo(equipoData.getNombre());
         return "redirect:/equipos";
     }
