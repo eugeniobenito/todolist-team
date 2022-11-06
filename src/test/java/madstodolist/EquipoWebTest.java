@@ -266,5 +266,20 @@ public class EquipoWebTest {
     }
 
 
+    @Test
+    public void equipoNotFoundUnirseAbandonarEquipo() throws Exception {
+        Usuario usuario = createUser();
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+
+
+        MockHttpServletResponse response = this.mockMvc.perform(post("/equipos/200/usuarios/" + usuario.getId().toString() )).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(404);
+
+         response = this.mockMvc.perform(delete("/equipos/200/usuarios/" + usuario.getId().toString() )).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(404);
+    }
+
 
 }
