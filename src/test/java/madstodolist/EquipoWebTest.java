@@ -147,7 +147,29 @@ public class EquipoWebTest {
     }
 
     @Test
-    @Transactional 
+    @Transactional
+    public void showJoinOrLeaveButtonOnEquipoDetalles() throws Exception{
+        Equipo e1 = equipoService.crearEquipo("PruebaEquipo1");
+
+
+        Usuario usuario = createUser();
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        this.mockMvc.perform(get("/equipos/" + e1.getId().toString()))
+                .andExpect(content().string
+                        (allOf(containsString("Unirse"))));
+
+        equipoService.addUsuarioEquipo(usuario.getId(), e1.getId());
+
+
+        this.mockMvc.perform(get("/equipos/" + e1.getId().toString()))
+                .andExpect(content().string
+                        (allOf(containsString("Abandonar"))));
+    }
+
+    @Test
+    @Transactional
     public void controladoresUnirseYAbandonarEquipo() throws Exception {
         Equipo e1 = equipoService.crearEquipo("PruebaEquipo1");
 
