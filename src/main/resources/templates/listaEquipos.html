@@ -28,6 +28,18 @@
                 <tr th:each="equipo: ${equipos}">
                     <td th:text="${equipo.id}"></td>
                     <td th:text="${equipo.nombre}"></td>
+                    <td th:if="${usuario.perteneceEquipo(equipo)}">
+                        <form method="post">
+                            <button class="btn btn-danger" type="submit">Abandonar</button>
+                        </form>
+                    </td>
+                    <td th:unless="${usuario.perteneceEquipo(equipo)}">
+                        <form method="post">
+                            <button class="btn btn-success" type="submit">Unirse</button>
+                        </form>
+                    </td>
+                    <td><a th:href="@{/equipos/{id}(id=${equipo.id})}">Ver detalles</a></td>
+
                 </tr>
                 </tbody>
             </table>

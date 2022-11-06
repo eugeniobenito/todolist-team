@@ -125,4 +125,25 @@ public class EquipoWebTest {
                                 not(containsString("El equipo no tiene usuarios que le pertenecen")))));
     }
 
+    @Test
+    public void showJoinOrLeaveButton() throws Exception{
+        Equipo e1 = equipoService.crearEquipo("PruebaEquipo1");
+
+
+        Usuario usuario = createUser();
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(content().string
+                        (allOf(containsString("Unirse"))));
+
+        equipoService.addUsuarioEquipo(usuario.getId(), e1.getId());
+
+
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(content().string
+                        (allOf(containsString("Abandonar"))));
+    }
+
 }
