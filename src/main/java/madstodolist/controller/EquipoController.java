@@ -97,6 +97,16 @@ public class EquipoController {
         return "redirect:/equipos/" + idEquipo.toString();
     }
 
+    @GetMapping("/equipos/nuevo")
+    public String formNuevoEquipo(@ModelAttribute EquipoData equipoData, Model model,
+                                 HttpSession session) {
+
+        isAnyUserLogged();
+        Long idUsuario = managerUserSession.usuarioLogeado();
+        Usuario usuario = usuarioService.findById(idUsuario);
+        model.addAttribute("usuario", usuario);
+        return "formNuevoEquipo";
+    }
     @PostMapping("/equipos")
     public String nuevoEquipo(@ModelAttribute EquipoData equipoData,
                              Model model, RedirectAttributes flash,
@@ -106,7 +116,6 @@ public class EquipoController {
         isAnyUserLogged();
 
         Equipo e = equipoService.crearEquipo(equipoData.getNombre());
-        flash.addFlashAttribute("mensaje", "Tarea creada correctamente");
         return "redirect:/equipos";
     }
 
