@@ -146,4 +146,31 @@ public class EquipoWebTest {
                         (allOf(containsString("Abandonar"))));
     }
 
+    @Test
+    public void controladoresUnirseYAbandonarEquipo() throws Exception {
+        Equipo e1 = equipoService.crearEquipo("PruebaEquipo1");
+
+
+        Usuario usuario = createUser();
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        Assertions.assertThat(usuario.getEquipos()).hasSize(0);
+
+        this.mockMvc.perform(post("/equipos/" + e1.getId().toString() + "/usuarios/" + usuario.getId().toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/equipos/" + e1.getId().toString()));
+
+        Assertions.assertThat(usuario.getEquipos()).hasSize(1);
+
+        this.mockMvc.perform(delete("/equipos/" + e1.getId().toString() + "/usuarios/" + usuario.getId().toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/equipos/" + e1.getId().toString()));
+
+        Assertions.assertThat(usuario.getEquipos()).hasSize(0);
+
+    }
+
+
+
 }
