@@ -97,4 +97,17 @@ public class EquipoController {
         return "redirect:/equipos/" + idEquipo.toString();
     }
 
+    @PostMapping("/equipos")
+    public String nuevoEquipo(@ModelAttribute EquipoData equipoData,
+                             Model model, RedirectAttributes flash,
+                             HttpSession session) {
+
+
+        isAnyUserLogged();
+
+        Equipo e = equipoService.crearEquipo(equipoData.getNombre());
+        flash.addFlashAttribute("mensaje", "Tarea creada correctamente");
+        return "redirect:/equipos";
+    }
+
 }

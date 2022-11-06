@@ -203,6 +203,22 @@ public class EquipoWebTest {
 
     }
 
+    @Test
+    @Transactional
+    public void controllerCrearEquipo() throws Exception {
+
+        Usuario usuario = createUser();
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+
+        this.mockMvc.perform(post("/equipos").param("nombre", "Equipo nuevo 1"));
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(content().string
+                        (allOf(containsString("Equipo nuevo 1"))));
+
+    }
+
 
 
 }
