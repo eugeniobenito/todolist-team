@@ -232,6 +232,18 @@ public class EquipoWebTest {
 
     }
 
+    @Test
+    public void botonNuevoEquipo() throws Exception {
+        Usuario usuario = createUser();
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(content().string
+                        (allOf(containsString("Nuevo equipo"))));
+
+    }
+
 
 
 }
