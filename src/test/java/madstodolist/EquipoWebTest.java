@@ -147,6 +147,7 @@ public class EquipoWebTest {
     }
 
     @Test
+    @Transactional 
     public void controladoresUnirseYAbandonarEquipo() throws Exception {
         Equipo e1 = equipoService.crearEquipo("PruebaEquipo1");
 
@@ -157,9 +158,13 @@ public class EquipoWebTest {
 
         Assertions.assertThat(usuario.getEquipos()).hasSize(0);
 
-        this.mockMvc.perform(post("/equipos/" + e1.getId().toString() + "/usuarios/" + usuario.getId().toString()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/equipos/" + e1.getId().toString()));
+        this.mockMvc.perform(post("/equipos/" + e1.getId().toString() + "/usuarios/" + usuario.getId().toString()));
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(content().string
+                        (allOf(containsString("Abandonar"))));
+
+
+        this.mockMvc.perform(post("/equipos/" + e1.getId().toString() + "/usuarios/" + usuario.getId().toString()));
 
         Assertions.assertThat(usuario.getEquipos()).hasSize(1);
 
@@ -167,7 +172,12 @@ public class EquipoWebTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/equipos/" + e1.getId().toString()));
 
-        Assertions.assertThat(usuario.getEquipos()).hasSize(0);
+
+
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(content().string
+                        (allOf(containsString("Abandonar"))));
+
 
     }
 

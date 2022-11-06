@@ -82,7 +82,7 @@ public class EquipoController {
         Equipo equipo = equipoService.recuperarEquipo(idEquipo);
         if(equipo == null)
             throw new EquipoNotFoundException();
-        equipoService.addUsuarioEquipo(idEquipo, userId);
+        equipoService.addUsuarioEquipo(userId, idEquipo);
         return "redirect:/equipos/" + idEquipo.toString();
     }
 
@@ -93,7 +93,7 @@ public class EquipoController {
         Equipo equipo = equipoService.recuperarEquipo(idEquipo);
         if(equipo == null)
             throw new EquipoNotFoundException();
-        equipoService.removeUsuarioEquipo(idEquipo, userId);
+        equipoService.removeUsuarioEquipo(userId, idEquipo);
         return "redirect:/equipos/" + idEquipo.toString();
     }
 
