@@ -253,6 +253,18 @@ public class EquipoWebTest {
         Assertions.assertThat(response.getStatus()).isEqualTo(400);
     }
 
+    @Test
+    public void unauthorizedGetNuevoEquipo() throws Exception {
+        MockHttpServletResponse response = this.mockMvc.perform(get("/equipos/nuevo")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(401);
+    }
+
+    @Test
+    public void unauthorizedGetNuevoEquipoC2() throws Exception {
+        MockHttpServletResponse response = this.mockMvc.perform(post("/equipos").param("nombre", "aaa")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(401);
+    }
+
 
 
 }
