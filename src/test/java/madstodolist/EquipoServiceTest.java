@@ -195,4 +195,10 @@ public class EquipoServiceTest {
         usuario = usuarioService.findById(usuario.getId());
         assertThat(usuario.getEquipos()).hasSize(0);
     }
+
+    @Test
+    public void eliminarEquipoThrowsException() {
+        EquipoServiceException e = assertThrows(EquipoServiceException.class, () -> equipoService.eliminarEquipo(new Long(100)));
+        assertThat(e.getMessage()).isEqualTo("No existe el equipo con id 100");
+    }
 }
