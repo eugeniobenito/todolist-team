@@ -2,6 +2,7 @@ package madstodolist.controller;
 
 import madstodolist.authentication.ManagerUserSession;
 import madstodolist.controller.exception.EquipoNotFoundException;
+import madstodolist.controller.exception.FormErrorException;
 import madstodolist.controller.exception.UsuarioNoLogeadoException;
 import madstodolist.model.Equipo;
 import madstodolist.model.Tarea;
@@ -12,10 +13,7 @@ import madstodolist.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
@@ -76,6 +74,50 @@ public class EquipoController {
         model.addAttribute("equipo", equipo);
         model.addAttribute("usuarios", usuarios);
         return "detallesEquipo";
+    }
+
+    @PostMapping("/equipos/{id}/usuarios/{userId}")
+    public String anyadirUsuarioEquipo(@PathVariable(value="id") Long idEquipo, @PathVariable(value="userId") Long userId,
+                                 Model model){
+        comprobarUsuarioLogeado(userId); // revisamos que el recurso es suyo y esta autenticado
+        Equipo equipo = equipoService.recuperarEquipo(idEquipo);
+        if(equipo == null)
+            throw new EquipoNotFoundException();
+        equipoService.addUsuarioEquipo(userId, idEquipo);
+        return "redirect:/equipos/" + idEquipo.toString();
+    }
+
+    @DeleteMapping("/equipos/{id}/usuarios/{userId}")
+    public String eliminarUsuarioEquipo(@PathVariable(value="id") Long idEquipo, @PathVariable(value="userId") Long userId,
+                                       Model model){
+        comprobarUsuarioLogeado(userId); // revisamos que el recurso es suyo y esta autenticado
+        Equipo equipo = equipoService.recuperarEquipo(idEquipo);
+        if(equipo == null)
+            throw new EquipoNotFoundException();
+        equipoService.removeUsuarioEquipo(userId, idEquipo);
+        return "redirect:/equipos/" + idEquipo.toString();
+    }
+
+    @GetMapping("/equipos/nuevo")
+    public String formNuevoEquipo(@ModelAttribute EquipoData equipoData, Model model,
+                                 HttpSession session) {
+
+        isAnyUserLogged();
+        Long idUsuario = managerUserSession.usuarioLogeado();
+        Usuario usuario = usuarioService.findById(idUsuario);
+        model.addAttribute("usuario", usuario);
+        return "formNuevoEquipo";
+    }
+    @PostMapping("/equipos")
+    public String nuevoEquipo(@ModelAttribute EquipoData equipoData,
+                             Model model, RedirectAttributes flash,
+                             HttpSession session) {
+
+
+        isAnyUserLogged();
+        if(equipoData.getNombre() == "") throw new FormErrorException();
+        Equipo e = equipoService.crearEquipo(equipoData.getNombre());
+        return "redirect:/equipos";
     }
 
 }

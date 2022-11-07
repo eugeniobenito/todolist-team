@@ -125,4 +125,161 @@ public class EquipoWebTest {
                                 not(containsString("El equipo no tiene usuarios que le pertenecen")))));
     }
 
+    @Test
+    public void showJoinOrLeaveButton() throws Exception{
+        Equipo e1 = equipoService.crearEquipo("PruebaEquipo1");
+
+
+        Usuario usuario = createUser();
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(content().string
+                        (allOf(containsString("Unirse"))));
+
+        equipoService.addUsuarioEquipo(usuario.getId(), e1.getId());
+
+
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(content().string
+                        (allOf(containsString("Abandonar"))));
+    }
+
+    @Test
+    @Transactional
+    public void showJoinOrLeaveButtonOnEquipoDetalles() throws Exception{
+        Equipo e1 = equipoService.crearEquipo("PruebaEquipo1");
+
+
+        Usuario usuario = createUser();
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        this.mockMvc.perform(get("/equipos/" + e1.getId().toString()))
+                .andExpect(content().string
+                        (allOf(containsString("Unirse"))));
+
+        equipoService.addUsuarioEquipo(usuario.getId(), e1.getId());
+
+
+        this.mockMvc.perform(get("/equipos/" + e1.getId().toString()))
+                .andExpect(content().string
+                        (allOf(containsString("Abandonar"))));
+    }
+
+    @Test
+    @Transactional
+    public void controladoresUnirseYAbandonarEquipo() throws Exception {
+        Equipo e1 = equipoService.crearEquipo("PruebaEquipo1");
+
+
+        Usuario usuario = createUser();
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        Assertions.assertThat(usuario.getEquipos()).hasSize(0);
+
+        this.mockMvc.perform(post("/equipos/" + e1.getId().toString() + "/usuarios/" + usuario.getId().toString()));
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(content().string
+                        (allOf(containsString("Abandonar"))));
+
+
+        this.mockMvc.perform(post("/equipos/" + e1.getId().toString() + "/usuarios/" + usuario.getId().toString()));
+
+        Assertions.assertThat(usuario.getEquipos()).hasSize(1);
+
+        this.mockMvc.perform(delete("/equipos/" + e1.getId().toString() + "/usuarios/" + usuario.getId().toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/equipos/" + e1.getId().toString()));
+
+
+
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(content().string
+                        (allOf(containsString("Abandonar"))));
+
+
+    }
+
+    @Test
+    @Transactional
+    public void controllerCrearEquipo() throws Exception {
+
+        Usuario usuario = createUser();
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+
+        this.mockMvc.perform(post("/equipos").param("nombre", "Equipo nuevo 1"));
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(content().string
+                        (allOf(containsString("Equipo nuevo 1"))));
+
+    }
+
+    @Test
+    public void controllerCrearEquipoVista() throws Exception {
+
+        Usuario usuario = createUser();
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        this.mockMvc.perform(get("/equipos/nuevo"))
+                .andExpect(content().string
+                        (allOf(containsString("Crear equipo"))));
+
+    }
+
+    @Test
+    public void botonNuevoEquipo() throws Exception {
+        Usuario usuario = createUser();
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(content().string
+                        (allOf(containsString("Nuevo equipo"))));
+
+    }
+
+    @Test
+    public void errorAlCrearEquipoVacio() throws Exception {
+        Usuario u = createUser();
+        when(managerUserSession.usuarioLogeado()).thenReturn(u.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+        MockHttpServletResponse response = this.mockMvc.perform(post("/equipos").param("nombre", "")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(400);
+    }
+
+    @Test
+    public void unauthorizedGetNuevoEquipo() throws Exception {
+        MockHttpServletResponse response = this.mockMvc.perform(get("/equipos/nuevo")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(401);
+    }
+
+    @Test
+    public void unauthorizedGetNuevoEquipoC2() throws Exception {
+        MockHttpServletResponse response = this.mockMvc.perform(post("/equipos").param("nombre", "aaa")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(401);
+    }
+
+
+    @Test
+    public void equipoNotFoundUnirseAbandonarEquipo() throws Exception {
+        Usuario usuario = createUser();
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+
+
+        MockHttpServletResponse response = this.mockMvc.perform(post("/equipos/200/usuarios/" + usuario.getId().toString() )).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(404);
+
+         response = this.mockMvc.perform(delete("/equipos/200/usuarios/" + usuario.getId().toString() )).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(404);
+    }
+
+
 }

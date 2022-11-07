@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.when;
@@ -167,6 +168,7 @@ public class TareaWebTest {
     }
 
     @Test
+    @Transactional
     public void editarTareaActualizaLaTarea() throws Exception {
         // GIVEN
         // Un usuario con dos tareas en la BD
