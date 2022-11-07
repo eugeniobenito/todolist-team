@@ -133,4 +133,11 @@ public class EquipoTest {
         equipo.removeUsuario(usuario);
         assertThat(equipo.getUsuarios().size()).isEqualTo(0);
     }
+
+    @Test
+    public void setNombre() {
+        Equipo equipo = new Equipo("hola");
+        equipo.setNombre("adios");
+        assertThat(equipo.getNombre()).isEqualTo("adios");
+    }
 }

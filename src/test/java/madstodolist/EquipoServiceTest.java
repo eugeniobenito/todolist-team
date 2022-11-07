@@ -160,4 +160,45 @@ public class EquipoServiceTest {
         e = assertThrows(EquipoServiceException.class, () -> equipoService.removeUsuarioEquipo(new Long(20), equipo.getId()));
         assertThat(e.getMessage()).isEqualTo("No existe el usuario con id 20");
     }
+
+    @Test
+    public void editarEquipo() {
+        Equipo equipo = equipoService.crearEquipo("Proyecto 1");
+        equipo = equipoService.modificarEquipo(equipo.getId(), "Proyecto 2");
+
+        assertThat(equipo.getNombre()).isEqualTo("Proyecto 2");
+    }
+
+    @Test
+    public void editarEquipoThrowsExceptions() {
+        EquipoServiceException e = assertThrows(EquipoServiceException.class, () -> equipoService.modificarEquipo(new Long(100), ""));
+        assertThat(e.getMessage()).isEqualTo("No existe el equipo con id 100");
+
+        Equipo equipo = equipoService.crearEquipo("Proyecto 1");
+        e = assertThrows(EquipoServiceException.class, () -> equipoService.modificarEquipo(equipo.getId(), ""));
+        assertThat(e.getMessage()).isEqualTo("El nombre no puede estar vacio");
+
+    }
+
+    @Test
+    public void eliminarEquipo() {
+        Equipo equipo = equipoService.crearEquipo("Proyecto 1");
+        Long equipoId = equipo.getId();
+        Usuario usuario = new Usuario("user@ua");
+        usuario.setPassword("123");
+        usuario = usuarioService.registrar(usuario);
+
+        equipoService.addUsuarioEquipo(usuario.getId(), equipo.getId());
+        equipoService.eliminarEquipo(equipoId);
+        equipo = equipoService.recuperarEquipo(equipoId);
+        assertThat(equipo).isNull();
+        usuario = usuarioService.findById(usuario.getId());
+        assertThat(usuario.getEquipos()).hasSize(0);
+    }
+
+    @Test
+    public void eliminarEquipoThrowsException() {
+        EquipoServiceException e = assertThrows(EquipoServiceException.class, () -> equipoService.eliminarEquipo(new Long(100)));
+        assertThat(e.getMessage()).isEqualTo("No existe el equipo con id 100");
+    }
 }
