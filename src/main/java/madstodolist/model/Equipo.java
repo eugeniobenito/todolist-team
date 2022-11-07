@@ -66,4 +66,6 @@ public class Equipo {
         this.getUsuarios().remove(usuario);
         usuario.getEquipos().remove(usuario);
     }
+
+    public void setNombre(String nombre) { this.nombre = nombre; }
 }
