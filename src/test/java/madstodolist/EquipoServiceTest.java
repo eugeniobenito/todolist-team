@@ -168,4 +168,15 @@ public class EquipoServiceTest {
 
         assertThat(equipo.getNombre()).isEqualTo("Proyecto 2");
     }
+
+    @Test
+    public void editarEquipoThrowsExceptions() {
+        EquipoServiceException e = assertThrows(EquipoServiceException.class, () -> equipoService.modificarEquipo(new Long(100), ""));
+        assertThat(e.getMessage()).isEqualTo("No existe el equipo con id 100");
+
+        Equipo equipo = equipoService.crearEquipo("Proyecto 1");
+        e = assertThrows(EquipoServiceException.class, () -> equipoService.modificarEquipo(equipo.getId(), ""));
+        assertThat(e.getMessage()).isEqualTo("El nombre no puede estar vacio");
+
+    }
 }
