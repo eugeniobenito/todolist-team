@@ -197,9 +197,7 @@ public class EquipoWebTest {
 
         Assertions.assertThat(usuario.getEquipos()).hasSize(1);
 
-        this.mockMvc.perform(delete("/equipos/" + e1.getId().toString() + "/usuarios/" + usuario.getId().toString()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/equipos/" + e1.getId().toString()));
+        this.mockMvc.perform(delete("/equipos/" + e1.getId().toString() + "/usuarios/" + usuario.getId().toString()));
 
 
 
@@ -320,9 +318,7 @@ public class EquipoWebTest {
         when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
         when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
 
-        this.mockMvc.perform(delete("/equipos/" + e1.getId().toString()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/equipos"));
+        this.mockMvc.perform(delete("/equipos/" + e1.getId().toString()));
 
         Assertions.assertThat(equipoService.recuperarEquipo(e1.getId())).isNull();
 

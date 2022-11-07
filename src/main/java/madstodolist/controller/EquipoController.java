@@ -96,6 +96,7 @@ public class EquipoController {
     }
 
     @DeleteMapping("/equipos/{id}/usuarios/{userId}")
+    @ResponseBody
     public String eliminarUsuarioEquipo(@PathVariable(value="id") Long idEquipo, @PathVariable(value="userId") Long userId,
                                        Model model){
         comprobarUsuarioLogeado(userId); // revisamos que el recurso es suyo y esta autenticado
@@ -103,7 +104,7 @@ public class EquipoController {
         if(equipo == null)
             throw new EquipoNotFoundException();
         equipoService.removeUsuarioEquipo(userId, idEquipo);
-        return "redirect:/equipos/" + idEquipo.toString();
+        return "";
     }
 
     @GetMapping("/equipos/nuevo")
@@ -144,6 +145,7 @@ public class EquipoController {
     }
 
     @DeleteMapping("/equipos/{id}")
+    @ResponseBody
     public String eliminarEquipo(@PathVariable(value="id") Long idEquipo,
                                         Model model){
         checkAdminUserLogged();
@@ -153,7 +155,7 @@ public class EquipoController {
 
         equipoService.eliminarEquipo(idEquipo);
 
-        return "redirect:/equipos";
+        return "";
     }
 
     @GetMapping("/equipos/{id}/editar")
