@@ -34,7 +34,7 @@
                         <button class="btn btn-danger btn-xs" onmouseover="" style="cursor: pointer;"
                                 th:onclick="'del(\'/equipos/' + ${equipo.id} + '\')'">Eliminar</button>
 
-                        <a class="btn btn-warning btn-xs" 
+                        <a class="btn btn-warning btn-xs"
                                 th:href="@{/equipos/{equipoId}/editar(equipoId=${equipo.id})}">Editar</a>
                     </td>
                     <td th:if="${usuario.perteneceEquipo(equipo)}">

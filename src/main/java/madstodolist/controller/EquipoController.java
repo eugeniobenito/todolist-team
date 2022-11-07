@@ -120,4 +120,11 @@ public class EquipoController {
         return "redirect:/equipos";
     }
 
+    @DeleteMapping("/equipos/{id}")
+    public String eliminarEquipo(@PathVariable(value="id") Long idEquipo,
+                                        Model model){
+        equipoService.eliminarEquipo(idEquipo);
+        return "redirect:/equipos";
+    }
+
 }

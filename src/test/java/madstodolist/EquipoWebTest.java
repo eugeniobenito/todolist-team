@@ -310,5 +310,23 @@ public class EquipoWebTest {
 
     }
 
+    @Test
+    public void deleteControllerMethod() throws Exception{
+        Equipo e1 = equipoService.crearEquipo("PruebaEquipo1");
+
+
+        Usuario usuario = createAdmin();
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        this.mockMvc.perform(delete("/equipos/" + e1.getId().toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/equipos"));
+
+        Assertions.assertThat(equipoService.recuperarEquipo(e1.getId())).isNull();
+
+    }
+
 
 }
