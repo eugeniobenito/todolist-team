@@ -350,4 +350,20 @@ public class EquipoWebTest {
 
     }
 
+    @Test
+    public void editarEquipoPOSTController() throws Exception {
+        Equipo equipo = equipoService.crearEquipo("equipo");
+        Usuario usuario = createAdmin();
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        this.mockMvc.perform(post("/equipos/" + equipo.getId().toString() + "/editar").param("nombre", "UATeam"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/equipos"));
+
+        equipo = equipoService.recuperarEquipo(equipo.getId());
+        Assertions.assertThat(equipo.getNombre()).isEqualTo("UATeam");
+    }
+
 }

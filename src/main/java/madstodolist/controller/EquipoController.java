@@ -131,6 +131,16 @@ public class EquipoController {
         return "redirect:/equipos";
     }
 
+    @PostMapping("/equipos/{id}/editar")
+    public String editarEquipo(@PathVariable(value="id") Long idEquipo, @ModelAttribute EquipoData equipoData,
+                              Model model, RedirectAttributes flash,
+                              HttpSession session) {
+
+
+        Equipo e = equipoService.modificarEquipo(idEquipo, equipoData.getNombre());
+        return "redirect:/equipos";
+    }
+
     @DeleteMapping("/equipos/{id}")
     public String eliminarEquipo(@PathVariable(value="id") Long idEquipo,
                                         Model model){
