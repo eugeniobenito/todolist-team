@@ -67,4 +67,12 @@ public class EquipoService {
         List<Usuario> l = new ArrayList<>(e.getUsuarios());
         return l;
     }
+
+    @Transactional
+    public Equipo modificarEquipo(Long equipoId, String nombre){
+        Equipo e = equipoRepository.findById(equipoId).orElse(null);
+        e.setNombre(nombre);
+        equipoRepository.save(e);
+        return e;
+    }
 }

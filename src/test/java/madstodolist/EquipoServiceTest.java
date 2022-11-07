@@ -160,4 +160,12 @@ public class EquipoServiceTest {
         e = assertThrows(EquipoServiceException.class, () -> equipoService.removeUsuarioEquipo(new Long(20), equipo.getId()));
         assertThat(e.getMessage()).isEqualTo("No existe el usuario con id 20");
     }
+
+    @Test
+    public void editarEquipo() {
+        Equipo equipo = equipoService.crearEquipo("Proyecto 1");
+        equipo = equipoService.modificarEquipo(equipo.getId(), "Proyecto 2");
+
+        assertThat(equipo.getNombre()).isEqualTo("Proyecto 2");
+    }
 }
