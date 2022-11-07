@@ -49,6 +49,13 @@ public class EquipoWebTest {
         return usuarioService.registrar(usuario);
     }
 
+    private Usuario createAdmin(){
+        Usuario usuario = new Usuario("admin@ua");
+        usuario.setPassword("123");
+        usuario.setIsAdmin(true);
+        usuario.setBlocked(false);
+        return usuarioService.registrar(usuario);
+    }
     @Test
     public void getSomeEquipos() throws Exception{
 
@@ -279,6 +286,28 @@ public class EquipoWebTest {
 
          response = this.mockMvc.perform(delete("/equipos/200/usuarios/" + usuario.getId().toString() )).andReturn().getResponse();
         Assertions.assertThat(response.getStatus()).isEqualTo(404);
+    }
+
+    @Test
+    public void showDeleteAndEditButtonIfIsAdmin() throws Exception{
+        Equipo e1 = equipoService.crearEquipo("PruebaEquipo1");
+
+
+        Usuario usuario = createAdmin();
+        Usuario usuario2 = createUser();
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(content().string(
+                        allOf(containsString("Editar"), containsString("Eliminar"))));
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario2.getId());
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(content().string(
+                        allOf(not(containsString("Editar")), not(containsString("Eliminar")))));
+
     }
 
 
