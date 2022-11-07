@@ -135,7 +135,12 @@ public class EquipoController {
     public String editarEquipo(@PathVariable(value="id") Long idEquipo, @ModelAttribute EquipoData equipoData,
                               Model model, RedirectAttributes flash,
                               HttpSession session) {
+        checkAdminUserLogged();
+        Equipo equipo = equipoService.recuperarEquipo(idEquipo);
+        if(equipo == null)
+            throw new EquipoNotFoundException();
 
+        if(equipoData.getNombre() == "") throw new FormErrorException();
 
         Equipo e = equipoService.modificarEquipo(idEquipo, equipoData.getNombre());
         return "redirect:/equipos";
