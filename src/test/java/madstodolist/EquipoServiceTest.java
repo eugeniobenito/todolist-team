@@ -179,4 +179,20 @@ public class EquipoServiceTest {
         assertThat(e.getMessage()).isEqualTo("El nombre no puede estar vacio");
 
     }
+
+    @Test
+    public void eliminarEquipo() {
+        Equipo equipo = equipoService.crearEquipo("Proyecto 1");
+        Long equipoId = equipo.getId();
+        Usuario usuario = new Usuario("user@ua");
+        usuario.setPassword("123");
+        usuario = usuarioService.registrar(usuario);
+
+        equipoService.addUsuarioEquipo(usuario.getId(), equipo.getId());
+        equipoService.eliminarEquipo(equipoId);
+        equipo = equipoService.recuperarEquipo(equipoId);
+        assertThat(equipo).isNull();
+        usuario = usuarioService.findById(usuario.getId());
+        assertThat(usuario.getEquipos()).hasSize(0);
+    }
 }

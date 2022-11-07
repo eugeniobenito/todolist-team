@@ -77,4 +77,10 @@ public class EquipoService {
         equipoRepository.save(e);
         return e;
     }
+
+    @Transactional
+    public void eliminarEquipo(Long equipoId){
+        Equipo e = equipoRepository.findById(equipoId).orElse(null);
+        equipoRepository.delete(e);
+    }
 }
