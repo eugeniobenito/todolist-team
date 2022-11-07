@@ -159,11 +159,13 @@ public class EquipoController {
     @GetMapping("/equipos/{id}/editar")
     public String formEditarEquipo(@PathVariable(value="id") Long idEquipo, @ModelAttribute EquipoData equipoData,
                                  Model model, HttpSession session) {
-
+        checkAdminUserLogged();
+        Equipo equipo = equipoService.recuperarEquipo(idEquipo);
+        if(equipo == null)
+            throw new EquipoNotFoundException();
 
         Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
         Usuario usuario = usuarioService.findById(idUsuarioLogeado);
-        Equipo equipo = equipoService.recuperarEquipo(idEquipo);
 
         equipoData.setNombre(equipo.getNombre());
 

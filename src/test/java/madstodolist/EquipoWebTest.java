@@ -401,4 +401,26 @@ public class EquipoWebTest {
 
     }
 
+    @Test
+    public void editarEquipoGetHasMiddleware() throws Exception {
+        MockHttpServletResponse response = this.mockMvc.perform(get("/equipos/200/editar")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(401);
+
+        Usuario usuario = createUser();
+        Usuario admin = createAdmin();
+        when(managerUserSession.usuarioLogeado()).thenReturn(admin.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        response = this.mockMvc.perform(get("/equipos/200/editar")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(404);
+
+        Equipo e = equipoService.crearEquipo("prueba");
+
+         when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+
+
+        response = this.mockMvc.perform(get("/equipos/" + e.getId().toString() + "/editar")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(401);
+    }
+
 }
