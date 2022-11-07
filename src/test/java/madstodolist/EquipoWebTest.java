@@ -388,4 +388,17 @@ public class EquipoWebTest {
         Assertions.assertThat(response.getStatus()).isEqualTo(401);
     }
 
+    @Test
+    public void editarEquipoGET() throws Exception {
+        Equipo equipo = equipoService.crearEquipo("equipo");
+        Usuario usuario = createAdmin();
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        this.mockMvc.perform(get("/equipos/" + equipo.getId().toString() + "/editar").param("nombre", "UATeam"))
+                .andExpect(content().string(allOf(containsString("Modificación del equipo " + equipo.getNombre()))));
+
+    }
+
 }

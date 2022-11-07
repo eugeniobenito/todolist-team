@@ -1,10 +1,7 @@
 package madstodolist.controller;
 
 import madstodolist.authentication.ManagerUserSession;
-import madstodolist.controller.exception.EquipoNotFoundException;
-import madstodolist.controller.exception.FormErrorException;
-import madstodolist.controller.exception.UsuarioNoAdminException;
-import madstodolist.controller.exception.UsuarioNoLogeadoException;
+import madstodolist.controller.exception.*;
 import madstodolist.model.Equipo;
 import madstodolist.model.Tarea;
 import madstodolist.model.Usuario;
@@ -157,6 +154,22 @@ public class EquipoController {
         equipoService.eliminarEquipo(idEquipo);
 
         return "redirect:/equipos";
+    }
+
+    @GetMapping("/equipos/{id}/editar")
+    public String formEditarEquipo(@PathVariable(value="id") Long idEquipo, @ModelAttribute EquipoData equipoData,
+                                 Model model, HttpSession session) {
+
+
+        Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
+        Usuario usuario = usuarioService.findById(idUsuarioLogeado);
+        Equipo equipo = equipoService.recuperarEquipo(idEquipo);
+
+        equipoData.setNombre(equipo.getNombre());
+
+        model.addAttribute("equipo", equipo);
+        model.addAttribute("usuario", usuario);
+        return "formEditarEquipo";
     }
 
 }
