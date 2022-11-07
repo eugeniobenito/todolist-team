@@ -1,9 +1,7 @@
 package madstodolist.controller;
 
 import madstodolist.authentication.ManagerUserSession;
-import madstodolist.controller.exception.EquipoNotFoundException;
-import madstodolist.controller.exception.FormErrorException;
-import madstodolist.controller.exception.UsuarioNoLogeadoException;
+import madstodolist.controller.exception.*;
 import madstodolist.model.Equipo;
 import madstodolist.model.Tarea;
 import madstodolist.model.Usuario;
@@ -43,6 +41,16 @@ public class EquipoController {
     private void isAnyUserLogged() {
         if (!managerUserSession.isUsuarioLogeado())
             throw new UsuarioNoLogeadoException();
+    }
+
+    private void checkAdminUserLogged() {
+        if (!managerUserSession.isUsuarioLogeado())
+            throw new UsuarioNoLogeadoException();
+        Long idUser = managerUserSession.usuarioLogeado();
+        Usuario u = usuarioService.findById(idUser);
+        if(!u.getIsAdmin()){
+            throw new UsuarioNoAdminException();
+        }
     }
 
     @GetMapping("/equipos")
@@ -88,6 +96,7 @@ public class EquipoController {
     }
 
     @DeleteMapping("/equipos/{id}/usuarios/{userId}")
+    @ResponseBody
     public String eliminarUsuarioEquipo(@PathVariable(value="id") Long idEquipo, @PathVariable(value="userId") Long userId,
                                        Model model){
         comprobarUsuarioLogeado(userId); // revisamos que el recurso es suyo y esta autenticado
@@ -95,7 +104,7 @@ public class EquipoController {
         if(equipo == null)
             throw new EquipoNotFoundException();
         equipoService.removeUsuarioEquipo(userId, idEquipo);
-        return "redirect:/equipos/" + idEquipo.toString();
+        return "";
     }
 
     @GetMapping("/equipos/nuevo")
@@ -118,6 +127,53 @@ public class EquipoController {
         if(equipoData.getNombre() == "") throw new FormErrorException();
         Equipo e = equipoService.crearEquipo(equipoData.getNombre());
         return "redirect:/equipos";
+    }
+
+    @PostMapping("/equipos/{id}/editar")
+    public String editarEquipo(@PathVariable(value="id") Long idEquipo, @ModelAttribute EquipoData equipoData,
+                              Model model, RedirectAttributes flash,
+                              HttpSession session) {
+        checkAdminUserLogged();
+        Equipo equipo = equipoService.recuperarEquipo(idEquipo);
+        if(equipo == null)
+            throw new EquipoNotFoundException();
+
+        if(equipoData.getNombre() == "") throw new FormErrorException();
+
+        Equipo e = equipoService.modificarEquipo(idEquipo, equipoData.getNombre());
+        return "redirect:/equipos";
+    }
+
+    @DeleteMapping("/equipos/{id}")
+    @ResponseBody
+    public String eliminarEquipo(@PathVariable(value="id") Long idEquipo,
+                                        Model model){
+        checkAdminUserLogged();
+        Equipo equipo = equipoService.recuperarEquipo(idEquipo);
+        if(equipo == null)
+            throw new EquipoNotFoundException();
+
+        equipoService.eliminarEquipo(idEquipo);
+
+        return "";
+    }
+
+    @GetMapping("/equipos/{id}/editar")
+    public String formEditarEquipo(@PathVariable(value="id") Long idEquipo, @ModelAttribute EquipoData equipoData,
+                                 Model model, HttpSession session) {
+        checkAdminUserLogged();
+        Equipo equipo = equipoService.recuperarEquipo(idEquipo);
+        if(equipo == null)
+            throw new EquipoNotFoundException();
+
+        Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
+        Usuario usuario = usuarioService.findById(idUsuarioLogeado);
+
+        equipoData.setNombre(equipo.getNombre());
+
+        model.addAttribute("equipo", equipo);
+        model.addAttribute("usuario", usuario);
+        return "formEditarEquipo";
     }
 
 }

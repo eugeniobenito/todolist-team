@@ -49,6 +49,13 @@ public class EquipoWebTest {
         return usuarioService.registrar(usuario);
     }
 
+    private Usuario createAdmin(){
+        Usuario usuario = new Usuario("admin@ua");
+        usuario.setPassword("123");
+        usuario.setIsAdmin(true);
+        usuario.setBlocked(false);
+        return usuarioService.registrar(usuario);
+    }
     @Test
     public void getSomeEquipos() throws Exception{
 
@@ -190,9 +197,7 @@ public class EquipoWebTest {
 
         Assertions.assertThat(usuario.getEquipos()).hasSize(1);
 
-        this.mockMvc.perform(delete("/equipos/" + e1.getId().toString() + "/usuarios/" + usuario.getId().toString()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/equipos/" + e1.getId().toString()));
+        this.mockMvc.perform(delete("/equipos/" + e1.getId().toString() + "/usuarios/" + usuario.getId().toString()));
 
 
 
@@ -281,5 +286,137 @@ public class EquipoWebTest {
         Assertions.assertThat(response.getStatus()).isEqualTo(404);
     }
 
+    @Test
+    public void showDeleteAndEditButtonIfIsAdmin() throws Exception{
+        Equipo e1 = equipoService.crearEquipo("PruebaEquipo1");
+
+
+        Usuario usuario = createAdmin();
+        Usuario usuario2 = createUser();
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(content().string(
+                        allOf(containsString("Editar"), containsString("Eliminar"))));
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario2.getId());
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(content().string(
+                        allOf(not(containsString("Editar")), not(containsString("Eliminar")))));
+
+    }
+
+    @Test
+    public void deleteControllerMethod() throws Exception{
+        Equipo e1 = equipoService.crearEquipo("PruebaEquipo1");
+
+
+        Usuario usuario = createAdmin();
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        this.mockMvc.perform(delete("/equipos/" + e1.getId().toString()));
+
+        Assertions.assertThat(equipoService.recuperarEquipo(e1.getId())).isNull();
+
+    }
+
+    @Test
+    public void checkAuthDeleteEquipoController() throws Exception {
+        MockHttpServletResponse response = this.mockMvc.perform(delete("/equipos/200")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(401);
+
+        Usuario usuario = createUser();
+        Usuario admin = createAdmin();
+        when(managerUserSession.usuarioLogeado()).thenReturn(admin.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+         response = this.mockMvc.perform(delete("/equipos/200/")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(404);
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        Equipo e = equipoService.crearEquipo("prueba");
+
+        response = this.mockMvc.perform(delete("/equipos/" + e.getId().toString())).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(401);
+
+
+    }
+
+    @Test
+    public void editarEquipoPOSTController() throws Exception {
+        Equipo equipo = equipoService.crearEquipo("equipo");
+        Usuario usuario = createAdmin();
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        this.mockMvc.perform(post("/equipos/" + equipo.getId().toString() + "/editar").param("nombre", "UATeam"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/equipos"));
+
+        equipo = equipoService.recuperarEquipo(equipo.getId());
+        Assertions.assertThat(equipo.getNombre()).isEqualTo("UATeam");
+    }
+
+    @Test
+    public void editarEquipoPOSTControllerAuth() throws Exception {
+        MockHttpServletResponse response = this.mockMvc.perform(post("/equipos/200/editar")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(401);
+
+        Usuario usuario = createUser();
+        Usuario admin = createAdmin();
+        when(managerUserSession.usuarioLogeado()).thenReturn(admin.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        response = this.mockMvc.perform(post("/equipos/200/editar")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(404);
+        Equipo e = equipoService.crearEquipo("prueba");
+        response = this.mockMvc.perform(post("/equipos/" + e.getId().toString() +"/editar").param("nombre", "")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(400);
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+
+
+        response = this.mockMvc.perform(post("/equipos/" + e.getId().toString() + "/editar")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(401);
+    }
+
+    @Test
+    public void editarEquipoGET() throws Exception {
+        Equipo equipo = equipoService.crearEquipo("equipo");
+        Usuario usuario = createAdmin();
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        this.mockMvc.perform(get("/equipos/" + equipo.getId().toString() + "/editar").param("nombre", "UATeam"))
+                .andExpect(content().string(allOf(containsString("Modificación del equipo " + equipo.getNombre()))));
+
+    }
+
+    @Test
+    public void editarEquipoGetHasMiddleware() throws Exception {
+        MockHttpServletResponse response = this.mockMvc.perform(get("/equipos/200/editar")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(401);
+
+        Usuario usuario = createUser();
+        Usuario admin = createAdmin();
+        when(managerUserSession.usuarioLogeado()).thenReturn(admin.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        response = this.mockMvc.perform(get("/equipos/200/editar")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(404);
+
+        Equipo e = equipoService.crearEquipo("prueba");
+
+         when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+
+
+        response = this.mockMvc.perform(get("/equipos/" + e.getId().toString() + "/editar")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(401);
+    }
 
 }

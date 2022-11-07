@@ -30,6 +30,13 @@
                 <tr th:each="equipo: ${equipos}">
                     <td th:text="${equipo.id}"></td>
                     <td th:text="${equipo.nombre}"></td>
+                    <td th:if="${usuario.isAdmin}">
+                        <button class="btn btn-danger btn-xs" onmouseover="" style="cursor: pointer;"
+                                th:onclick="'del(\'/equipos/' + ${equipo.id} + '\')'">Eliminar</button>
+
+                        <a class="btn btn-warning btn-xs"
+                                th:href="@{/equipos/{equipoId}/editar(equipoId=${equipo.id})}">Editar</a>
+                    </td>
                     <td th:if="${usuario.perteneceEquipo(equipo)}">
                         <button class="btn btn-danger btn-xs" onmouseover="" style="cursor: pointer;"
                                 th:onclick="'del(\'/equipos/' + ${equipo.id} + '/usuarios/' + ${usuario.id} + '\')'">Abandonar</button>
@@ -53,7 +60,7 @@
 
 <script type="text/javascript">
     function del(urlBorrar) {
-        if (confirm('¿Estás seguro/a de que quieres abandonar el equipo?')) {
+        if (confirm('¿Estás seguro/a de que quieres ejecutar la accion?')) {
             fetch(urlBorrar, {
                 method: 'DELETE'
             }).then((res) => location.reload());
