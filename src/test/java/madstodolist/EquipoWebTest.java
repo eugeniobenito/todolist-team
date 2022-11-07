@@ -328,5 +328,26 @@ public class EquipoWebTest {
 
     }
 
+    @Test
+    public void checkAuthDeleteEquipoController() throws Exception {
+        MockHttpServletResponse response = this.mockMvc.perform(delete("/equipos/200")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(401);
+
+        Usuario usuario = createUser();
+        Usuario admin = createAdmin();
+        when(managerUserSession.usuarioLogeado()).thenReturn(admin.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+         response = this.mockMvc.perform(delete("/equipos/200/")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(404);
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        Equipo e = equipoService.crearEquipo("prueba");
+
+        response = this.mockMvc.perform(delete("/equipos/" + e.getId().toString())).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(401);
+
+
+    }
 
 }

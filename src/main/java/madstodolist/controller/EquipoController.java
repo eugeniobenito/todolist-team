@@ -3,6 +3,7 @@ package madstodolist.controller;
 import madstodolist.authentication.ManagerUserSession;
 import madstodolist.controller.exception.EquipoNotFoundException;
 import madstodolist.controller.exception.FormErrorException;
+import madstodolist.controller.exception.UsuarioNoAdminException;
 import madstodolist.controller.exception.UsuarioNoLogeadoException;
 import madstodolist.model.Equipo;
 import madstodolist.model.Tarea;
@@ -43,6 +44,16 @@ public class EquipoController {
     private void isAnyUserLogged() {
         if (!managerUserSession.isUsuarioLogeado())
             throw new UsuarioNoLogeadoException();
+    }
+
+    private void checkAdminUserLogged() {
+        if (!managerUserSession.isUsuarioLogeado())
+            throw new UsuarioNoLogeadoException();
+        Long idUser = managerUserSession.usuarioLogeado();
+        Usuario u = usuarioService.findById(idUser);
+        if(!u.getIsAdmin()){
+            throw new UsuarioNoAdminException();
+        }
     }
 
     @GetMapping("/equipos")
@@ -123,7 +134,13 @@ public class EquipoController {
     @DeleteMapping("/equipos/{id}")
     public String eliminarEquipo(@PathVariable(value="id") Long idEquipo,
                                         Model model){
+        checkAdminUserLogged();
+        Equipo equipo = equipoService.recuperarEquipo(idEquipo);
+        if(equipo == null)
+            throw new EquipoNotFoundException();
+
         equipoService.eliminarEquipo(idEquipo);
+
         return "redirect:/equipos";
     }
 
