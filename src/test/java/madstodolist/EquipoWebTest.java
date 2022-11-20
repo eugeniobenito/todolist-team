@@ -419,4 +419,21 @@ public class EquipoWebTest {
         Assertions.assertThat(response.getStatus()).isEqualTo(401);
     }
 
+    @Test
+    @Transactional
+    public void deleteUserFromEquipoAdmin() throws Exception{
+        Equipo e1 = equipoService.crearEquipo("PruebaEquipo1");
+        Usuario notAdmin = createUser();
+
+        Usuario admin = createAdmin();
+        equipoService.addUsuarioEquipo(notAdmin.getId(), e1.getId());
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(admin.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        this.mockMvc.perform(delete("/equipos/" + e1.getId().toString() + "/usuarios/" + notAdmin.getId()));
+
+        Assertions.assertThat(equipoService.recuperarEquipo(e1.getId()).getUsuarios().size()).isEqualTo(0);
+    }
+
 }
