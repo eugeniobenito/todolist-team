@@ -453,4 +453,34 @@ public class EquipoWebTest {
 
         Assertions.assertThat(response.getStatus()).isEqualTo(401);
     }
+
+    @Test
+    @Transactional
+    public void showEliminarDelEquipoButton() throws Exception{
+        Equipo equipo = equipoService.crearEquipo("PruebaEquipo1");
+        Usuario notAdmin = createUser();
+
+        Usuario admin = createAdmin();
+        when(managerUserSession.usuarioLogeado()).thenReturn(admin.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        // No tiene que salir porque no hay usuarios dentro del equipo
+        this.mockMvc.perform(get("/equipos/" + equipo.getId().toString()))
+                .andExpect(content().string(allOf(not(containsString("Eliminar del equipo")))));
+
+        equipoService.addUsuarioEquipo(notAdmin.getId(), equipo.getId());
+
+
+
+
+        this.mockMvc.perform(get("/equipos/" + equipo.getId().toString()))
+                .andExpect(content().string(allOf(containsString("Eliminar del equipo"))));
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(notAdmin.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        // No tiene que salir porque no soy administrador
+        this.mockMvc.perform(get("/equipos/" + equipo.getId().toString()))
+                .andExpect(content().string(allOf(not(containsString("Eliminar del equipo")))));
+    }
 }

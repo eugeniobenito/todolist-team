@@ -42,10 +42,14 @@
                 <th:block th:if="${usuarios.size() == 0}">
                     El equipo no tiene usuarios que le pertenecen
                 </th:block>
-                <tr th:each="usuario: ${usuarios}">
-                    <td th:text="${usuario.id}"></td>
-                    <td th:text="${usuario.nombre}"></td>
-                    <td th:text="${usuario.email}"></td>
+                <tr th:each="usuarioEquipo: ${usuarios}">
+                    <td th:text="${usuarioEquipo.id}"></td>
+                    <td th:text="${usuarioEquipo.nombre}"></td>
+                    <td th:text="${usuarioEquipo.email}"></td>
+                    <td th:if="${usuario.isAdmin}">
+                        <button class="btn btn-danger btn-xs" onmouseover="" style="cursor: pointer;"
+                                th:onclick="'del(\'/equipos/' + ${equipo.id} + '/usuarios/' + ${usuarioEquipo.id} + '\')'">Eliminar del equipo</button>
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -57,7 +61,7 @@
 
 <script type="text/javascript">
     function del(urlBorrar) {
-        if (confirm('¿Estás seguro/a de que quieres abandonar el equipo?')) {
+        if (confirm('¿Estás seguro/a?')) {
             fetch(urlBorrar, {
                 method: 'DELETE'
             }).then((res) => location.reload());
