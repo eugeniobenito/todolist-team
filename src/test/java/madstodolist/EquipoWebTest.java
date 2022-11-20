@@ -436,4 +436,21 @@ public class EquipoWebTest {
         Assertions.assertThat(equipoService.recuperarEquipo(e1.getId()).getUsuarios().size()).isEqualTo(0);
     }
 
+    @Test
+    public void deleteFromEquipoNotOwnerResource() throws Exception{
+        Equipo e1 = equipoService.crearEquipo("PruebaEquipo1");
+        Usuario notAdmin = createUser();
+
+        Usuario otro = new Usuario("aaa@aaa");
+        otro.setPassword("123");
+        otro = usuarioService.registrar(otro);
+        equipoService.addUsuarioEquipo(notAdmin.getId(), e1.getId());
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(otro.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        MockHttpServletResponse response = this.mockMvc.perform(delete("/equipos/" + e1.getId().toString() + "/usuarios/" + notAdmin.getId())).andReturn().getResponse();
+
+        Assertions.assertThat(response.getStatus()).isEqualTo(401);
+    }
 }
