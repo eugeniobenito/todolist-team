@@ -32,6 +32,15 @@ public class EquipoService {
         return e;
     }
 
+    @Transactional
+    public Equipo crearEquipo(String nombre, String descripcion) {
+        if(nombre == "") throw new EquipoServiceException("El nombre del equipo no puede estar vacio");
+        Equipo e = new Equipo(nombre);
+        e.setDescripcion(descripcion);
+        equipoRepository.save(e);
+        return e;
+    }
+
     @Transactional(readOnly = true)
     public Equipo recuperarEquipo(Long id) {
 
@@ -74,6 +83,17 @@ public class EquipoService {
         if(e == null) throw new EquipoServiceException("No existe el equipo con id " + equipoId);
         if(nombre == "") throw new EquipoServiceException("El nombre no puede estar vacio");
         e.setNombre(nombre);
+        equipoRepository.save(e);
+        return e;
+    }
+
+    @Transactional
+    public Equipo modificarEquipo(Long equipoId, String nombre, String descripcion){
+        Equipo e = equipoRepository.findById(equipoId).orElse(null);
+        if(e == null) throw new EquipoServiceException("No existe el equipo con id " + equipoId);
+        if(nombre == "") throw new EquipoServiceException("El nombre no puede estar vacio");
+        e.setNombre(nombre);
+        e.setDescripcion(descripcion);
         equipoRepository.save(e);
         return e;
     }

@@ -38,6 +38,15 @@ public class EquipoServiceTest {
     }
 
     @Test
+    public void crearEquipoConDescripcion() {
+        Equipo equipo = equipoService.crearEquipo("Proyecto 1", "Equipo de la asignatura MADS");
+        Equipo equipoBd = equipoService.recuperarEquipo(equipo.getId());
+        assertThat(equipoBd).isNotNull();
+        assertThat(equipoBd.getNombre()).isEqualTo("Proyecto 1");
+        assertThat(equipoBd.getDescripcion()).isEqualTo("Equipo de la asignatura MADS");
+    }
+
+    @Test
     public void listadoEquiposOrdenAlfabetico() {
         // GIVEN
         // Dos equipos en la base de datos
@@ -168,6 +177,22 @@ public class EquipoServiceTest {
 
         assertThat(equipo.getNombre()).isEqualTo("Proyecto 2");
     }
+
+    @Test
+    public void editarDescripcionEquipo() {
+        // GIVEN
+        // Un equipo creado en la base de datos sin descripcion
+        Equipo equipo = equipoService.crearEquipo("Proyecto 1");
+
+        // WHEN 
+        // Añadimos una descripción
+        equipo = equipoService.modificarEquipo(equipo.getId(), "Proyecto 1", "Equipo de la asignatura MADS");
+
+        // THEN
+        // Se ha actualizado la descripción del equipo
+        assertThat(equipo.getDescripcion()).isEqualTo("Equipo de la asignatura MADS");
+    }
+
 
     @Test
     public void editarEquipoThrowsExceptions() {

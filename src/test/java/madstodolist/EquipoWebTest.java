@@ -101,7 +101,7 @@ public class EquipoWebTest {
     @Test
     public void getInfoEquipoSinMiembros() throws Exception{
 
-        Equipo e1 = equipoService.crearEquipo("PruebaEquipo1");
+        Equipo e1 = equipoService.crearEquipo("PruebaEquipo1","Descripcion");
 
         Usuario usuario = createUser();
         when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
@@ -111,6 +111,7 @@ public class EquipoWebTest {
                 .andExpect(content().string
                         (allOf(containsString(e1.getNombre()),
                                 containsString(e1.getId().toString()),
+                                containsString(e1.getDescripcion()),
                                 containsString("El equipo no tiene usuarios que le pertenecen"))));
     }
 
@@ -118,7 +119,7 @@ public class EquipoWebTest {
     @Transactional
     public void getInfoEquipoConMiembros() throws Exception{
 
-        Equipo e1 = equipoService.crearEquipo("PruebaEquipo1");
+        Equipo e1 = equipoService.crearEquipo("PruebaEquipo1","Descripcion");
 
         Usuario usuario = createUser();
         e1.addUsuario(usuario);
@@ -129,6 +130,7 @@ public class EquipoWebTest {
                 .andExpect(content().string
                         (allOf(containsString(e1.getNombre()),
                                 containsString(e1.getId().toString()),
+                                containsString(e1.getDescripcion()),
                                 not(containsString("El equipo no tiene usuarios que le pertenecen")))));
     }
 
@@ -233,7 +235,8 @@ public class EquipoWebTest {
 
         this.mockMvc.perform(get("/equipos/nuevo"))
                 .andExpect(content().string
-                        (allOf(containsString("Crear equipo"))));
+                        (allOf(containsString("Crear equipo"),
+                                (containsString("Descripción")))));
 
     }
 
@@ -354,12 +357,13 @@ public class EquipoWebTest {
         when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
         when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
 
-        this.mockMvc.perform(post("/equipos/" + equipo.getId().toString() + "/editar").param("nombre", "UATeam"))
+        this.mockMvc.perform(post("/equipos/" + equipo.getId().toString() + "/editar").param("nombre", "UATeam").param("descripcion", "Equipo de la UA"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/equipos"));
 
         equipo = equipoService.recuperarEquipo(equipo.getId());
         Assertions.assertThat(equipo.getNombre()).isEqualTo("UATeam");
+        Assertions.assertThat(equipo.getDescripcion()).isEqualTo("Equipo de la UA");
     }
 
     @Test

@@ -131,7 +131,7 @@ public class EquipoController {
 
         isAnyUserLogged();
         if(equipoData.getNombre() == "") throw new FormErrorException();
-        Equipo e = equipoService.crearEquipo(equipoData.getNombre());
+        Equipo e = equipoService.crearEquipo(equipoData.getNombre(), equipoData.getDescripcion());
         return "redirect:/equipos";
     }
 
@@ -146,7 +146,7 @@ public class EquipoController {
 
         if(equipoData.getNombre() == "") throw new FormErrorException();
 
-        Equipo e = equipoService.modificarEquipo(idEquipo, equipoData.getNombre());
+        Equipo e = equipoService.modificarEquipo(idEquipo, equipoData.getNombre(), equipoData.getDescripcion());
         return "redirect:/equipos";
     }
 
