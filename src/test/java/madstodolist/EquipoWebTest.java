@@ -355,12 +355,13 @@ public class EquipoWebTest {
         when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
         when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
 
-        this.mockMvc.perform(post("/equipos/" + equipo.getId().toString() + "/editar").param("nombre", "UATeam"))
+        this.mockMvc.perform(post("/equipos/" + equipo.getId().toString() + "/editar").param("nombre", "UATeam").param("descripcion", "Equipo de la UA"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/equipos"));
 
         equipo = equipoService.recuperarEquipo(equipo.getId());
         Assertions.assertThat(equipo.getNombre()).isEqualTo("UATeam");
+        Assertions.assertThat(equipo.getDescripcion()).isEqualTo("Equipo de la UA");
     }
 
     @Test

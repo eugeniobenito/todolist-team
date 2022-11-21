@@ -140,7 +140,7 @@ public class EquipoController {
 
         if(equipoData.getNombre() == "") throw new FormErrorException();
 
-        Equipo e = equipoService.modificarEquipo(idEquipo, equipoData.getNombre());
+        Equipo e = equipoService.modificarEquipo(idEquipo, equipoData.getNombre(), equipoData.getDescripcion());
         return "redirect:/equipos";
     }
 
