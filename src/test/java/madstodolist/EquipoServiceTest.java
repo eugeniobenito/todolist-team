@@ -38,6 +38,15 @@ public class EquipoServiceTest {
     }
 
     @Test
+    public void crearEquipoConDescripcion() {
+        Equipo equipo = equipoService.crearEquipo("Proyecto 1", "Equipo de la asignatura MADS");
+        Equipo equipoBd = equipoService.recuperarEquipo(equipo.getId());
+        assertThat(equipoBd).isNotNull();
+        assertThat(equipoBd.getNombre()).isEqualTo("Proyecto 1");
+        assertThat(equipoBd.getDescripcion()).isEqualTo("Equipo de la asignatura MADS");
+    }
+
+    @Test
     public void listadoEquiposOrdenAlfabetico() {
         // GIVEN
         // Dos equipos en la base de datos
