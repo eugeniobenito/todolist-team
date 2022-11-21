@@ -170,6 +170,22 @@ public class EquipoServiceTest {
     }
 
     @Test
+    public void editarDescripcionEquipo() {
+        // GIVEN
+        // Un equipo creado en la base de datos sin descripcion
+        Equipo equipo = equipoService.crearEquipo("Proyecto 1");
+
+        // WHEN 
+        // Añadimos una descripción
+        equipo = equipoService.modificarEquipo(equipo.getId(), "Proyecto 1", "Equipo de la asignatura MADS");
+
+        // THEN
+        // Se ha actualizado la descripción del equipo
+        assertThat(equipo.getDescripcion()).isEqualTo("Equipo de la asignatura MADS");
+    }
+
+
+    @Test
     public void editarEquipoThrowsExceptions() {
         EquipoServiceException e = assertThrows(EquipoServiceException.class, () -> equipoService.modificarEquipo(new Long(100), ""));
         assertThat(e.getMessage()).isEqualTo("No existe el equipo con id 100");

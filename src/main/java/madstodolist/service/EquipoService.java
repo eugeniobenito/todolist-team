@@ -79,6 +79,17 @@ public class EquipoService {
     }
 
     @Transactional
+    public Equipo modificarEquipo(Long equipoId, String nombre, String descripcion){
+        Equipo e = equipoRepository.findById(equipoId).orElse(null);
+        if(e == null) throw new EquipoServiceException("No existe el equipo con id " + equipoId);
+        if(nombre == "") throw new EquipoServiceException("El nombre no puede estar vacio");
+        e.setNombre(nombre);
+        e.setDescripcion(descripcion);
+        equipoRepository.save(e);
+        return e;
+    }
+
+    @Transactional
     public void eliminarEquipo(Long equipoId){
         Equipo e = equipoRepository.findById(equipoId).orElse(null);
         if(e == null) throw new EquipoServiceException("No existe el equipo con id " + equipoId);
