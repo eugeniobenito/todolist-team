@@ -34,8 +34,14 @@ public class EquipoController {
 
     private void comprobarUsuarioLogeado(Long idUsuario) {
         Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
-        if (!idUsuario.equals(idUsuarioLogeado))
+        if (!managerUserSession.isUsuarioLogeado())
             throw new UsuarioNoLogeadoException();
+        Long idUser = managerUserSession.usuarioLogeado();
+        Usuario u = usuarioService.findById(idUser);
+        if(!u.getIsAdmin()) {
+            if (!idUsuario.equals(idUsuarioLogeado))
+                throw new UsuarioNoLogeadoException();
+        }
     }
 
     private void isAnyUserLogged() {

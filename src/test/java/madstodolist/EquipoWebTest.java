@@ -419,4 +419,68 @@ public class EquipoWebTest {
         Assertions.assertThat(response.getStatus()).isEqualTo(401);
     }
 
+    @Test
+    @Transactional
+    public void deleteUserFromEquipoAdmin() throws Exception{
+        Equipo e1 = equipoService.crearEquipo("PruebaEquipo1");
+        Usuario notAdmin = createUser();
+
+        Usuario admin = createAdmin();
+        equipoService.addUsuarioEquipo(notAdmin.getId(), e1.getId());
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(admin.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        this.mockMvc.perform(delete("/equipos/" + e1.getId().toString() + "/usuarios/" + notAdmin.getId()));
+
+        Assertions.assertThat(equipoService.recuperarEquipo(e1.getId()).getUsuarios().size()).isEqualTo(0);
+    }
+
+    @Test
+    public void deleteFromEquipoNotOwnerResource() throws Exception{
+        Equipo e1 = equipoService.crearEquipo("PruebaEquipo1");
+        Usuario notAdmin = createUser();
+
+        Usuario otro = new Usuario("aaa@aaa");
+        otro.setPassword("123");
+        otro = usuarioService.registrar(otro);
+        equipoService.addUsuarioEquipo(notAdmin.getId(), e1.getId());
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(otro.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        MockHttpServletResponse response = this.mockMvc.perform(delete("/equipos/" + e1.getId().toString() + "/usuarios/" + notAdmin.getId())).andReturn().getResponse();
+
+        Assertions.assertThat(response.getStatus()).isEqualTo(401);
+    }
+
+    @Test
+    @Transactional
+    public void showEliminarDelEquipoButton() throws Exception{
+        Equipo equipo = equipoService.crearEquipo("PruebaEquipo1");
+        Usuario notAdmin = createUser();
+
+        Usuario admin = createAdmin();
+        when(managerUserSession.usuarioLogeado()).thenReturn(admin.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        // No tiene que salir porque no hay usuarios dentro del equipo
+        this.mockMvc.perform(get("/equipos/" + equipo.getId().toString()))
+                .andExpect(content().string(allOf(not(containsString("Eliminar del equipo")))));
+
+        equipoService.addUsuarioEquipo(notAdmin.getId(), equipo.getId());
+
+
+
+
+        this.mockMvc.perform(get("/equipos/" + equipo.getId().toString()))
+                .andExpect(content().string(allOf(containsString("Eliminar del equipo"))));
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(notAdmin.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        // No tiene que salir porque no soy administrador
+        this.mockMvc.perform(get("/equipos/" + equipo.getId().toString()))
+                .andExpect(content().string(allOf(not(containsString("Eliminar del equipo")))));
+    }
 }
