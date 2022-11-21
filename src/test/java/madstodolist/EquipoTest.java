@@ -74,6 +74,30 @@ public class EquipoTest {
     }
 
     @Test
+    @Transactional
+    public void grabarYBuscarEquipoConDescripcion() {
+        // GIVEN
+        // Un equipo nuevo con descripcion
+        Equipo equipo = new Equipo("Proyecto P1");
+        equipo.setDescripcion("Equipo encargado de la asignatura MADS");
+
+        // WHEN
+        // Salvamos el equipo en la base de datos
+        equipoRepository.save(equipo);
+
+        // THEN
+        // Su identificador se ha actualizado y lo podemos
+        // usar para recuperarlo de la base de datos
+        Long equipoId = equipo.getId();
+        assertThat(equipoId).isNotNull();
+        Equipo equipoDB = equipoRepository.findById(equipoId).orElse(null);
+        assertThat(equipoDB).isNotNull();
+        assertThat(equipoDB.getNombre()).isEqualTo("Proyecto P1");
+        assertThat(equipoDB.getDescripcion()).isEqualTo("Equipo encargado de la asignatura MADS");
+    }
+
+
+    @Test
     public void comprobarIgualdadEquipos() {
         // GIVEN
         // Creamos tres equipos sin id, sólo con el nombre
