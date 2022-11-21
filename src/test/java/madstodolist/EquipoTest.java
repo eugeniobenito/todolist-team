@@ -32,6 +32,12 @@ public class EquipoTest {
     }
 
     @Test
+    public void crearEquipoDescripcionNull() {
+        Equipo equipo = new Equipo("Proyecto P1");
+        assertThat(equipo.getDescripcion()).isNull();
+    }
+
+    @Test
     @Transactional
     public void grabarYBuscarEquipo() {
         // GIVEN

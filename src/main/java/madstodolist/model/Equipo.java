@@ -15,14 +15,21 @@ public class Equipo {
 
     private String nombre;
 
+    private String descripcion;
+
     public Equipo(String nombre){
         this.nombre = nombre;
+        this.descripcion = null;
     }
 
     public Equipo(){}
 
     public String getNombre(){
         return this.nombre;
+    }
+
+    public String getDescripcion() {
+        return this.descripcion;
     }
 
     public Long getId() {
