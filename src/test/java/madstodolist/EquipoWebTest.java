@@ -233,7 +233,8 @@ public class EquipoWebTest {
 
         this.mockMvc.perform(get("/equipos/nuevo"))
                 .andExpect(content().string
-                        (allOf(containsString("Crear equipo"))));
+                        (allOf(containsString("Crear equipo"),
+                                (containsString("Descripción")))));
 
     }
 
