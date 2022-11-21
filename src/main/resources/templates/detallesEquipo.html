@@ -18,6 +18,9 @@
             <b>Nombre: </b> <th:block th:text="${equipo.nombre}" />
         </div>
         <div>
+            <b>Descripción: </b> <th:block th:text="${equipo.descripcion}" />
+        </div>
+        <div>
             <th:block th:if="${usuario.perteneceEquipo(equipo)}">
                 <button class="btn btn-danger btn-xs" onmouseover="" style="cursor: pointer;"
                         th:onclick="'del(\'/equipos/' + ${equipo.id} + '/usuarios/' + ${usuario.id} + '\')'">Abandonar</button>
