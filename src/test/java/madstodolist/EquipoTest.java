@@ -38,6 +38,21 @@ public class EquipoTest {
     }
 
     @Test
+    public void anyadeDescripcionEquipo() {
+        // GIVEN
+        // Un equipo nuevo
+        Equipo equipo = new Equipo("Proyecto P1");
+
+        // WHEN
+        // Añadimos una descripcion de equipo 
+        equipo.setDescripcion("Equipo encargado de la asignatura MADS");        
+
+        // THEN 
+        // Obtenemos la descripción del equipo
+        assertThat(equipo.getDescripcion()).isEqualTo("Equipo encargado de la asignatura MADS");
+    }
+
+    @Test
     @Transactional
     public void grabarYBuscarEquipo() {
         // GIVEN
