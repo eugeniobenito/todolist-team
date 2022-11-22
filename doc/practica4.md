@@ -1,7 +1,145 @@
+# ToDoList 1.3.0
+
+Esta versión de la aplicación incorpora **3 nuevas _features_** 
+
+- [ToDoList 1.3.0](#todolist-130)
+- [Docker Hub](#docker-hub)
+- [011 Descripción de equipos](#011-descripción-de-equipos)
+    - [Entidad _Equipo_](#entidad-equipo)
+    - [Servicio _EquipoService_](#servicio-equiposervice)
+    - [Controller, vista y _DTO_ EquipoData](#controller-vista-y-dto-equipodata)
+- [012 Gestión de equipos por administradores](#012-gestión-de-equipos-por-administradores)
+    - [Controladores](#controladores)
+    - [Vistas](#vistas)
+- [013 Información de entidades](#013-información-de-entidades)
+    - [Rutas - Controladores](#rutas---controladores)
+    - [Vistas](#vistas-1)
+    - [Tests](#tests)
+
 # Docker Hub
 ``` 
 https://hub.docker.com/r/sergioaluua/mads-todolist-equipo15
 ```
+
+# 011 Descripción de equipos
+De ahora en adelante los equipos podrán tener -de forma opcional- una descripción. Al momento de crear un equipo se le podrá detallar la descripción, por lo un usuario cualquiera (no administrador) solo tendrá la opción de detallar la descripción cuando crea el equipo. De ahí en adelante, la descripción solo podrá ser editada por el administrador.
+
+Esta funcionalidad se ha implementado aplicando _TDD_ en las capas de modelo y servicio.
+
+### Entidad _Equipo_
+
+Ya que se tomó la decision de que la descripción sea un atributo opcional en la construcción de un equipo, creamos el primer test que comprueba que el atributo se ha inicializado por defecto en el constructor.
+
+```java
+@Test
+public void crearEquipoDescripcionNull() {
+    Equipo equipo = new Equipo("Proyecto P1");
+    assertThat(equipo.getDescripcion()).isNull();
+}
+```
+Se ha incorporado el atributo **descripcion** a la clase **Equipo**. En el constructor de clase se inicializa por defecto a _null_, de este modo mantenemos la signatura del constructor intacta. 
+
+```java
+private String descripcion;
+
+public Equipo(String nombre){
+    this.nombre = nombre;
+    this.descripcion = null;
+}
+
+public String getDescripcion() {
+    return this.descripcion;
+}
+```
+
+En posteriores iteraciones aplicando _TDD_ se incluye el _setter_ del atributo y se testea que se guarda correctamente en base de datos.
+
+### Servicio _EquipoService_
+
+Para los métodos de servicio se barajaron varias opciones:
+
+**Modificar la signatura del servicio**
+
+El servicio *crearEquipo()* recibe únicamente el nombre del equipo a crear. Si añadimos un segundo parámetro nos vemos obligados a modificar todos los clientes del servicio, tanto en código de aplicación como en código de tests (unas 70 llamadas al servicio en total).
+
+```java
+public Equipo crearEquipo(String nombre)
+```
+
+Además, habría que hacer lo propio con el servicio encargado de modificar el equipo.
+
+```java
+public Equipo modificarEquipo(Long equipoId, String nombre)
+```
+
+Por lo que se descartó esta opción.
+
+**Añadir un servicio específico para modificar la descripción**
+
+Otra opción habría sido implementar un servicio tipo **modificarDescripcionEquipo()** que se encargase únicamente dicha tarea. Pero si en un futuro añadimos más atributos a la clase, siguiendo con esta opción iríamos incrementando innecesariamente la clase _EquipoService_, añadiendo un _setter_ por cada nuevo atributo que queremos modificar.
+
+**Sobreescribir los métodos de servicio**
+
+Finalmente se decidió por sobreescribir los métodos de servicio *crearEquipo()* y *modificarEquipo()*
+
+```java
+public Equipo crearEquipo(String nombre, String descripcion) {
+    if(nombre == "") throw new EquipoServiceException("El nombre del equipo no puede estar vacio");
+    Equipo e = new Equipo(nombre);
+    e.setDescripcion(descripcion);
+    equipoRepository.save(e);
+    return e;
+}
+```
+
+De este modo no necesitamos modificar todos los tests que invocan a la función, solo el controller que se encarga de la petición _http_. Se da la opción así de crear un Equipo con o sin descripción.
+
+Aunque esta opción es la que menos modifica el código existente, sigue siendo poco mantenible en el tiempo si se van incluyendo atributos a la clase.
+
+Quizá la opción más interesante sería que los métodos de servicio recibiesen un _DTO_ con los campos con los que se desea crear/modificar el objeto. De este modo nos cubrimos las espaldas si en el futuro vamos añadiendo más atributos a la clase.
+
+Un ejemplo de test que prueba la sobreescritura del método:
+
+```java
+@Test
+public void crearEquipoConDescripcion() {
+    Equipo equipo = equipoService.crearEquipo("Proyecto 1", "Equipo de la asignatura MADS");
+    Equipo equipoBd = equipoService.recuperarEquipo(equipo.getId());
+    assertThat(equipoBd).isNotNull();
+    assertThat(equipoBd.getNombre()).isEqualTo("Proyecto 1");
+    assertThat(equipoBd.getDescripcion()).isEqualTo("Equipo de la asignatura MADS");
+}
+```
+
+### Controller, vista y _DTO_ EquipoData
+
+La clase **EquipoData** incorpora tambien el atributo **descripcion**.
+
+```java
+public class EquipoData {
+
+    private String descripcion;
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+}
+```
+
+Como hemos comentado anteriormente, el controller encargado de manejar la petición _http_ llama al método sobreescrito:
+
+```java
+//Equipo e = equipoService.crearEquipo(equipoData.getNombre());
+Equipo e = equipoService.crearEquipo(equipoData.getNombre(), equipoData.getDescripcion());
+```
+
+En las vistas de crear, modificar y ver detalles de un equipo se añadió el campo para editar y visualizar la descripción del equipo.
+
+![](img/vista_desc_equipo.png)
+
 # 012 Gestión de equipos por administradores
 En esta historia se pretende que los administradores de la aplicación puedan eliminar a usuarios de un grupo. Anteriormente, para echar a un usuario era necesario eliminar el grupo entero, con esto no haría falta.
 ### Controladores
