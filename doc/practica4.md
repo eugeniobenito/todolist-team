@@ -2,8 +2,10 @@
 
 Esta versión de la aplicación incorpora **3 nuevas _features_** 
 
-- [ToDoList 1.3.0](#todolist-130)
 - [Docker Hub](#docker-hub)
+  - [Despliegue en producción](#despliegue-en-produccin)
+    - [Esquemas de la base de datos](#esquemas-de-la-base-de-datos)
+    - [Diferencias 1.2.0 - 1.3.0](#diferencias-120---130)
 - [011 Descripción de equipos](#011-descripción-de-equipos)
     - [Entidad _Equipo_](#entidad-equipo)
     - [Servicio _EquipoService_](#servicio-equiposervice)
@@ -19,6 +21,33 @@ Esta versión de la aplicación incorpora **3 nuevas _features_**
 # Docker Hub
 ``` 
 https://hub.docker.com/r/sergioaluua/mads-todolist-equipo15
+```
+# Despliegue en producción
+Se han añadido los siguientes schemas de la base de datos: 
+- schema-1.2.0 -> Schema de la versión 1.2.0
+- schema-1.3.0 -> Schema de la versión 1.3.0
+- schema-1.2.0-1.3.0 -> Script de migración de versión 1.2.0 a 1.3.0
+
+Se han añadido los siguientes backups:
+- backup17112022.sql -> Contiene un backup con datos de la versión 1.2.0
+- backup22112022.sql -> Contiene un backup con los datos del script anterior y nuevos para la versión 1.3.0
+
+### Esquemas de la base de datos
+### 1. Schema 1.2.0
+![](img/basededatos1.2.0.png)
+
+### 1. Schema 1.3.0
+![](img/basededatos1.3.0.png)
+
+### Diferencias 1.2.0 - 1.3.0
+Se ha añadido a la columna a la tabla equipo.
+```sql
+descripcion varchar(255)
+```
+El script de migración contiene: 
+```sql 
+ALTER TABLE public.equipos
+ADD COLUMN descripcion character varying(255)
 ```
 
 # 011 Descripción de equipos
