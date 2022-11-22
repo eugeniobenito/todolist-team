@@ -34,8 +34,14 @@ public class EquipoController {
 
     private void comprobarUsuarioLogeado(Long idUsuario) {
         Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
-        if (!idUsuario.equals(idUsuarioLogeado))
+        if (!managerUserSession.isUsuarioLogeado())
             throw new UsuarioNoLogeadoException();
+        Long idUser = managerUserSession.usuarioLogeado();
+        Usuario u = usuarioService.findById(idUser);
+        if(!u.getIsAdmin()) {
+            if (!idUsuario.equals(idUsuarioLogeado))
+                throw new UsuarioNoLogeadoException();
+        }
     }
 
     private void isAnyUserLogged() {
@@ -125,7 +131,7 @@ public class EquipoController {
 
         isAnyUserLogged();
         if(equipoData.getNombre() == "") throw new FormErrorException();
-        Equipo e = equipoService.crearEquipo(equipoData.getNombre());
+        Equipo e = equipoService.crearEquipo(equipoData.getNombre(), equipoData.getDescripcion());
         return "redirect:/equipos";
     }
 
@@ -140,7 +146,7 @@ public class EquipoController {
 
         if(equipoData.getNombre() == "") throw new FormErrorException();
 
-        Equipo e = equipoService.modificarEquipo(idEquipo, equipoData.getNombre());
+        Equipo e = equipoService.modificarEquipo(idEquipo, equipoData.getNombre(), equipoData.getDescripcion());
         return "redirect:/equipos";
     }
 
