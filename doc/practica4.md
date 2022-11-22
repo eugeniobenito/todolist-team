@@ -35,3 +35,66 @@ La vista quedaría para usuarios sería así:
 ![](img/detallesUser.png)
 Y para administradores:
 ![](img/detallesAdmin.png)
+
+# 013 Información de entidades
+En esta historia se pretende añadir una nueva funcionalidad a la vista `Acerca de` que contemple un seguimiento de los usuarios registrados, asi como las tareas y equipos que han sido creadas en nuestra aplicación.
+
+### Rutas - Controladores
+Modificado el método `about` para que añada tres nuevos atributos a la vista que calculen el numero de usuarios registrados en la aplicación, el número de tareas totales de los usuarios y el número de equipos totales que han sido creados.
+
+- Calculo de los usuarios registrados y las tareas totales:
+```java
+Integer numberUser = 0;
+        Integer numberTask = 0;
+        for(Usuario u :usuarioService.findAll()) {
+            numberUser++;
+            for (Tarea t : tareaService.allTareasUsuario(u.getId())) {
+                numberTask++;
+            }
+        }
+```
+
+### Vistas
+- *about*: Añadidos tres elementos a la lista para mostrar el numero de usuarios registrados en la aplicación, el número de tareas totales de los usuarios y el número de equipos totales que han sido creados.
+```html
+<h1>ToDoList</h1>
+      <ul>
+        <li>Desarrollada por Equipo 15: </li>
+        <li>Sergio Baeza Carrasco</li>
+        <li>Eugenio Benito López</li>
+        <li>Álvaro Lario Sánchez</li>
+        <li>Versión 1.3.0-SNAPSHOT</li>
+        <li>Fecha de release: en desarrollo</li>
+        <li>Usuarios registrados: <span th:text="${numberUser}"></span></li>
+        <li>Tareas registradas: <span th:text="${numberTask}"></span></li>
+        <li>Equipos registrados: <span th:text="${numberTeam}"></span></li>
+      </ul>
+```
+
+### Tests
+Hemos añadido un método en la clase `AcercaDeWebTest` que compruebe el funcionamiento de nuestra nueva funcionalidad.
+
+```java
+@Test
+    public void testShowEntityAmount() throws Exception {
+
+        this.mockMvc.perform(get("/about"))
+                .andExpect(content().string(allOf(containsString("<li>Usuarios registrados: <span>0</span></li>"),
+                        containsString("<li>Tareas registradas: <span>0</span></li>"),
+                        containsString("<li>Equipos registrados: <span>0</span></li>"))));
+
+        Usuario invitado = new Usuario("als106@alu.ua.es");
+        invitado.setPassword("123");
+        invitado = usuarioService.registrar(invitado);
+
+        Tarea task1 = tareaService.nuevaTareaUsuario(invitado.getId(),"Task 1");
+
+        Equipo equipoA  = equipoService.crearEquipo("Equipo A");
+        Equipo equipoB  = equipoService.crearEquipo("Equipo B");
+
+        this.mockMvc.perform(get("/about"))
+                .andExpect(content().string(allOf(containsString("<li>Usuarios registrados: <span>1</span></li>"),
+                        containsString("<li>Tareas registradas: <span>1</span></li>"),
+                        containsString("<li>Equipos registrados: <span>2</span></li>"))));
+    }
+```
