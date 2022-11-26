@@ -29,7 +29,7 @@ Una vez lanzada la aplicación puedes abrir un navegador y probar la página de 
 - [http://localhost:8080/login](http://localhost:8080/login)
 
 
-## Trello del proyecto
+## Trello del proyecto Equipo 15 Backlog
 ```
-https://trello.com/invite/b/OyXvOSld/ATTIb4bc50bd3437355893d798402f246dd9DFB99E16/todolist-mads
+https://trello.com/b/y2G4dzco/backlog-todolist-equipo-15
 ```
