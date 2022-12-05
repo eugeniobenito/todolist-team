@@ -17,6 +17,8 @@ public class Tarea implements Serializable {
     private Long id;
     @NotNull
     private String titulo;
+    @Column(name = "fecha_limite")
+    @Temporal(TemporalType.DATE)
     private Date fechaLimite;
 
     @NotNull

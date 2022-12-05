@@ -84,9 +84,7 @@ public class TareaTest {
         // la fecha es la que se ha asignado y no null
         // assertThat(tarea.getFechaLimite()).isNotNull();
         assertThat(tarea.getFechaLimite()).isEqualTo(sdf.parse("1997-02-20"));
-
     }
-
 
     @Test
     public void laListaDeTareasDeUnUsuarioSeActualizaEnMemoriaConUnaNuevaTarea() {
@@ -285,5 +283,26 @@ public class TareaTest {
 
         Tarea tareaBD = tareaRepository.findById(tareaId).orElse(null);
         assertThat(tareaBD.getTitulo()).isEqualTo(tarea.getTitulo());
+    }
+
+    @Test
+    @Transactional
+    public void guardarTareaEnBDConFechaNull() {
+        // GIVEN
+        // Un usuario y una tarea en la base de datos
+        Usuario usuario = new Usuario("user@ua");
+        usuarioRepository.save(usuario);
+        Tarea tarea = new Tarea(usuario, "Práctica 1 de MADS");
+        tareaRepository.save(tarea);
+
+        // WHEN
+        // Recuperamos la tarea
+        Long tareaId = tarea.getId();
+        tarea = tareaRepository.findById(tareaId).orElse(null);
+
+        // THEN
+        // la fecha es null
+        Tarea tareaBD = tareaRepository.findById(tareaId).orElse(null);
+        assertThat(tareaBD.getFechaLimite()).isNull();
     }
 }
