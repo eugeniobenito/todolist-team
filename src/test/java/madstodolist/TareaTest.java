@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Set;
 
@@ -305,4 +306,29 @@ public class TareaTest {
         Tarea tareaBD = tareaRepository.findById(tareaId).orElse(null);
         assertThat(tareaBD.getFechaLimite()).isNull();
     }
+
+    @Test
+    @Transactional
+    public void guardarTareaEnBDConFechaNotNull() throws ParseException {
+        // GIVEN
+        // Un usuario y una tarea con fecha en la base de datos
+        Usuario usuario = new Usuario("user@ua");
+        usuarioRepository.save(usuario);
+        Tarea tarea = new Tarea(usuario, "Práctica 1 de MADS");
+        // se le asigna una fecha límite
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        tarea.setFechaLimite(sdf.parse("1997-02-20"));        
+        tareaRepository.save(tarea);
+
+        // WHEN
+        // Recuperamos la tarea
+        Long tareaId = tarea.getId();
+        Tarea tareaBD = tareaRepository.findById(tareaId).orElse(null);
+
+        // THEN
+        // la fecha es la que hemos asignado
+        assertThat(tareaBD.getFechaLimite()).isNotNull();
+        assertThat(tareaBD.getFechaLimite()).isEqualTo(sdf.parse("1997-02-20"));
+    }
+
 }
