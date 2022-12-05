@@ -69,6 +69,10 @@ public class Tarea implements Serializable {
         return this.fechaLimite;
     }
 
+    public void setFechaLimite(Date fechaLimite) {
+        this.fechaLimite = fechaLimite;
+    }
+
 
     @Override
     public boolean equals(Object o) {
