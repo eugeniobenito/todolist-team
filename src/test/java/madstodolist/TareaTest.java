@@ -51,6 +51,22 @@ public class TareaTest {
     }
 
     @Test
+    public void crearTareaConFecha() {
+        // GIVEN
+        // Un usuario nuevo creado en memoria, sin conexión con la BD
+        Usuario usuario = new Usuario("juan.gutierrez@gmail.com");
+
+        // WHEN
+        // se crea una nueva tarea con ese usuario
+        Tarea tarea = new Tarea(usuario, "Práctica 1 de MADS");
+
+        // THEN
+        // la fecha es null
+        assertThat(tarea.getFechaLimite()).isNull();
+    }
+
+
+    @Test
     public void laListaDeTareasDeUnUsuarioSeActualizaEnMemoriaConUnaNuevaTarea() {
         // GIVEN
         // Un usuario nuevo creado en memoria, sin conexión con la BD,

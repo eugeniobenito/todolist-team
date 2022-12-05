@@ -3,6 +3,7 @@ package madstodolist.model;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
@@ -16,6 +17,7 @@ public class Tarea implements Serializable {
     private Long id;
     @NotNull
     private String titulo;
+    private Date fechaLimite;
 
     @NotNull
     // Relación muchos-a-uno entre tareas y usuario
@@ -35,6 +37,7 @@ public class Tarea implements Serializable {
     public Tarea(Usuario usuario, String titulo) {
         this.usuario = usuario;
         this.titulo = titulo;
+        this.fechaLimite = null;
         usuario.getTareas().add(this);
     }
 
@@ -60,6 +63,10 @@ public class Tarea implements Serializable {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+
+    public Date getFechaLimite() {
+        return this.fechaLimite;
     }
 
 
