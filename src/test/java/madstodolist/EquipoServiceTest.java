@@ -226,4 +226,16 @@ public class EquipoServiceTest {
         EquipoServiceException e = assertThrows(EquipoServiceException.class, () -> equipoService.eliminarEquipo(new Long(100)));
         assertThat(e.getMessage()).isEqualTo("No existe el equipo con id 100");
     }
+
+    @Test
+    public void crearEquipoWithAdmin() {
+        Usuario usuario = new Usuario("p@p");
+        usuario.setPassword("123");
+        usuario = usuarioService.registrar(usuario);
+
+        Equipo e = equipoService.crearEquipo("sadk", "aaaa", usuario);
+        e = equipoService.recuperarEquipo(e.getId());
+
+        assertThat(e.getAdmin()).isEqualTo(usuario);
+    }
 }
