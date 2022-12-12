@@ -130,8 +130,10 @@ public class EquipoController {
 
 
         isAnyUserLogged();
+        Long idUser = managerUserSession.usuarioLogeado();
+        Usuario u = usuarioService.findById(idUser);
         if(equipoData.getNombre() == "") throw new FormErrorException();
-        Equipo e = equipoService.crearEquipo(equipoData.getNombre(), equipoData.getDescripcion());
+        Equipo e = equipoService.crearEquipo(equipoData.getNombre(), equipoData.getDescripcion(), u);
         return "redirect:/equipos";
     }
 

@@ -227,6 +227,28 @@ public class EquipoWebTest {
     }
 
     @Test
+    @Transactional
+    public void showButtonsIfUserIsAdmin() throws Exception {
+
+        Usuario usuario = createUser();
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+        Usuario usuario2 = createAdmin();
+
+
+
+
+        Equipo e = equipoService.crearEquipo("prueba", "a", usuario);
+        equipoService.addUsuarioEquipo(usuario2.getId(), e.getId());
+        this.mockMvc.perform(get("/equipos/" + e.getId()))
+                .andExpect(content().string
+                        (allOf(containsString("Editar"),
+                                containsString("Eliminar del equipo"),
+                                containsString("Eliminar equipo"))));
+    }
+
+
+    @Test
     public void controllerCrearEquipoVista() throws Exception {
 
         Usuario usuario = createUser();

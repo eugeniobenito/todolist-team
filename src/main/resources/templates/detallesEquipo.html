@@ -15,6 +15,9 @@
             <b>Id: </b> <th:block th:text="${equipo.id}" />
         </div>
         <div>
+            <b>Administrador: </b> <th:block th:if="${equipo.admin != null}" th:text="${equipo.admin.getNombre()}" />
+        </div>
+        <div>
             <b>Nombre: </b> <th:block th:text="${equipo.nombre}" />
         </div>
         <div>
@@ -49,16 +52,24 @@
                     <td th:text="${usuarioEquipo.id}"></td>
                     <td th:text="${usuarioEquipo.nombre}"></td>
                     <td th:text="${usuarioEquipo.email}"></td>
-                    <td th:if="${usuario.isAdmin}">
+                    <td th:if="${(usuario.isAdmin || usuario == equipo.admin) && usuarioEquipo != usuario}">
                         <button class="btn btn-danger btn-xs" onmouseover="" style="cursor: pointer;"
                                 th:onclick="'del(\'/equipos/' + ${equipo.id} + '/usuarios/' + ${usuarioEquipo.id} + '\')'">Eliminar del equipo</button>
                     </td>
                 </tr>
                 </tbody>
             </table>
+
         </div>
 
     </div>
+    <td th:if="${usuario == equipo.admin}">
+        <button class="btn btn-danger btn-xs" onmouseover="" style="cursor: pointer;"
+                th:onclick="'del(\'/equipos/' + ${equipo.id} + '\')'">Eliminar equipo</button>
+
+        <a class="btn btn-warning btn-xs"
+           th:href="@{/equipos/{equipoId}/editar(equipoId=${equipo.id})}">Editar</a>
+    </td>
 
 </div>
 
