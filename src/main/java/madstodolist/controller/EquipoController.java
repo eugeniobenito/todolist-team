@@ -30,7 +30,21 @@ public class EquipoController {
     @Autowired
     UsuarioService usuarioService;
 
+    private void comprobarUsuarioLogeado(Long idUsuario, Equipo e) {
+        Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
+        if (!managerUserSession.isUsuarioLogeado())
+            throw new UsuarioNoLogeadoException();
+        Long idUser = managerUserSession.usuarioLogeado();
+        Usuario u = usuarioService.findById(idUser);
 
+        Long idAdmin = new Long(-1);
+        if(e.getAdmin() != null)  idAdmin = e.getAdmin().getId();
+
+        if(!u.getIsAdmin() && idUser != idAdmin) {
+            if (!idUsuario.equals(idUsuarioLogeado))
+                throw new UsuarioNoLogeadoException();
+        }
+    }
 
     private void comprobarUsuarioLogeado(Long idUsuario) {
         Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
@@ -49,22 +63,14 @@ public class EquipoController {
             throw new UsuarioNoLogeadoException();
     }
 
-    private void checkAdminUserLogged() {
+    private void checkAdminUserLogged(Equipo e) {
         if (!managerUserSession.isUsuarioLogeado())
             throw new UsuarioNoLogeadoException();
         Long idUser = managerUserSession.usuarioLogeado();
         Usuario u = usuarioService.findById(idUser);
-        if(!u.getIsAdmin()){
-            throw new UsuarioNoAdminException();
-        }
-    }
-
-    private void checkAdminOrOwnerLogged(Equipo equipo){
-        if (!managerUserSession.isUsuarioLogeado())
-            throw new UsuarioNoLogeadoException();
-        Long idUser = managerUserSession.usuarioLogeado();
-        Usuario u = usuarioService.findById(idUser);
-        if(!u.getIsAdmin() && equipo.getAdmin() != u){
+        Long idAdmin = new Long(-1);
+        if(e.getAdmin() != null)  idAdmin = e.getAdmin().getId();
+        if(!u.getIsAdmin() && idUser != idAdmin){
             throw new UsuarioNoAdminException();
         }
     }
@@ -116,11 +122,10 @@ public class EquipoController {
     public String eliminarUsuarioEquipo(@PathVariable(value="id") Long idEquipo, @PathVariable(value="userId") Long userId,
                                        Model model){
 
-        isAnyUserLogged();
         Equipo equipo = equipoService.recuperarEquipo(idEquipo);
         if(equipo == null)
             throw new EquipoNotFoundException();
-        checkAdminOrOwnerLogged(equipo);
+        comprobarUsuarioLogeado(userId, equipo); // revisamos que el recurso es suyo y esta autenticado
         equipoService.removeUsuarioEquipo(userId, idEquipo);
         return "";
     }
@@ -153,11 +158,11 @@ public class EquipoController {
     public String editarEquipo(@PathVariable(value="id") Long idEquipo, @ModelAttribute EquipoData equipoData,
                               Model model, RedirectAttributes flash,
                               HttpSession session) {
-        isAnyUserLogged();
         Equipo equipo = equipoService.recuperarEquipo(idEquipo);
         if(equipo == null)
             throw new EquipoNotFoundException();
-        checkAdminOrOwnerLogged(equipo);
+
+        checkAdminUserLogged(equipo);
 
         if(equipoData.getNombre() == "") throw new FormErrorException();
 
@@ -169,11 +174,10 @@ public class EquipoController {
     @ResponseBody
     public String eliminarEquipo(@PathVariable(value="id") Long idEquipo,
                                         Model model){
-        isAnyUserLogged();
         Equipo equipo = equipoService.recuperarEquipo(idEquipo);
         if(equipo == null)
             throw new EquipoNotFoundException();
-        checkAdminOrOwnerLogged(equipo);
+        checkAdminUserLogged(equipo);
 
         equipoService.eliminarEquipo(idEquipo);
 
@@ -183,11 +187,11 @@ public class EquipoController {
     @GetMapping("/equipos/{id}/editar")
     public String formEditarEquipo(@PathVariable(value="id") Long idEquipo, @ModelAttribute EquipoData equipoData,
                                  Model model, HttpSession session) {
-        isAnyUserLogged();
+
         Equipo equipo = equipoService.recuperarEquipo(idEquipo);
         if(equipo == null)
             throw new EquipoNotFoundException();
-        checkAdminOrOwnerLogged(equipo);
+        checkAdminUserLogged(equipo);
 
         Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
         Usuario usuario = usuarioService.findById(idUsuarioLogeado);

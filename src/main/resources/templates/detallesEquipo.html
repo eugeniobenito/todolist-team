@@ -78,7 +78,7 @@
         if (confirm('¿Estás seguro/a?')) {
             fetch(urlBorrar, {
                 method: 'DELETE'
-            }).then((res) => location.reload());
+            }).then((res) => location.href = '/equipos');
         }
     }
 </script>

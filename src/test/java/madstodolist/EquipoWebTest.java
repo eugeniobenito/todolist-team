@@ -387,15 +387,13 @@ public class EquipoWebTest {
 
     @Test
     public void checkAuthDeleteEquipoController() throws Exception {
-        MockHttpServletResponse response = this.mockMvc.perform(delete("/equipos/200")).andReturn().getResponse();
-        Assertions.assertThat(response.getStatus()).isEqualTo(401);
 
         Usuario usuario = createUser();
         Usuario admin = createAdmin();
         when(managerUserSession.usuarioLogeado()).thenReturn(admin.getId());
         when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
 
-         response = this.mockMvc.perform(delete("/equipos/200/")).andReturn().getResponse();
+        MockHttpServletResponse response = this.mockMvc.perform(delete("/equipos/200/")).andReturn().getResponse();
         Assertions.assertThat(response.getStatus()).isEqualTo(404);
 
         when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
@@ -426,15 +424,14 @@ public class EquipoWebTest {
 
     @Test
     public void editarEquipoPOSTControllerAuth() throws Exception {
-        MockHttpServletResponse response = this.mockMvc.perform(post("/equipos/200/editar")).andReturn().getResponse();
-        Assertions.assertThat(response.getStatus()).isEqualTo(401);
+
 
         Usuario usuario = createUser();
         Usuario admin = createAdmin();
         when(managerUserSession.usuarioLogeado()).thenReturn(admin.getId());
         when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
 
-        response = this.mockMvc.perform(post("/equipos/200/editar")).andReturn().getResponse();
+        MockHttpServletResponse response = this.mockMvc.perform(post("/equipos/200/editar")).andReturn().getResponse();
         Assertions.assertThat(response.getStatus()).isEqualTo(404);
         Equipo e = equipoService.crearEquipo("prueba");
         response = this.mockMvc.perform(post("/equipos/" + e.getId().toString() +"/editar").param("nombre", "")).andReturn().getResponse();
@@ -461,15 +458,13 @@ public class EquipoWebTest {
 
     @Test
     public void editarEquipoGetHasMiddleware() throws Exception {
-        MockHttpServletResponse response = this.mockMvc.perform(get("/equipos/200/editar")).andReturn().getResponse();
-        Assertions.assertThat(response.getStatus()).isEqualTo(401);
 
         Usuario usuario = createUser();
         Usuario admin = createAdmin();
         when(managerUserSession.usuarioLogeado()).thenReturn(admin.getId());
         when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
 
-        response = this.mockMvc.perform(get("/equipos/200/editar")).andReturn().getResponse();
+        MockHttpServletResponse response = this.mockMvc.perform(get("/equipos/200/editar")).andReturn().getResponse();
         Assertions.assertThat(response.getStatus()).isEqualTo(404);
 
         Equipo e = equipoService.crearEquipo("prueba");
