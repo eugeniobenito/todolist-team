@@ -246,6 +246,42 @@ public class EquipoWebTest {
                                 containsString("Eliminar del equipo"),
                                 containsString("Eliminar equipo"))));
     }
+    @Test
+    @Transactional
+    public void userCanEditAndRemove() throws Exception {
+        Usuario admin = createAdmin();
+        Usuario usuario = createUser();
+        Equipo equipo = equipoService.crearEquipo("equipo", "", usuario);
+
+        equipoService.addUsuarioEquipo(admin.getId(), equipo.getId());
+
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        // Admin can edit the team
+        MockHttpServletResponse response = this.mockMvc.perform(get("/equipos/" + equipo.getId().toString() + "/editar")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(200);
+
+        this.mockMvc.perform(post("/equipos/" + equipo.getId().toString() + "/editar").param("nombre", "UATeam").param("descripcion", "Equipo de la UA"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/equipos"));
+
+        equipo = equipoService.recuperarEquipo(equipo.getId());
+        Assertions.assertThat(equipo.getNombre()).isEqualTo("UATeam");
+        Assertions.assertThat(equipo.getDescripcion()).isEqualTo("Equipo de la UA");
+
+        // Admin can remove users from the team
+        Assertions.assertThat(equipo.getUsuarios().size()).isEqualTo(1);
+        this.mockMvc.perform(delete("/equipos/" + equipo.getId().toString() + "/usuarios/" + admin.getId()));
+        Assertions.assertThat(equipo.getUsuarios().size()).isEqualTo(0);
+
+
+        // Admin can remove the team
+        this.mockMvc.perform(delete("/equipos/" + equipo.getId().toString()));
+
+        Assertions.assertThat(equipoService.recuperarEquipo(equipo.getId())).isNull();
+    }
 
 
     @Test

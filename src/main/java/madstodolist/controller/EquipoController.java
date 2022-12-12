@@ -59,6 +59,16 @@ public class EquipoController {
         }
     }
 
+    private void checkAdminOrOwnerLogged(Equipo equipo){
+        if (!managerUserSession.isUsuarioLogeado())
+            throw new UsuarioNoLogeadoException();
+        Long idUser = managerUserSession.usuarioLogeado();
+        Usuario u = usuarioService.findById(idUser);
+        if(!u.getIsAdmin() && equipo.getAdmin() != u){
+            throw new UsuarioNoAdminException();
+        }
+    }
+
     @GetMapping("/equipos")
     public String listadoEquipos(Model model, HttpSession session) {
         // middleware usuario logeado
@@ -105,10 +115,12 @@ public class EquipoController {
     @ResponseBody
     public String eliminarUsuarioEquipo(@PathVariable(value="id") Long idEquipo, @PathVariable(value="userId") Long userId,
                                        Model model){
-        comprobarUsuarioLogeado(userId); // revisamos que el recurso es suyo y esta autenticado
+
+        isAnyUserLogged();
         Equipo equipo = equipoService.recuperarEquipo(idEquipo);
         if(equipo == null)
             throw new EquipoNotFoundException();
+        checkAdminOrOwnerLogged(equipo);
         equipoService.removeUsuarioEquipo(userId, idEquipo);
         return "";
     }
@@ -141,10 +153,11 @@ public class EquipoController {
     public String editarEquipo(@PathVariable(value="id") Long idEquipo, @ModelAttribute EquipoData equipoData,
                               Model model, RedirectAttributes flash,
                               HttpSession session) {
-        checkAdminUserLogged();
+        isAnyUserLogged();
         Equipo equipo = equipoService.recuperarEquipo(idEquipo);
         if(equipo == null)
             throw new EquipoNotFoundException();
+        checkAdminOrOwnerLogged(equipo);
 
         if(equipoData.getNombre() == "") throw new FormErrorException();
 
@@ -156,10 +169,11 @@ public class EquipoController {
     @ResponseBody
     public String eliminarEquipo(@PathVariable(value="id") Long idEquipo,
                                         Model model){
-        checkAdminUserLogged();
+        isAnyUserLogged();
         Equipo equipo = equipoService.recuperarEquipo(idEquipo);
         if(equipo == null)
             throw new EquipoNotFoundException();
+        checkAdminOrOwnerLogged(equipo);
 
         equipoService.eliminarEquipo(idEquipo);
 
@@ -169,10 +183,11 @@ public class EquipoController {
     @GetMapping("/equipos/{id}/editar")
     public String formEditarEquipo(@PathVariable(value="id") Long idEquipo, @ModelAttribute EquipoData equipoData,
                                  Model model, HttpSession session) {
-        checkAdminUserLogged();
+        isAnyUserLogged();
         Equipo equipo = equipoService.recuperarEquipo(idEquipo);
         if(equipo == null)
             throw new EquipoNotFoundException();
+        checkAdminOrOwnerLogged(equipo);
 
         Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
         Usuario usuario = usuarioService.findById(idUsuarioLogeado);
