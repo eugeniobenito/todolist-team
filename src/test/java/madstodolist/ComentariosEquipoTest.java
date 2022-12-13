@@ -22,6 +22,8 @@ public class ComentariosEquipoTest {
     private EquipoRepository equipoRepository;
 
     @Autowired
+    private ComentarioEquipoRepository comentarioEquipoRepository;
+    @Autowired
     private UsuarioRepository usuarioRepository;
 
     private Usuario crearUsuario(String email, Boolean isAdmin){
@@ -59,8 +61,17 @@ public class ComentariosEquipoTest {
         ComentarioEquipo c = new ComentarioEquipo("prueba", u, e);
         assertThat(e.getComentariosEquipo()).contains(c);
         assertThat(comentarios).contains(c);
+    }
 
-
+    @Test
+    public void comentariosEquipoRepository() {
+        Usuario u = crearUsuario("a@a", false);
+        Equipo e = crearEquipo(u);
+        Set<ComentarioEquipo> comentarios = e.getComentariosEquipo();
+        ComentarioEquipo c = new ComentarioEquipo("prueba", u, e);
+        assertThat(c.getId()).isNull(); 
+        c = comentarioEquipoRepository.save(c);
+        assertThat(c.getId()).isNotNull();
 
     }
 
