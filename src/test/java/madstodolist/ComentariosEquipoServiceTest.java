@@ -75,8 +75,17 @@ public class ComentariosEquipoServiceTest {
          ex = assertThrows(ComentarioEquipoServiceException.class, () ->
                 comentarioEquipoService.crearComentario("prueba", u.getId(), new Long(20)));
         assertThat(ex.getMessage()).isEqualTo("No existe el equipo");
+    }
 
-
+    @Test
+    public void eliminarEquipoService() {
+        Usuario u = crearUsuario("a@a", false);
+        Equipo e = crearEquipo(u);
+        ComentarioEquipo c = comentarioEquipoService.crearComentario("prueba", u.getId(), e.getId());
+        Long idComment = c.getId();
+        assertThat(comentarioEquipoRepository.findById(idComment).orElse(null)).isNotNull();
+        comentarioEquipoService.eliminarComentario(idComment);
+        assertThat(comentarioEquipoRepository.findById(idComment).orElse(null)).isNull();
     }
 
 

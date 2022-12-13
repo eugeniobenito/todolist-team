@@ -35,4 +35,11 @@ public class ComentarioEquipoService {
         comentario = comentarioEquipoRepository.save(comentario);
         return comentario;
     }
+
+    @Transactional
+    public void eliminarComentario(Long comentarioId){
+        ComentarioEquipo c = comentarioEquipoRepository.findById(comentarioId).orElse(null);
+
+        comentarioEquipoRepository.delete(c);
+    }
 }
