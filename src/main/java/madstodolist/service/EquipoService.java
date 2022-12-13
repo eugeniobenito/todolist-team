@@ -41,6 +41,16 @@ public class EquipoService {
         return e;
     }
 
+    @Transactional
+    public Equipo crearEquipo(String nombre, String descripcion, Usuario admin){
+        if(nombre == "") throw new EquipoServiceException("El nombre del equipo no puede estar vacio");
+        Equipo e = new Equipo(nombre);
+        e.setDescripcion(descripcion);
+        e.setAdmin(admin);
+        equipoRepository.save(e);
+        return e;
+    }
+
     @Transactional(readOnly = true)
     public Equipo recuperarEquipo(Long id) {
 
