@@ -27,7 +27,13 @@ public class Equipo {
     @JoinColumn(name = "admin_id")
     private Usuario admin;
 
+
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER)
+    Set<ComentarioEquipo> comentariosEquipo = new HashSet<>();
+
     public void setAdmin(Usuario admin) { this.admin = admin; }
+
+    public Set<ComentarioEquipo> getComentariosEquipo() { return this.comentariosEquipo; }
 
     public Usuario getAdmin(){ return this.admin; }
 

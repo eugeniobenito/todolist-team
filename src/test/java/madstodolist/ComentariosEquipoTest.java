@@ -9,6 +9,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
@@ -48,6 +49,19 @@ public class ComentariosEquipoTest {
         assertThat(c.getEquipo()).isEqualTo(e);
         assertThat(c.getUsuario()).isEqualTo(u);
         assertThat(c.getFecha()).isNotNull();
+    }
+
+    @Test
+    public void comentarioEquipoSeActualizaEnEquipos() {
+        Usuario u = crearUsuario("a@a", false);
+        Equipo e = crearEquipo(u);
+        Set<ComentarioEquipo> comentarios = e.getComentariosEquipo();
+        ComentarioEquipo c = new ComentarioEquipo("prueba", u, e);
+        assertThat(e.getComentariosEquipo()).contains(c);
+        assertThat(comentarios).contains(c);
+
+
+
     }
 
 }

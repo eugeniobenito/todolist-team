@@ -41,6 +41,7 @@ public class ComentarioEquipo implements Serializable {
         this.fecha = Date.from(Instant.now());
 
         // should add to equipo to
+        equipo.getComentariosEquipo().add(this);
     }
 
     public Long getId() {
