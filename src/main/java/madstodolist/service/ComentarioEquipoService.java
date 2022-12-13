@@ -39,7 +39,7 @@ public class ComentarioEquipoService {
     @Transactional
     public void eliminarComentario(Long comentarioId){
         ComentarioEquipo c = comentarioEquipoRepository.findById(comentarioId).orElse(null);
-
+        if(c == null) throw new ComentarioEquipoServiceException("No existe el comentario");
         comentarioEquipoRepository.delete(c);
     }
 }

@@ -88,5 +88,12 @@ public class ComentariosEquipoServiceTest {
         assertThat(comentarioEquipoRepository.findById(idComment).orElse(null)).isNull();
     }
 
+    @Test
+    public void eliminarEquipoNoExistente() {
+        ComentarioEquipoServiceException ex = assertThrows(ComentarioEquipoServiceException.class, () ->
+                comentarioEquipoService.eliminarComentario( new Long(20)));
+        assertThat(ex.getMessage()).isEqualTo("No existe el comentario");
+    }
+
 
 }
