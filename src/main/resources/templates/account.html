@@ -8,31 +8,38 @@
 <div th:insert="navbar :: navbar"></div>
 
 <div class="container-fluid">
-    <h2>Cuenta:</h2>
-    <form th:action="@{/user/create}" th:object="${usuario}" method="post">
-        <fieldset>
-            <legend>Datos del usuario</legend>
-            <table>
-                <tr>
-                    <td><label th:text="#{form.user.nombre}">Nombre: </label></td>
-                    <td><input type="text" th:field="*{nombre}" /></td>
-                </tr>
-                <tr>
-                    <td><label th:text="#{form.user.fecha}">Fecha de nacimiento: </label></td>
-                    <td><input type="text" th:field="*{fechaNacimiento}" /></td>
-                </tr>
-                <tr>
-                    <td><label th:text="#{form.user.password}">Contraseña: </label></td>
-                    <td><input type="text" th:field="*{password}" /></td>
-                </tr>
-                <tr>
-                    <td>
-                        <button type="submit">Guardar</button>
-                    </td>
-                </tr>
-            </table>
-        </fieldset>
-    </form>
+    <div class="row justify-content-center mb-3">
+        <div class="col-auto">
+            <h2>Datos de usuario:</h2>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-6">
+            <form method="post" th:action="@{/registro}" th:object="${usuario}">
+                <div class="row justify-content-center">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="name">Nombre:</label>
+                            <input id="name" class="form-control" name="name" placeholder="Nombre"
+                                   type="text" th:field="*{email}" required/>
+                        </div>
+                        <div class="form-group">
+                            <label for="fechaNacimiento">Fecha de nacimiento:</label>
+                            <input id="fechaNacimiento" class="form-control" name="fechaNacimiento" placeholder="Fecha de nacimiento"
+                                   type="text" th:field="*{fechaNacimiento}" required/>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Contraseña</label>
+                            <input id="password" class="form-control" name="password" placeholder="Contraseña"
+                                   type="password" th:field="*{password}" required/>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
 <div th:replace="fragments::javascript" />
 
