@@ -26,8 +26,11 @@ public class ComentarioEquipoService {
 
     @Transactional
     public ComentarioEquipo crearComentario(String nombre, Long usuarioId, Long equipoId) {
+        if(nombre == "") throw new ComentarioEquipoServiceException("El nombre no puede estar vacio");
         Usuario u = usuarioRepository.findById(usuarioId).orElse(null);
+        if(u == null) throw new ComentarioEquipoServiceException("No existe el usuario");
         Equipo e = equipoRepository.findById(equipoId).orElse(null);
+        if(e == null) throw new ComentarioEquipoServiceException("No existe el equipo");
         ComentarioEquipo comentario = new ComentarioEquipo(nombre, u, e);
         comentario = comentarioEquipoRepository.save(comentario);
         return comentario;

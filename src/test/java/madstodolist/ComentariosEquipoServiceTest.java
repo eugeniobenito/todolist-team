@@ -2,6 +2,7 @@ package madstodolist;
 
 import madstodolist.model.*;
 import madstodolist.service.ComentarioEquipoService;
+import madstodolist.service.ComentarioEquipoServiceException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,6 +12,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 @SpringBootTest
@@ -45,7 +47,7 @@ public class ComentariosEquipoServiceTest {
 
 
     @Test
-    public void comprobarEquipoService(){
+    public void crearEquipoService(){
         Usuario u = crearUsuario("a@a", false);
         Equipo e = crearEquipo(u);
         ComentarioEquipo c = comentarioEquipoService.crearComentario("prueba", u.getId(), e.getId());
@@ -55,7 +57,26 @@ public class ComentariosEquipoServiceTest {
         assertThat(c.getUsuario()).isEqualTo(c2.getUsuario());
         assertThat(c.getEquipo()).isEqualTo(c2.getEquipo());
         assertThat(c.getFecha()).isEqualTo(c2.getFecha());
-        assertThat(c).isEqualTo(c2); 
+        assertThat(c).isEqualTo(c2);
+    }
+
+    @Test
+    public void crearEquipoServiceExceptions(){
+        Usuario u = crearUsuario("a@a", false);
+        Equipo e = crearEquipo(u);
+        ComentarioEquipoServiceException ex = assertThrows(ComentarioEquipoServiceException.class, () ->
+                comentarioEquipoService.crearComentario("", u.getId(), e.getId()));
+        assertThat(ex.getMessage()).isEqualTo("El nombre no puede estar vacio");
+
+        ex = assertThrows(ComentarioEquipoServiceException.class, () ->
+                comentarioEquipoService.crearComentario("prueba", (u.getId() + 200), e.getId()));
+        assertThat(ex.getMessage()).isEqualTo("No existe el usuario");
+
+         ex = assertThrows(ComentarioEquipoServiceException.class, () ->
+                comentarioEquipoService.crearComentario("prueba", u.getId(), new Long(20)));
+        assertThat(ex.getMessage()).isEqualTo("No existe el equipo");
+
+
     }
 
 
