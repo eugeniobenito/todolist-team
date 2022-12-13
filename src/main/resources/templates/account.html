@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: head (titulo='Acerca de')"></head>
+
+<body>
+
+<div th:insert="navbar :: navbar"></div>
+
+<div class="container-fluid">
+    <h2>Cuenta:</h2>
+    <form th:action="@{/user/create}" th:object="${usuario}" method="post">
+        <fieldset>
+            <legend>Datos del usuario</legend>
+            <table>
+                <tr>
+                    <td><label th:text="#{form.user.nombre}">Nombre: </label></td>
+                    <td><input type="text" th:field="*{nombre}" /></td>
+                </tr>
+                <tr>
+                    <td><label th:text="#{form.user.fecha}">Fecha de nacimiento: </label></td>
+                    <td><input type="text" th:field="*{fechaNacimiento}" /></td>
+                </tr>
+                <tr>
+                    <td><label th:text="#{form.user.password}">Contraseña: </label></td>
+                    <td><input type="text" th:field="*{password}" /></td>
+                </tr>
+                <tr>
+                    <td>
+                        <button type="submit">Guardar</button>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </form>
+
+<div th:replace="fragments::javascript" />
+
+</body>
+
+</html>

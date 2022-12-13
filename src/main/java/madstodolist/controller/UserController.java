@@ -91,4 +91,18 @@ public class UserController {
         return "redirect:/registrados";
 
     }
+
+    @GetMapping("/account/{id}")
+    public String Account(@PathVariable(value="id") Long idUsuario, Model model){
+        Long idUser = managerUserSession.usuarioLogeado();
+        if (idUser != null) {
+            Usuario user = usuarioService.findById(idUser);
+            model.addAttribute("usuario", user);
+        }
+        else{
+            throw new UsuarioNotFoundException();
+        }
+
+        return "account";
+    }
 }
