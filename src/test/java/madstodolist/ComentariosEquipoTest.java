@@ -69,7 +69,7 @@ public class ComentariosEquipoTest {
         Equipo e = crearEquipo(u);
         Set<ComentarioEquipo> comentarios = e.getComentariosEquipo();
         ComentarioEquipo c = new ComentarioEquipo("prueba", u, e);
-        assertThat(c.getId()).isNull(); 
+        assertThat(c.getId()).isNull();
         c = comentarioEquipoRepository.save(c);
         assertThat(c.getId()).isNotNull();
 
