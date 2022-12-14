@@ -1,5 +1,6 @@
 package madstodolist;
 
+import madstodolist.controller.TareaData;
 import madstodolist.model.Tarea;
 import madstodolist.model.Usuario;
 import madstodolist.service.TareaService;
@@ -11,6 +12,9 @@ import org.springframework.test.context.jdbc.Sql;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 // Hemos eliminado todos los @Transactional de los tests
 // y usado un script para limpiar la BD de test después de
@@ -47,6 +51,15 @@ public class TareaServiceTest {
         return new DosIds(usuario.getId(), tarea1.getId());
     }
 
+    TareaData crearTareaDTOExample() throws ParseException {
+        TareaData tareaDTO = new TareaData();
+        tareaDTO.setTitulo("MADS");
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        tareaDTO.setFechaLimite(sdf.parse("1997-02-20"));
+        return tareaDTO;
+    }  
+
     @Test
     public void testNuevaTareaUsuario() {
         // GIVEN
@@ -65,6 +78,27 @@ public class TareaServiceTest {
         Usuario usuario = usuarioService.findByEmail("user@ua");
         assertThat(usuario.getTareas()).hasSize(3);
         assertThat(usuario.getTareas()).contains(tarea);
+    }
+
+    @Test
+    public void testNuevaTareaConFecha() throws ParseException {
+        // GIVEN
+        // Un usuario en la BD
+        Long usuarioId = addUsuarioTareasBD().usuarioId;
+
+        // WHEN
+        // creamos una nueva tarea asociada al usuario
+        TareaData tareaDTO = crearTareaDTOExample();
+        Tarea tarea = tareaService.nuevaTareaUsuario(usuarioId, tareaDTO);
+
+        // THEN
+        // al recuperar el usuario usando el método findByEmail la tarea creada
+        // está en la lista de tareas del usuario.
+        Usuario usuario = usuarioService.findByEmail("user@ua");
+        assertThat(usuario.getTareas()).hasSize(3);
+        assertThat(usuario.getTareas()).contains(tarea);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        assertThat(tarea.getFechaLimite()).isEqualTo(sdf.parse("1997-02-20"));
     }
 
     @Test

@@ -1,5 +1,6 @@
 package madstodolist.service;
 
+import madstodolist.controller.TareaData;
 import madstodolist.model.Tarea;
 import madstodolist.model.TareaRepository;
 import madstodolist.model.Usuario;
@@ -32,6 +33,20 @@ public class TareaService {
             throw new TareaServiceException("Usuario " + idUsuario + " no existe al crear tarea " + tituloTarea);
         }
         Tarea tarea = new Tarea(usuario, tituloTarea);
+        tareaRepository.save(tarea);
+        return tarea;
+    }
+
+    @Transactional
+    public Tarea nuevaTareaUsuario(Long idUsuario, TareaData tareaDTO) {
+        logger.debug("Añadiendo tarea " + tareaDTO.getTitulo() + " al usuario " + idUsuario);
+        Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
+        if (usuario == null) {
+            throw new TareaServiceException("Usuario " + idUsuario + " no existe al crear tarea " + tareaDTO.getTitulo());
+        }
+        
+        Tarea tarea = new Tarea(usuario, tareaDTO.getTitulo());
+        tarea.setFechaLimite(tareaDTO.getFechaLimite());
         tareaRepository.save(tarea);
         return tarea;
     }
