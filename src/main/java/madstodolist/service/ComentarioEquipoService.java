@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ComentarioEquipoService {
@@ -23,6 +24,11 @@ public class ComentarioEquipoService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+
+    @Transactional(readOnly = true)
+    public ComentarioEquipo recuperarComentario (Long id){
+        return comentarioEquipoRepository.findById(id).orElse(null);
+    }
 
     @Transactional
     public ComentarioEquipo crearComentario(String nombre, Long usuarioId, Long equipoId) {
@@ -40,6 +46,9 @@ public class ComentarioEquipoService {
     public void eliminarComentario(Long comentarioId){
         ComentarioEquipo c = comentarioEquipoRepository.findById(comentarioId).orElse(null);
         if(c == null) throw new ComentarioEquipoServiceException("No existe el comentario");
+        Set<ComentarioEquipo> listaComentarios = c.getEquipo().getComentariosEquipo();
+        listaComentarios.remove(c);
+        equipoRepository.save(c.getEquipo());
         comentarioEquipoRepository.delete(c);
     }
 }

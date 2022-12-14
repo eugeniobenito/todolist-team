@@ -28,7 +28,7 @@ public class Equipo {
     private Usuario admin;
 
 
-    @OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "equipo", fetch = FetchType.EAGER)
     Set<ComentarioEquipo> comentariosEquipo = new HashSet<>();
 
     public void setAdmin(Usuario admin) { this.admin = admin; }
