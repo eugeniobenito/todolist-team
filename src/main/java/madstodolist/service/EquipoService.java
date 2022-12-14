@@ -114,4 +114,9 @@ public class EquipoService {
         if(e == null) throw new EquipoServiceException("No existe el equipo con id " + equipoId);
         equipoRepository.delete(e);
     }
+
+    @Transactional(readOnly = true)
+    public Boolean usuarioPerteneceEquipo(Equipo e, Usuario u){
+        return e.getUsuarios().contains(u);
+    }
 }
