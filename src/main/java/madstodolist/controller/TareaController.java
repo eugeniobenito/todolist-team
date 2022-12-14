@@ -88,6 +88,7 @@ public class TareaController {
         model.addAttribute("tarea", tarea);
         model.addAttribute("usuario", tarea.getUsuario());
         tareaData.setTitulo(tarea.getTitulo());
+        tareaData.setFechaLimite(tarea.getFechaLimite());
         return "formEditarTarea";
     }
 
