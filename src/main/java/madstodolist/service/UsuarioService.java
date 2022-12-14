@@ -90,5 +90,19 @@ public class UsuarioService {
 
     @Transactional(readOnly = true)
     public boolean existsAnyAdmin() { return (usuarioRepository.findByIsAdmin(true) != null && usuarioRepository.findByIsAdmin(true).size() > 0); }
+    @Transactional
+    public Usuario editar(Usuario usuario) {
+        Optional<Usuario> usuarioBD = usuarioRepository.findByEmail(usuario.getEmail());
+        if (usuarioBD.isPresent())
+            if (usuario.getPassword() == null){
+                throw new UsuarioServiceException("El usuario no tiene password");
+            } else if (usuario.getNombre() == null) {
+                throw new UsuarioServiceException("El usuario no tiene nombre");
+            }
+            else{
+                return usuarioRepository.save(usuario);
+            }
+        else throw new UsuarioServiceException("El usuario no existe en la base de datos");
+    }
 
 }
