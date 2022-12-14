@@ -98,4 +98,47 @@ public class ComentariosEquipoWebTest {
     }
 
 
+    @Test
+    @Transactional
+    public void crearComentarioController() throws Exception{
+        Usuario u = crearUsuario("a@a", false);
+        Equipo e = crearEquipo(u);
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(u.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        Assertions.assertThat(e.getComentariosEquipo().size()).isEqualTo(0);
+        MockHttpServletResponse response = this.mockMvc.perform(post("/equipos/" + e.getId().toString() + "/comentarios").param("comentario", "prueba")).andReturn().getResponse();
+        Assertions.assertThat(e.getComentariosEquipo().size()).isEqualTo(1);
+    }
+
+    @Test
+    @Transactional
+    public void crearComentarioControllerExceptions() throws Exception {
+        MockHttpServletResponse response = this.mockMvc.perform(post("/equipos/200/comentarios")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(404);
+
+        Usuario u = crearUsuario("a@a", false);
+        Usuario u2 = crearUsuario("a@aa", false);
+        Equipo e = crearEquipo(u);
+        ComentarioEquipo c = comentarioEquipoService.crearComentario("prueba", u.getId(), e.getId());
+
+        // nadie logeado
+        response = this.mockMvc.perform(post("/equipos/" + e.getId().toString() + "/comentarios")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(401);
+
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(u2.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        // logeado uno que no está unido al grupo
+        response = this.mockMvc.perform(post("/equipos/" + e.getId().toString() + "/comentarios")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(404);
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(u.getId());
+
+        response = this.mockMvc.perform(delete("/equipos/" + e.getId().toString() + "/comentarios/200")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(404);
+    }
+
 }

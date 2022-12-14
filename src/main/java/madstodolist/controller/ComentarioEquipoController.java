@@ -73,4 +73,21 @@ public class ComentarioEquipoController {
         comentarioEquipoService.eliminarComentario(commentId);
         return "";
     }
+
+    @PostMapping("/equipos/{id}/comentarios")
+    public String nuevoComentario(@PathVariable(value="id") Long idEquipo,
+                                  @ModelAttribute ComentarioEquipoData comentarioData,
+                              Model model, RedirectAttributes flash,
+                              HttpSession session) {
+
+        Equipo equipo = equipoService.recuperarEquipo(idEquipo);
+        if(equipo == null)
+            throw new EquipoNotFoundException();
+        userJoinedTeam(equipo);
+
+        if(comentarioData.getComentario() == "") throw new FormErrorException();
+        Long idUser = managerUserSession.usuarioLogeado();
+        ComentarioEquipo comentario = comentarioEquipoService.crearComentario(comentarioData.getComentario(), idUser, idEquipo);
+        return "redirect:/equipos/" + idEquipo;
+    }
 }
