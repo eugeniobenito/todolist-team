@@ -4,8 +4,10 @@ import madstodolist.controller.TareaData;
 import madstodolist.model.Tarea;
 import madstodolist.model.Usuario;
 import madstodolist.service.TareaService;
+import madstodolist.service.TareaServiceException;
 import madstodolist.service.UsuarioService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -56,7 +58,7 @@ public class TareaServiceTest {
         tareaDTO.setTitulo("MADS");
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        tareaDTO.setFechaLimite(sdf.parse("1997-02-20"));
+        tareaDTO.setFechaLimite(sdf.parse("2023-02-20"));
         return tareaDTO;
     }  
 
@@ -98,7 +100,26 @@ public class TareaServiceTest {
         assertThat(usuario.getTareas()).hasSize(3);
         assertThat(usuario.getTareas()).contains(tarea);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        assertThat(tarea.getFechaLimite()).isEqualTo(sdf.parse("1997-02-20"));
+        assertThat(tarea.getFechaLimite()).isEqualTo(sdf.parse("2023-02-20"));
+    }
+
+    @Test
+    public void testNuevaTareaConFechaPasadaException() throws ParseException {
+        // GIVEN
+        // Un usuario en la BD
+        Long usuarioId = addUsuarioTareasBD().usuarioId;
+
+        // WHEN
+        // creamos una nueva tarea asociada al usuario y la fecha de tarea es del pasado
+        TareaData tareaDTO = crearTareaDTOExample();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        tareaDTO.setFechaLimite(sdf.parse("1997-02-20"));
+
+        // THEN
+        // intentamos añadirla, se produce una excepción de tipo TareaServiceException
+        Assertions.assertThrows(TareaServiceException.class, () -> {
+            tareaService.nuevaTareaUsuario(usuarioId, tareaDTO);
+        });
     }
 
     @Test

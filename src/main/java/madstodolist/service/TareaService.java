@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -44,7 +45,11 @@ public class TareaService {
         if (usuario == null) {
             throw new TareaServiceException("Usuario " + idUsuario + " no existe al crear tarea " + tareaDTO.getTitulo());
         }
-        
+
+        if (tareaDTO.getFechaLimite().before(new Date())) {
+            throw new TareaServiceException("No puedes crear una tarea con fecha límite en pasado");            
+        }
+
         Tarea tarea = new Tarea(usuario, tareaDTO.getTitulo());
         tarea.setFechaLimite(tareaDTO.getFechaLimite());
         tareaRepository.save(tarea);
