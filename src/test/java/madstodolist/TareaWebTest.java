@@ -104,7 +104,8 @@ public class TareaWebTest {
         this.mockMvc.perform(get(urlPeticion))
                 .andExpect((content().string(allOf(
                         containsString("form method=\"post\""),
-                        containsString(urlAction)
+                        containsString(urlAction),
+                        containsString("Fecha límite")
                 ))));
     }
 

@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Controller
@@ -49,12 +52,12 @@ public class TareaController {
     @PostMapping("/usuarios/{id}/tareas/nueva")
     public String nuevaTarea(@PathVariable(value="id") Long idUsuario, @ModelAttribute TareaData tareaData,
                              Model model, RedirectAttributes flash,
-                             HttpSession session) {
+                             HttpSession session) throws ParseException {
 
         comprobarUsuarioLogeado(idUsuario);
 
         Usuario usuario = usuarioService.findById(idUsuario);
-        tareaService.nuevaTareaUsuario(idUsuario, tareaData.getTitulo());
+        tareaService.nuevaTareaUsuario(idUsuario, tareaData);
         flash.addFlashAttribute("mensaje", "Tarea creada correctamente");
         return "redirect:/usuarios/" + idUsuario + "/tareas";
      }

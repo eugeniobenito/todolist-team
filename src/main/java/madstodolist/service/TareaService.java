@@ -46,7 +46,7 @@ public class TareaService {
             throw new TareaServiceException("Usuario " + idUsuario + " no existe al crear tarea " + tareaDTO.getTitulo());
         }
 
-        if (tareaDTO.getFechaLimite().before(new Date())) {
+        if (tareaDTO.getFechaLimite() != null && tareaDTO.getFechaLimite().before(new Date())) {
             throw new TareaServiceException("No puedes crear una tarea con fecha límite en pasado");            
         }
 

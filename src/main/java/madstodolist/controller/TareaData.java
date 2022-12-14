@@ -2,8 +2,12 @@ package madstodolist.controller;
 
 import java.util.Date;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 public class TareaData {
     private String titulo;
+
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     private Date fechaLimite;
 
     public String getTitulo() {
