@@ -142,7 +142,7 @@ public class TareaServiceTest {
     }
 
     @Test
-    public void testModificarTarea() {
+    public void testModificarTarea() throws ParseException {
         // GIVEN
         // Un usuario y una tarea en la BD
 
@@ -152,14 +152,17 @@ public class TareaServiceTest {
 
         // WHEN
         // modificamos la tarea correspondiente a ese identificador,
-
-        tareaService.modificaTarea(tareaId, "Limpiar los cristales del coche");
+        TareaData tareaDTO = crearTareaDTOExample();
+        tareaService.modificaTarea(tareaId, tareaDTO);
 
         // THEN
         // al buscar por el identificador en la base de datos se devuelve la tarea modificada
 
         Tarea tareaBD = tareaService.findById(tareaId);
-        assertThat(tareaBD.getTitulo()).isEqualTo("Limpiar los cristales del coche");
+        assertThat(tareaBD.getTitulo()).isEqualTo("MADS");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        assertThat(tareaBD.getFechaLimite()).isEqualTo(sdf.parse("2023-02-20"));
+
 
         // y el usuario tiene también esa tarea modificada.
         Usuario usuarioBD = usuarioService.findById(usuarioId);
