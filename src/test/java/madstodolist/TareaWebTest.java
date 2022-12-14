@@ -127,6 +127,7 @@ public class TareaWebTest {
         String urlRedirect = "/usuarios/" + usuarioId.toString() + "/tareas";
 
         this.mockMvc.perform(post(urlPost)
+                        .param("fechaLimite", "01-01-2025")
                         .param("titulo", "Estudiar examen MADS"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(urlRedirect));
@@ -135,7 +136,10 @@ public class TareaWebTest {
         // GET el HTML contiene la tarea añadida.
 
         this.mockMvc.perform(get(urlRedirect))
-                .andExpect((content().string(containsString("Estudiar examen MADS"))));
+        .andExpect((content().string(allOf(
+                        containsString("Estudiar examen MADS"),
+                        containsString("2025-01-01")
+                ))));
     }
 
     @Test
