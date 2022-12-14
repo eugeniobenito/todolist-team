@@ -141,4 +141,73 @@ public class ComentariosEquipoWebTest {
         Assertions.assertThat(response.getStatus()).isEqualTo(404);
     }
 
+    @Test
+    public void crearComentarioForumlarioShow() throws Exception {
+
+        Usuario u = crearUsuario("a@a", false);
+
+        Usuario u2 = crearUsuario("a2@a", false);
+        Equipo e = crearEquipo(u);
+
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(u.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+
+        this.mockMvc.perform(get("/equipos/" + e.getId().toString()))
+                .andExpect(content().string(containsString("Enviar comentario")));
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(u2.getId());
+
+        this.mockMvc.perform(get("/equipos/" + e.getId().toString()))
+                .andExpect(content().string(not(containsString("Enviar comentario"))));
+    }
+
+    @Test
+    public void eliminarComentarioShow() throws Exception {
+
+        Usuario u = crearUsuario("a@a", false);
+
+        Usuario u2 = crearUsuario("a2@a", false);
+        Equipo e = crearEquipo(u);
+        equipoService.addUsuarioEquipo(u2.getId(), e.getId());
+        comentarioEquipoService.crearComentario("aa", u.getId(), e.getId());
+
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(u.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+
+        this.mockMvc.perform(get("/equipos/" + e.getId().toString()))
+                .andExpect(content().string(containsString("Eliminar comentario")));
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(u2.getId());
+
+        this.mockMvc.perform(get("/equipos/" + e.getId().toString()))
+                .andExpect(content().string(not(containsString("Eliminar comentario"))));
+    }
+
+    @Test
+    public void showAllComentarios() throws Exception {
+
+        Usuario u = crearUsuario("a@a", false);
+
+        Usuario u2 = crearUsuario("a2@a", false);
+        Equipo e = crearEquipo(u);
+        equipoService.addUsuarioEquipo(u2.getId(), e.getId());
+
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(u.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+
+        this.mockMvc.perform(get("/equipos/" + e.getId().toString()))
+                .andExpect(content().string(containsString("No existen comentarios en el equipo actualmente")));
+
+        comentarioEquipoService.crearComentario("El mejor comentario de la historia", u.getId(), e.getId());
+
+        this.mockMvc.perform(get("/equipos/" + e.getId().toString()))
+                .andExpect(content().string((containsString("El mejor comentario de la historia"))));
+    }
+
 }

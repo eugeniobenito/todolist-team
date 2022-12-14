@@ -91,7 +91,9 @@ public class EquipoController {
     }
 
     @GetMapping("/equipos/{id}")
-    public String detallesEquipo(@PathVariable(value="id") Long idEquipo, Model model){
+    public String detallesEquipo(@PathVariable(value="id") Long idEquipo,
+                                 @ModelAttribute ComentarioEquipoData comentarioEquipoData,
+                                 Model model){
         isAnyUserLogged();
         Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
 
