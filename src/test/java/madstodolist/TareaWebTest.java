@@ -191,6 +191,7 @@ public class TareaWebTest {
         String urlRedirect = "/usuarios/" + usuarioId + "/tareas";
 
         this.mockMvc.perform(post(urlEditar)
+                        .param("fechaLimite", "01-01-2025")
                         .param("titulo", "Limpiar cristales coche"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(urlRedirect));
