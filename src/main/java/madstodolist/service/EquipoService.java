@@ -41,6 +41,16 @@ public class EquipoService {
         return e;
     }
 
+    @Transactional
+    public Equipo crearEquipo(String nombre, String descripcion, Usuario admin){
+        if(nombre == "") throw new EquipoServiceException("El nombre del equipo no puede estar vacio");
+        Equipo e = new Equipo(nombre);
+        e.setDescripcion(descripcion);
+        e.setAdmin(admin);
+        equipoRepository.save(e);
+        return e;
+    }
+
     @Transactional(readOnly = true)
     public Equipo recuperarEquipo(Long id) {
 
@@ -103,5 +113,10 @@ public class EquipoService {
         Equipo e = equipoRepository.findById(equipoId).orElse(null);
         if(e == null) throw new EquipoServiceException("No existe el equipo con id " + equipoId);
         equipoRepository.delete(e);
+    }
+
+    @Transactional(readOnly = true)
+    public Boolean usuarioPerteneceEquipo(Equipo e, Usuario u){
+        return e.getUsuarios().contains(u);
     }
 }

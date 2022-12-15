@@ -11,6 +11,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.Iterator;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -241,5 +242,39 @@ public class UsuarioServiceTest {
 
         usuario = usuarioService.findById(idUser);
         assertThat(usuario.getBlocked()).isEqualTo(false);
+    }
+
+    @Test
+    public void servicioEditarUsuario() {
+        Usuario usuario = new Usuario("usuario.prueba2@gmail.com");
+        usuario.setNombre("Alvaro");
+        usuario.setFechaNacimiento(new Date(1999,02,27));
+        usuario.setPassword("12345678");
+        usuarioService.registrar(usuario);
+        Usuario usuarioBaseDatos = usuarioService.findByEmail("usuario.prueba2@gmail.com");
+        assertThat(usuarioBaseDatos).isNotNull();
+        assertThat(usuarioBaseDatos.getPassword()).isEqualTo(usuario.getPassword());
+        usuario.setPassword("123");
+        usuarioService.editar(usuario);
+        usuarioBaseDatos = usuarioService.findByEmail("usuario.prueba2@gmail.com");
+        assertThat(usuarioBaseDatos.getPassword()).isEqualTo(usuario.getPassword());
+    }
+
+    @Test
+    public void servicioEditarUsuario2() {
+        Usuario usuario = new Usuario("usuario.prueba2@gmail.com");
+        usuario.setNombre("Alvaro");
+        usuario.setFechaNacimiento(new Date(1999,02,27));
+        usuario.setPassword("12345678");
+        usuarioService.registrar(usuario);
+        Usuario usuarioBaseDatos = usuarioService.findByEmail("usuario.prueba2@gmail.com");
+        assertThat(usuarioBaseDatos).isNotNull();
+        assertThat(usuarioBaseDatos.getPassword()).isEqualTo(usuario.getPassword());
+        usuario.setPassword("123");
+        usuario.setNombre("Alberto");
+        usuarioService.editar(usuario);
+        usuarioBaseDatos = usuarioService.findByEmail("usuario.prueba2@gmail.com");
+        assertThat(usuarioBaseDatos.getPassword()).isEqualTo(usuario.getPassword());
+        assertThat(usuarioBaseDatos.getNombre()).isEqualTo(usuario.getNombre());
     }
 }

@@ -11,8 +11,18 @@
 
 
     <div class="col-6">
+        <td th:if="${usuario == equipo.admin}">
+            <button class="btn btn-danger btn-xs" onmouseover="" style="cursor: pointer;"
+                    th:onclick="'del(\'/equipos/' + ${equipo.id} + '\')'">Eliminar equipo</button>
+
+            <a class="btn btn-warning btn-xs"
+               th:href="@{/equipos/{equipoId}/editar(equipoId=${equipo.id})}">Editar</a>
+        </td>
         <div>
             <b>Id: </b> <th:block th:text="${equipo.id}" />
+        </div>
+        <div>
+            <b>Administrador: </b> <th:block th:if="${equipo.admin != null}" th:text="${equipo.admin.getNombre()}" />
         </div>
         <div>
             <b>Nombre: </b> <th:block th:text="${equipo.nombre}" />
@@ -49,13 +59,50 @@
                     <td th:text="${usuarioEquipo.id}"></td>
                     <td th:text="${usuarioEquipo.nombre}"></td>
                     <td th:text="${usuarioEquipo.email}"></td>
-                    <td th:if="${usuario.isAdmin}">
+                    <td th:if="${(usuario.isAdmin || usuario == equipo.admin) && usuarioEquipo != usuario}">
                         <button class="btn btn-danger btn-xs" onmouseover="" style="cursor: pointer;"
                                 th:onclick="'del(\'/equipos/' + ${equipo.id} + '/usuarios/' + ${usuarioEquipo.id} + '\')'">Eliminar del equipo</button>
                     </td>
                 </tr>
                 </tbody>
             </table>
+
+            <div id="comentarios">
+                <br \>
+                <br \>
+
+                <span><b>Comentarios</b></span>
+                <div class="container" id="form">
+                    Añadir un nuevo comentario <br \>
+                    <th:block th:if="${equipo.comentariosEquipo.contains(usuario) || usuario == equipo.admin || usuario.isAdmin}">
+                        <form method="post"  th:action="@{/equipos/{equipoId}/comentarios(equipoId=${equipo.id})}" th:object="${comentarioEquipoData}">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="nombre">Comentario:</label>
+                                    <input class="form-control" id="nombre" name="nombre" required th:field="*{comentario}" type="text"/>
+                                </div>
+                                <button class="btn btn-success" type="submit">Enviar comentario</button>
+                            </div>
+                        </form>
+                    </th:block>
+                </div>
+            </div>
+            Comentarios del proyecto:
+            <th:block th:if="${equipo.comentariosEquipo == null || equipo.comentariosEquipo.size() == 0} " >No existen comentarios en el equipo actualmente</th:block>
+            <div class="card" th:each="comentario: ${equipo.comentariosEquipo}" style="margin-top:10px">
+                <div class="card-header">
+                    <th:block th:text="${comentario.usuario.nombre}" /> - <th:block th:if="${comentario.usuario == equipo.admin}" th:text="ADMIN" /> dijo...
+                    <button th:if="${usuario == equipo.admin}" class="btn btn-sm btn-danger btn-xs float-right" onmouseover="" style="cursor: pointer;"
+                            th:onclick="'del(\'/equipos/' + ${equipo.id} + '/comentarios/' + ${comentario.id} + '\')'">Eliminar comentario</button>
+                </div>
+                <div class="card-body">
+                    <blockquote class="blockquote mb-0">
+                        <p><th:block th:text="${comentario.comentario}" /></p>
+                        <footer class="blockquote-footer">El <th:block th:text="${comentario.fecha}" /></footer>
+                    </blockquote>
+                </div>
+            </div>
+
         </div>
 
     </div>
@@ -67,7 +114,7 @@
         if (confirm('¿Estás seguro/a?')) {
             fetch(urlBorrar, {
                 method: 'DELETE'
-            }).then((res) => location.reload());
+            }).then((res) => location.href = '/equipos');
         }
     }
 </script>

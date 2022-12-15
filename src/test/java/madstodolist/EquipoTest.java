@@ -185,4 +185,12 @@ public class EquipoTest {
         equipo.setNombre("adios");
         assertThat(equipo.getNombre()).isEqualTo("adios");
     }
+
+    @Test
+    public void getAdmin() {
+        Equipo equipo = new Equipo("prueba");
+        Usuario usuario = new Usuario("user@ua");
+        equipo.setAdmin(usuario);
+        assertThat(usuario).isEqualTo(equipo.getAdmin());
+    }
 }

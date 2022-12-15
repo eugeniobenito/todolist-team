@@ -1,6 +1,7 @@
 package madstodolist.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -21,6 +22,20 @@ public class Equipo {
         this.nombre = nombre;
         this.descripcion = null;
     }
+
+    @ManyToOne
+    @JoinColumn(name = "admin_id")
+    private Usuario admin;
+
+
+    @OneToMany(mappedBy = "equipo", fetch = FetchType.EAGER)
+    Set<ComentarioEquipo> comentariosEquipo = new HashSet<>();
+
+    public void setAdmin(Usuario admin) { this.admin = admin; }
+
+    public Set<ComentarioEquipo> getComentariosEquipo() { return this.comentariosEquipo; }
+
+    public Usuario getAdmin(){ return this.admin; }
 
     public Equipo(){}
 
