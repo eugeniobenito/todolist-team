@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpSession;
 import java.lang.ref.ReferenceQueue;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 public class EquipoController {
@@ -203,6 +204,17 @@ public class EquipoController {
         model.addAttribute("equipo", equipo);
         model.addAttribute("usuario", usuario);
         return "formEditarEquipo";
+    }
+
+    @GetMapping("/mis-equipos")
+    public String listadoMisEquipos(Model model, HttpSession session) {
+        isAnyUserLogged();
+        Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
+        Usuario usuario = usuarioService.findById(idUsuarioLogeado);
+        Set<Equipo> equipos = usuario.getEquipos();
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("equipos", equipos);
+        return "misEquipos";
     }
 
 }

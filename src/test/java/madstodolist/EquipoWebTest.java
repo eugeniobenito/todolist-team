@@ -540,4 +540,39 @@ public class EquipoWebTest {
         this.mockMvc.perform(get("/equipos/" + equipo.getId().toString()))
                 .andExpect(content().string(allOf(not(containsString("Eliminar del equipo")))));
     }
+
+    @Test
+    public void getMisEquipos() throws Exception{
+
+        Equipo e1 = equipoService.crearEquipo("PruebaEquipo1");
+        Equipo e2 = equipoService.crearEquipo("PruebaEquipo2");
+
+
+        Usuario usuario = createUser();
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        this.mockMvc.perform(post("/equipos/" + e1.getId().toString() + "/usuarios/" + usuario.getId().toString()));
+
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(content().string
+                        (allOf(containsString("Abandonar"))));
+
+        this.mockMvc.perform(get("/mis-equipos"))
+                .andExpect(content().string
+                        (allOf(containsString("PruebaEquipo1"))));
+
+        this.mockMvc.perform(post("/equipos/" + e2.getId().toString() + "/usuarios/" + usuario.getId().toString()));
+
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(content().string
+                        (allOf(containsString("PruebaEquipo1"),
+                                containsString("PruebaEquipo2"))));
+
+        this.mockMvc.perform(delete("/equipos/" + e1.getId().toString() + "/usuarios/" + usuario.getId()));
+        this.mockMvc.perform(get("/mis-equipos"))
+                .andExpect(content().string
+                        (allOf(containsString("PruebaEquipo2"))));
+    }
+
 }
