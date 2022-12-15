@@ -1,6 +1,7 @@
 package madstodolist;
 
 
+import madstodolist.model.Status;
 import madstodolist.model.Tarea;
 import madstodolist.model.TareaRepository;
 import madstodolist.model.Usuario;
@@ -85,6 +86,21 @@ public class TareaTest {
         // la fecha es la que se ha asignado y no null
         // assertThat(tarea.getFechaLimite()).isNotNull();
         assertThat(tarea.getFechaLimite()).isEqualTo(sdf.parse("1997-02-20"));
+    }
+
+    @Test
+    public void crearTareaConStatusAToDo() {
+        // GIVEN
+        // Un usuario nuevo creado en memoria, sin conexión con la BD
+        Usuario usuario = new Usuario("juan.gutierrez@gmail.com");
+
+        // WHEN
+        // se crea una nueva tarea con ese usuario
+        Tarea tarea = new Tarea(usuario, "Práctica 1 de MADS");
+
+        // THEN
+        // el estado es 'ToDo' por defecto cuando se crea una tarea nueva
+        assertThat(tarea.getStatus()).isEqualTo(Status.TODO);
     }
 
     @Test

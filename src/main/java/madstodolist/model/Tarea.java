@@ -20,6 +20,9 @@ public class Tarea implements Serializable {
     @Column(name = "fecha_limite")
     @Temporal(TemporalType.DATE)
     private Date fechaLimite;
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
 
     @NotNull
     // Relación muchos-a-uno entre tareas y usuario
@@ -40,6 +43,7 @@ public class Tarea implements Serializable {
         this.usuario = usuario;
         this.titulo = titulo;
         this.fechaLimite = null;
+        this.status = Status.TODO;
         usuario.getTareas().add(this);
     }
 
@@ -73,6 +77,10 @@ public class Tarea implements Serializable {
 
     public void setFechaLimite(Date fechaLimite) {
         this.fechaLimite = fechaLimite;
+    }
+
+    public Status getStatus() {
+        return this.status;
     }
 
 
