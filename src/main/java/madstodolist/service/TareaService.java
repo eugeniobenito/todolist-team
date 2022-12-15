@@ -1,5 +1,6 @@
 package madstodolist.service;
 
+import madstodolist.controller.TareaData;
 import madstodolist.model.Tarea;
 import madstodolist.model.TareaRepository;
 import madstodolist.model.Usuario;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -32,6 +34,24 @@ public class TareaService {
             throw new TareaServiceException("Usuario " + idUsuario + " no existe al crear tarea " + tituloTarea);
         }
         Tarea tarea = new Tarea(usuario, tituloTarea);
+        tareaRepository.save(tarea);
+        return tarea;
+    }
+
+    @Transactional
+    public Tarea nuevaTareaUsuario(Long idUsuario, TareaData tareaDTO) {
+        logger.debug("Añadiendo tarea " + tareaDTO.getTitulo() + " al usuario " + idUsuario);
+        Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
+        if (usuario == null) {
+            throw new TareaServiceException("Usuario " + idUsuario + " no existe al crear tarea " + tareaDTO.getTitulo());
+        }
+
+        if (tareaDTO.getFechaLimite() != null && tareaDTO.getFechaLimite().before(new Date())) {
+            throw new TareaServiceException("No puedes crear una tarea con fecha límite en pasado");            
+        }
+
+        Tarea tarea = new Tarea(usuario, tareaDTO.getTitulo());
+        tarea.setFechaLimite(tareaDTO.getFechaLimite());
         tareaRepository.save(tarea);
         return tarea;
     }
@@ -62,6 +82,23 @@ public class TareaService {
             throw new TareaServiceException("No existe tarea con id " + idTarea);
         }
         tarea.setTitulo(nuevoTitulo);
+        tareaRepository.save(tarea);
+        return tarea;
+    }
+
+    @Transactional
+    public Tarea modificaTarea(Long idTarea, TareaData tareaDTO) {
+        logger.debug("Modificando tarea " + idTarea + " - " + tareaDTO.getTitulo());
+        Tarea tarea = tareaRepository.findById(idTarea).orElse(null);
+        if (tarea == null) {
+            throw new TareaServiceException("No existe tarea con id " + idTarea);
+        }
+
+        if (tareaDTO.getFechaLimite() != null && tareaDTO.getFechaLimite().before(new Date())) {
+            throw new TareaServiceException("No puedes crear una tarea con fecha límite en pasado");            
+        }
+        tarea.setTitulo(tareaDTO.getTitulo());
+        tarea.setFechaLimite(tareaDTO.getFechaLimite());
         tareaRepository.save(tarea);
         return tarea;
     }

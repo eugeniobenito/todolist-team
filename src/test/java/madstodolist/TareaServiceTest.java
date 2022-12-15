@@ -1,16 +1,22 @@
 package madstodolist;
 
+import madstodolist.controller.TareaData;
 import madstodolist.model.Tarea;
 import madstodolist.model.Usuario;
 import madstodolist.service.TareaService;
+import madstodolist.service.TareaServiceException;
 import madstodolist.service.UsuarioService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 // Hemos eliminado todos los @Transactional de los tests
 // y usado un script para limpiar la BD de test después de
@@ -47,6 +53,15 @@ public class TareaServiceTest {
         return new DosIds(usuario.getId(), tarea1.getId());
     }
 
+    TareaData crearTareaDTOExample() throws ParseException {
+        TareaData tareaDTO = new TareaData();
+        tareaDTO.setTitulo("MADS");
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        tareaDTO.setFechaLimite(sdf.parse("2023-02-20"));
+        return tareaDTO;
+    }  
+
     @Test
     public void testNuevaTareaUsuario() {
         // GIVEN
@@ -65,6 +80,46 @@ public class TareaServiceTest {
         Usuario usuario = usuarioService.findByEmail("user@ua");
         assertThat(usuario.getTareas()).hasSize(3);
         assertThat(usuario.getTareas()).contains(tarea);
+    }
+
+    @Test
+    public void testNuevaTareaConFecha() throws ParseException {
+        // GIVEN
+        // Un usuario en la BD
+        Long usuarioId = addUsuarioTareasBD().usuarioId;
+
+        // WHEN
+        // creamos una nueva tarea asociada al usuario
+        TareaData tareaDTO = crearTareaDTOExample();
+        Tarea tarea = tareaService.nuevaTareaUsuario(usuarioId, tareaDTO);
+
+        // THEN
+        // al recuperar el usuario usando el método findByEmail la tarea creada
+        // está en la lista de tareas del usuario.
+        Usuario usuario = usuarioService.findByEmail("user@ua");
+        assertThat(usuario.getTareas()).hasSize(3);
+        assertThat(usuario.getTareas()).contains(tarea);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        assertThat(tarea.getFechaLimite()).isEqualTo(sdf.parse("2023-02-20"));
+    }
+
+    @Test
+    public void testNuevaTareaConFechaPasadaException() throws ParseException {
+        // GIVEN
+        // Un usuario en la BD
+        Long usuarioId = addUsuarioTareasBD().usuarioId;
+
+        // WHEN
+        // creamos una nueva tarea asociada al usuario y la fecha de tarea es del pasado
+        TareaData tareaDTO = crearTareaDTOExample();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        tareaDTO.setFechaLimite(sdf.parse("1997-02-20"));
+
+        // THEN
+        // intentamos añadirla, se produce una excepción de tipo TareaServiceException
+        Assertions.assertThrows(TareaServiceException.class, () -> {
+            tareaService.nuevaTareaUsuario(usuarioId, tareaDTO);
+        });
     }
 
     @Test
@@ -87,7 +142,7 @@ public class TareaServiceTest {
     }
 
     @Test
-    public void testModificarTarea() {
+    public void testModificarTarea() throws ParseException {
         // GIVEN
         // Un usuario y una tarea en la BD
 
@@ -97,14 +152,17 @@ public class TareaServiceTest {
 
         // WHEN
         // modificamos la tarea correspondiente a ese identificador,
-
-        tareaService.modificaTarea(tareaId, "Limpiar los cristales del coche");
+        TareaData tareaDTO = crearTareaDTOExample();
+        tareaService.modificaTarea(tareaId, tareaDTO);
 
         // THEN
         // al buscar por el identificador en la base de datos se devuelve la tarea modificada
 
         Tarea tareaBD = tareaService.findById(tareaId);
-        assertThat(tareaBD.getTitulo()).isEqualTo("Limpiar los cristales del coche");
+        assertThat(tareaBD.getTitulo()).isEqualTo("MADS");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        assertThat(tareaBD.getFechaLimite()).isEqualTo(sdf.parse("2023-02-20"));
+
 
         // y el usuario tiene también esa tarea modificada.
         Usuario usuarioBD = usuarioService.findById(usuarioId);

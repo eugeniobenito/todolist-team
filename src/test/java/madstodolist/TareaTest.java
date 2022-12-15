@@ -12,6 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,6 +50,41 @@ public class TareaTest {
 
         assertThat(tarea.getTitulo()).isEqualTo("Práctica 1 de MADS");
         assertThat(tarea.getUsuario()).isEqualTo(usuario);
+    }
+
+    @Test
+    public void crearTareaConFecha() {
+        // GIVEN
+        // Un usuario nuevo creado en memoria, sin conexión con la BD
+        Usuario usuario = new Usuario("juan.gutierrez@gmail.com");
+
+        // WHEN
+        // se crea una nueva tarea con ese usuario
+        Tarea tarea = new Tarea(usuario, "Práctica 1 de MADS");
+
+        // THEN
+        // la fecha es null
+        assertThat(tarea.getFechaLimite()).isNull();
+    }
+
+    @Test
+    public void crearTareaConFechaNotNull() throws Exception {
+        // GIVEN
+        // Un usuario nuevo creado en memoria, sin conexión con la BD
+        Usuario usuario = new Usuario("juan.gutierrez@gmail.com");
+
+        // WHEN
+        // se crea una nueva tarea con ese usuario
+        Tarea tarea = new Tarea(usuario, "Práctica 1 de MADS");
+
+        // se le asigna una fecha límite
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        tarea.setFechaLimite(sdf.parse("1997-02-20"));        
+
+        // THEN
+        // la fecha es la que se ha asignado y no null
+        // assertThat(tarea.getFechaLimite()).isNotNull();
+        assertThat(tarea.getFechaLimite()).isEqualTo(sdf.parse("1997-02-20"));
     }
 
     @Test
@@ -248,4 +285,50 @@ public class TareaTest {
         Tarea tareaBD = tareaRepository.findById(tareaId).orElse(null);
         assertThat(tareaBD.getTitulo()).isEqualTo(tarea.getTitulo());
     }
+
+    @Test
+    @Transactional
+    public void guardarTareaEnBDConFechaNull() {
+        // GIVEN
+        // Un usuario y una tarea en la base de datos
+        Usuario usuario = new Usuario("user@ua");
+        usuarioRepository.save(usuario);
+        Tarea tarea = new Tarea(usuario, "Práctica 1 de MADS");
+        tareaRepository.save(tarea);
+
+        // WHEN
+        // Recuperamos la tarea
+        Long tareaId = tarea.getId();
+        tarea = tareaRepository.findById(tareaId).orElse(null);
+
+        // THEN
+        // la fecha es null
+        Tarea tareaBD = tareaRepository.findById(tareaId).orElse(null);
+        assertThat(tareaBD.getFechaLimite()).isNull();
+    }
+
+    @Test
+    @Transactional
+    public void guardarTareaEnBDConFechaNotNull() throws ParseException {
+        // GIVEN
+        // Un usuario y una tarea con fecha en la base de datos
+        Usuario usuario = new Usuario("user@ua");
+        usuarioRepository.save(usuario);
+        Tarea tarea = new Tarea(usuario, "Práctica 1 de MADS");
+        // se le asigna una fecha límite
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        tarea.setFechaLimite(sdf.parse("1997-02-20"));        
+        tareaRepository.save(tarea);
+
+        // WHEN
+        // Recuperamos la tarea
+        Long tareaId = tarea.getId();
+        Tarea tareaBD = tareaRepository.findById(tareaId).orElse(null);
+
+        // THEN
+        // la fecha es la que hemos asignado
+        assertThat(tareaBD.getFechaLimite()).isNotNull();
+        assertThat(tareaBD.getFechaLimite()).isEqualTo(sdf.parse("1997-02-20"));
+    }
+
 }
