@@ -4,71 +4,124 @@
 <head th:replace="fragments :: head (titulo='Login')"></head>
 
 <body>
-<div th:insert="navbar :: navbar"></div>
+    <div th:insert="navbar :: navbar"></div>
 
-<div class="container-fluid">
+    <div class="container-fluid">
 
-    <div class="row mt-3">
-        <div class="col">
-            <h2 th:text="'Listado de tareas de ' + ${usuario.nombre}"></h2>
+        <div class="row mt-3">
+            <div class="col">
+                <h2 th:text="'Tareas de ' + ${usuario.nombre}"></h2>
+            </div>
         </div>
-    </div>
 
-    <div class="row mt-3">
-        <div class="col">
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Tarea</th>
-                    <th>Fecha Límite</th>
-                    <th>Acción</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="tarea: ${tareas}">
-                    <td th:text="${tarea.id}"></td>
-                    <td th:text="${tarea.titulo}"></td>
-                    <td th:text="${tarea.fechaLimite}"></td>
-                    <td><a class="btn btn-primary btn-xs" th:href="@{/tareas/{id}/editar(id=${tarea.id})}"/>editar</a>
-                        <button class="btn btn-danger btn-xs" onmouseover="" style="cursor: pointer;"
-                           th:onclick="'del(\'/tareas/' + ${tarea.id} + '\')'">borrar</button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            <p><a class="btn btn-primary" th:href="@{/usuarios/{id}/tareas/nueva(id=${usuario.id})}"> Nueva tarea</a>
-            <a class="btn btn-link" href="/logout">Salir</a></p>
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="calendar-tab" data-toggle="tab" href="#calendar" role="tab"
+                    aria-controls="calendar" aria-selected="true">Calendario</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="list-tab" data-toggle="tab" href="#list" role="tab" aria-controls="list"
+                    aria-selected="false">Lista</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="container-xl tab-pane fade show active" id="calendar" role="tabpanel"
+                aria-labelledby="calendar-tab">
+                <div id="calendario"></div>
+            </div>
+            <div class="container-fluid tab-pane fade" id="list" role="tabpanel" aria-labelledby="list-tab">
+                <div class="row mt-3">
+                    <div class="col">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Tarea</th>
+                                    <th>Fecha Límite</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="tarea: ${tareas}">
+                                    <td th:text="${tarea.id}"></td>
+                                    <td th:text="${tarea.titulo}"></td>
+                                    <td th:text="${tarea.fechaLimite}"></td>
+                                    <td><a class="btn btn-primary btn-xs"
+                                            th:href="@{/tareas/{id}/editar(id=${tarea.id})}" />editar</a>
+                                        <button class="btn btn-danger btn-xs" onmouseover="" style="cursor: pointer;"
+                                            th:onclick="'del(\'/tareas/' + ${tarea.id} + '\')'">borrar</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="row mt-2">
-        <div class="col">
-            <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${!#strings.isEmpty(mensaje)}">
-                <span th:text="${mensaje}"></span>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+
+        <p><a class="btn btn-primary" th:href="@{/usuarios/{id}/tareas/nueva(id=${usuario.id})}"> Nueva
+                tarea</a>
+            <a class="btn btn-link" href="/logout">Salir</a>
+        </p>
+
+        <div class="row mt-2">
+            <div class="col">
+                <div class="alert alert-success alert-dismissible fade show" role="alert"
+                    th:if="${!#strings.isEmpty(mensaje)}">
+                    <span th:text="${mensaje}"></span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
+    <div th:replace="fragments::javascript" />
 
-</div>
+    <!-- Lanzamos una petición DELETE por JavaScript para borrar una tarea -->
 
-<div th:replace="fragments::javascript"/>
-
-<!-- Lanzamos una petición DELETE por JavaScript para borrar una tarea -->
-
-<script type="text/javascript">
-    function del(urlBorrar) {
-        if (confirm('¿Estás seguro/a de que quieres borrar la tarea?')) {
-            fetch(urlBorrar, {
-                method: 'DELETE'
-            }).then((res) => location.reload());
+    <script type="text/javascript">
+        function del(urlBorrar) {
+            if (confirm('¿Estás seguro/a de que quieres borrar la tarea?')) {
+                fetch(urlBorrar, {
+                    method: 'DELETE'
+                }).then((res) => location.reload());
+            }
         }
-    }
-</script>
+    </script>
+
+    <script type="text/javascript" th:inline="javascript">
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendario');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                headerToolbar: {
+                    left: "prev,next today",
+                    center: "title",
+                    right: "dayGridMonth,timeGridWeek,timeGridDay"
+                },
+                height: 800,
+                contentHeight: 780,
+                aspectRatio: 3,
+                initialView: 'dayGridMonth',
+                nowIndicator: true,
+            });
+
+            /*[# th:each="tarea : ${tareas}"]*/
+            console.log("[(${tarea.fechaLimite})]");
+            calendar.addEvent({
+                title: "[(${tarea.titulo})]",
+                start: "[(${tarea.fechaLimite})]",
+            })
+            /*[/]*/
+
+            calendar.updateSize();
+            calendar.render();
+        });
+
+    </script>
 
 </body>
+
 </html>

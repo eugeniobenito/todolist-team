@@ -80,7 +80,9 @@ public class TareaWebTest {
         this.mockMvc.perform(get(url))
                 .andExpect((content().string(allOf(
                         containsString("Lavar coche"),
-                        containsString("Renovar DNI")
+                        containsString("Renovar DNI"),
+                        containsString("Calendario")
+
                 ))));
     }
 
