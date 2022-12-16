@@ -1,6 +1,7 @@
 package madstodolist.service;
 
 import madstodolist.controller.TareaData;
+import madstodolist.model.Status;
 import madstodolist.model.Tarea;
 import madstodolist.model.TareaRepository;
 import madstodolist.model.Usuario;
@@ -97,10 +98,22 @@ public class TareaService {
         if (tareaDTO.getFechaLimite() != null && tareaDTO.getFechaLimite().before(new Date())) {
             throw new TareaServiceException("No puedes crear una tarea con fecha límite en pasado");            
         }
+
         tarea.setTitulo(tareaDTO.getTitulo());
         tarea.setFechaLimite(tareaDTO.getFechaLimite());
         tareaRepository.save(tarea);
         return tarea;
+    }
+
+    @Transactional
+    public void changeStatus(Long idTarea, Status status) {
+        logger.debug("Modificando tarea " + idTarea);
+        Tarea tarea = tareaRepository.findById(idTarea).orElse(null);
+        if (tarea == null) {
+            throw new TareaServiceException("No existe tarea con id " + idTarea);
+        }
+        tarea.changeStatus(status);
+        tareaRepository.save(tarea);
     }
 
     @Transactional

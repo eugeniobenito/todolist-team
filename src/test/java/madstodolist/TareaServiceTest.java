@@ -1,6 +1,7 @@
 package madstodolist;
 
 import madstodolist.controller.TareaData;
+import madstodolist.model.Status;
 import madstodolist.model.Tarea;
 import madstodolist.model.Usuario;
 import madstodolist.service.TareaService;
@@ -163,6 +164,28 @@ public class TareaServiceTest {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         assertThat(tareaBD.getFechaLimite()).isEqualTo(sdf.parse("2023-02-20"));
 
+
+        // y el usuario tiene también esa tarea modificada.
+        Usuario usuarioBD = usuarioService.findById(usuarioId);
+        usuarioBD.getTareas().contains(tareaBD);
+    }
+
+    @Test
+    public void testCambiarStatusTarea() {
+        // GIVEN
+        // Un usuario y una tarea en la BD
+        DosIds dosIds = addUsuarioTareasBD();
+        Long usuarioId = dosIds.usuarioId;
+        Long tareaId = dosIds.tareaId;
+
+        // WHEN
+        // cambiamos el status de la tarea correspondiente a ese identificador
+        tareaService.changeStatus(tareaId, Status.IN_PROGRESS);
+
+        // THEN
+        // al buscar por el identificador en la base de datos se devuelve la tarea modificada
+        Tarea tareaBD = tareaService.findById(tareaId);
+        assertThat(tareaBD.getStatus()).isEqualTo(Status.IN_PROGRESS);
 
         // y el usuario tiene también esa tarea modificada.
         Usuario usuarioBD = usuarioService.findById(usuarioId);
