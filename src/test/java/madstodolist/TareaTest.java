@@ -119,6 +119,25 @@ public class TareaTest {
     }
 
     @Test
+    public void cambiarStatusTareaADoneMarcaFechaLimiteANull() throws ParseException {
+        // GIVEN
+        // Un usuario nuevo creado y una tarea asignada
+        Usuario usuario = new Usuario("juan.gutierrez@gmail.com");
+        Tarea tarea = new Tarea(usuario, "Práctica 1 de MADS");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        tarea.setFechaLimite(sdf.parse("2030-02-20"));
+
+        // WHEN
+        // se cambia el estado a 'Done'
+        tarea.changeStatus(Status.DONE);
+
+        // THEN
+        // el estado es 'Done' y automáticamente se settea la fecha límite a null
+        assertThat(tarea.getStatus()).isEqualTo(Status.DONE);
+        assertThat(tarea.getFechaLimite()).isNull();
+    }
+
+    @Test
     public void laListaDeTareasDeUnUsuarioSeActualizaEnMemoriaConUnaNuevaTarea() {
         // GIVEN
         // Un usuario nuevo creado en memoria, sin conexión con la BD,
@@ -362,4 +381,30 @@ public class TareaTest {
         assertThat(tareaBD.getFechaLimite()).isEqualTo(sdf.parse("1997-02-20"));
     }
 
+    @Test
+    public void guardarStatusTareaADoneMarcaFechaLimiteANull() throws ParseException {
+        // GIVEN
+        // Un usuario y una tarea en la base de datos
+        Usuario usuario = new Usuario("user@ua");
+        usuarioRepository.save(usuario);
+        Tarea tarea = new Tarea(usuario, "Práctica 1 de MADS");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        tarea.setFechaLimite(sdf.parse("2030-02-20"));
+        tareaRepository.save(tarea);
+
+        // WHEN
+        // Recuperamos la tarea y cambiamos status a DONE
+        Long tareaId = tarea.getId();
+        Tarea tareaBD = tareaRepository.findById(tareaId).orElse(null);
+        assertThat(tareaBD.getStatus()).isEqualTo(Status.TODO);
+        tareaBD.changeStatus(Status.DONE);
+        tareaRepository.save(tareaBD);
+
+        // THEN
+        // la fecha es null y el status ha cambiado
+        Tarea tareaDONE = tareaRepository.findById(tarea.getId()).orElse(null);
+
+        assertThat(tareaDONE.getFechaLimite()).isNull();
+        assertThat(tareaDONE.getStatus()).isEqualTo(Status.DONE);
+    }
 }

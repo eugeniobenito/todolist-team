@@ -84,6 +84,10 @@ public class Tarea implements Serializable {
     }
 
     public void changeStatus(Status status) {
+
+        if (status == Status.DONE)
+            this.fechaLimite = null;
+            
         this.status = status;
     }
 
