@@ -83,6 +83,10 @@ public class Tarea implements Serializable {
         return this.status;
     }
 
+    public void changeStatus(Status status) {
+        this.status = status;
+    }
+
 
     @Override
     public boolean equals(Object o) {

@@ -1,6 +1,5 @@
 package madstodolist;
 
-
 import madstodolist.model.Status;
 import madstodolist.model.Tarea;
 import madstodolist.model.TareaRepository;
@@ -80,7 +79,7 @@ public class TareaTest {
 
         // se le asigna una fecha límite
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        tarea.setFechaLimite(sdf.parse("1997-02-20"));        
+        tarea.setFechaLimite(sdf.parse("1997-02-20"));
 
         // THEN
         // la fecha es la que se ha asignado y no null
@@ -101,6 +100,22 @@ public class TareaTest {
         // THEN
         // el estado es 'ToDo' por defecto cuando se crea una tarea nueva
         assertThat(tarea.getStatus()).isEqualTo(Status.TODO);
+    }
+
+    @Test
+    public void cambiarStatusTareaAInProgress() {
+        // GIVEN
+        // Un usuario nuevo creado y una tarea asignada
+        Usuario usuario = new Usuario("juan.gutierrez@gmail.com");
+        Tarea tarea = new Tarea(usuario, "Práctica 1 de MADS");
+
+        // WHEN
+        // se cambia el estado a 'InProgress'
+        tarea.changeStatus(Status.IN_PROGRESS);
+
+        // THEN
+        // el estado es 'In Progress'
+        assertThat(tarea.getStatus()).isEqualTo(Status.IN_PROGRESS);
     }
 
     @Test
@@ -199,6 +214,7 @@ public class TareaTest {
         Tarea tareaBD = tareaRepository.findById(tarea.getId()).orElse(null);
         assertThat(tareaBD.getTitulo()).isEqualTo(tarea.getTitulo());
         assertThat(tareaBD.getUsuario()).isEqualTo(usuario);
+        assertThat(tareaBD.getStatus()).isEqualTo(tarea.getStatus());
     }
 
     @Test
@@ -275,7 +291,6 @@ public class TareaTest {
         assertThat(usuarioBD.getTareas()).contains(tareaBD);
     }
 
-
     @Test
     @Transactional
     public void cambioEnLaEntidadEnTransactionalModificaLaBD() {
@@ -333,7 +348,7 @@ public class TareaTest {
         Tarea tarea = new Tarea(usuario, "Práctica 1 de MADS");
         // se le asigna una fecha límite
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        tarea.setFechaLimite(sdf.parse("1997-02-20"));        
+        tarea.setFechaLimite(sdf.parse("1997-02-20"));
         tareaRepository.save(tarea);
 
         // WHEN
