@@ -61,7 +61,7 @@ public class TareaServiceTest {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         tareaDTO.setFechaLimite(sdf.parse("2023-02-20"));
         return tareaDTO;
-    }  
+    }
 
     @Test
     public void testNuevaTareaUsuario() {
@@ -157,14 +157,15 @@ public class TareaServiceTest {
         tareaService.modificaTarea(tareaId, tareaDTO);
 
         // THEN
-        // al buscar por el identificador en la base de datos se devuelve la tarea modificada
+        // al buscar por el identificador en la base de datos se devuelve la tarea
+        // modificada
 
         Tarea tareaBD = tareaService.findById(tareaId);
         assertThat(tareaBD.getTitulo()).isEqualTo("MADS");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         assertThat(tareaBD.getFechaLimite()).isEqualTo(sdf.parse("2023-02-20"));
 
-
+        
         // y el usuario tiene también esa tarea modificada.
         Usuario usuarioBD = usuarioService.findById(usuarioId);
         usuarioBD.getTareas().contains(tareaBD);
@@ -183,13 +184,32 @@ public class TareaServiceTest {
         tareaService.changeStatus(tareaId, Status.IN_PROGRESS);
 
         // THEN
-        // al buscar por el identificador en la base de datos se devuelve la tarea modificada
+        // al buscar por el identificador en la base de datos se devuelve la tarea
+        // modificada
         Tarea tareaBD = tareaService.findById(tareaId);
         assertThat(tareaBD.getStatus()).isEqualTo(Status.IN_PROGRESS);
 
         // y el usuario tiene también esa tarea modificada.
         Usuario usuarioBD = usuarioService.findById(usuarioId);
         usuarioBD.getTareas().contains(tareaBD);
+    }
+
+    @Test
+    public void testModificarTareaConStatusDoneException() throws ParseException {
+        // GIVEN
+        // Un usuario y una tarea en la BD con status a
+        DosIds dosIds = addUsuarioTareasBD();
+        Long tareaId = dosIds.tareaId;
+        // cambiamos el status de la tarea correspondiente a DONE
+        tareaService.changeStatus(tareaId, Status.DONE);
+
+        // WHEN, THEN
+        // intentamos modificar los atributos de una tarea con status DONE se lanza
+        // excepción de tipo TareaServiceException
+        Assertions.assertThrows(TareaServiceException.class, () -> {
+            TareaData tareaDTO = crearTareaDTOExample();
+            tareaService.modificaTarea(tareaId, tareaDTO);
+        });
     }
 
     @Test

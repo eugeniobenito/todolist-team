@@ -91,13 +91,14 @@ public class TareaService {
     public Tarea modificaTarea(Long idTarea, TareaData tareaDTO) {
         logger.debug("Modificando tarea " + idTarea + " - " + tareaDTO.getTitulo());
         Tarea tarea = tareaRepository.findById(idTarea).orElse(null);
-        if (tarea == null) {
+        if (tarea == null)
             throw new TareaServiceException("No existe tarea con id " + idTarea);
-        }
 
-        if (tareaDTO.getFechaLimite() != null && tareaDTO.getFechaLimite().before(new Date())) {
+        if (tarea.getStatus() == Status.DONE) 
+            throw new TareaServiceException("No puedes modificar una tarea terminada");
+
+        if (tareaDTO.getFechaLimite() != null && tareaDTO.getFechaLimite().before(new Date()))
             throw new TareaServiceException("No puedes crear una tarea con fecha límite en pasado");            
-        }
 
         tarea.setTitulo(tareaDTO.getTitulo());
         tarea.setFechaLimite(tareaDTO.getFechaLimite());
