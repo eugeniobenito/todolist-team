@@ -1,6 +1,6 @@
 package madstodolist;
 
-
+import madstodolist.model.Status;
 import madstodolist.model.Tarea;
 import madstodolist.model.TareaRepository;
 import madstodolist.model.Usuario;
@@ -79,12 +79,62 @@ public class TareaTest {
 
         // se le asigna una fecha límite
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        tarea.setFechaLimite(sdf.parse("1997-02-20"));        
+        tarea.setFechaLimite(sdf.parse("1997-02-20"));
 
         // THEN
         // la fecha es la que se ha asignado y no null
         // assertThat(tarea.getFechaLimite()).isNotNull();
         assertThat(tarea.getFechaLimite()).isEqualTo(sdf.parse("1997-02-20"));
+    }
+
+    @Test
+    public void crearTareaConStatusAToDo() {
+        // GIVEN
+        // Un usuario nuevo creado en memoria, sin conexión con la BD
+        Usuario usuario = new Usuario("juan.gutierrez@gmail.com");
+
+        // WHEN
+        // se crea una nueva tarea con ese usuario
+        Tarea tarea = new Tarea(usuario, "Práctica 1 de MADS");
+
+        // THEN
+        // el estado es 'ToDo' por defecto cuando se crea una tarea nueva
+        assertThat(tarea.getStatus()).isEqualTo(Status.TODO);
+    }
+
+    @Test
+    public void cambiarStatusTareaAInProgress() {
+        // GIVEN
+        // Un usuario nuevo creado y una tarea asignada
+        Usuario usuario = new Usuario("juan.gutierrez@gmail.com");
+        Tarea tarea = new Tarea(usuario, "Práctica 1 de MADS");
+
+        // WHEN
+        // se cambia el estado a 'InProgress'
+        tarea.changeStatus(Status.IN_PROGRESS);
+
+        // THEN
+        // el estado es 'In Progress'
+        assertThat(tarea.getStatus()).isEqualTo(Status.IN_PROGRESS);
+    }
+
+    @Test
+    public void cambiarStatusTareaADoneMarcaFechaLimiteANull() throws ParseException {
+        // GIVEN
+        // Un usuario nuevo creado y una tarea asignada
+        Usuario usuario = new Usuario("juan.gutierrez@gmail.com");
+        Tarea tarea = new Tarea(usuario, "Práctica 1 de MADS");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        tarea.setFechaLimite(sdf.parse("2030-02-20"));
+
+        // WHEN
+        // se cambia el estado a 'Done'
+        tarea.changeStatus(Status.DONE);
+
+        // THEN
+        // el estado es 'Done' y automáticamente se settea la fecha límite a null
+        assertThat(tarea.getStatus()).isEqualTo(Status.DONE);
+        assertThat(tarea.getFechaLimite()).isNull();
     }
 
     @Test
@@ -183,6 +233,7 @@ public class TareaTest {
         Tarea tareaBD = tareaRepository.findById(tarea.getId()).orElse(null);
         assertThat(tareaBD.getTitulo()).isEqualTo(tarea.getTitulo());
         assertThat(tareaBD.getUsuario()).isEqualTo(usuario);
+        assertThat(tareaBD.getStatus()).isEqualTo(tarea.getStatus());
     }
 
     @Test
@@ -259,7 +310,6 @@ public class TareaTest {
         assertThat(usuarioBD.getTareas()).contains(tareaBD);
     }
 
-
     @Test
     @Transactional
     public void cambioEnLaEntidadEnTransactionalModificaLaBD() {
@@ -317,7 +367,7 @@ public class TareaTest {
         Tarea tarea = new Tarea(usuario, "Práctica 1 de MADS");
         // se le asigna una fecha límite
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        tarea.setFechaLimite(sdf.parse("1997-02-20"));        
+        tarea.setFechaLimite(sdf.parse("1997-02-20"));
         tareaRepository.save(tarea);
 
         // WHEN
@@ -331,4 +381,30 @@ public class TareaTest {
         assertThat(tareaBD.getFechaLimite()).isEqualTo(sdf.parse("1997-02-20"));
     }
 
+    @Test
+    public void guardarStatusTareaADoneMarcaFechaLimiteANull() throws ParseException {
+        // GIVEN
+        // Un usuario y una tarea en la base de datos
+        Usuario usuario = new Usuario("user@ua");
+        usuarioRepository.save(usuario);
+        Tarea tarea = new Tarea(usuario, "Práctica 1 de MADS");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        tarea.setFechaLimite(sdf.parse("2030-02-20"));
+        tareaRepository.save(tarea);
+
+        // WHEN
+        // Recuperamos la tarea y cambiamos status a DONE
+        Long tareaId = tarea.getId();
+        Tarea tareaBD = tareaRepository.findById(tareaId).orElse(null);
+        assertThat(tareaBD.getStatus()).isEqualTo(Status.TODO);
+        tareaBD.changeStatus(Status.DONE);
+        tareaRepository.save(tareaBD);
+
+        // THEN
+        // la fecha es null y el status ha cambiado
+        Tarea tareaDONE = tareaRepository.findById(tarea.getId()).orElse(null);
+
+        assertThat(tareaDONE.getFechaLimite()).isNull();
+        assertThat(tareaDONE.getStatus()).isEqualTo(Status.DONE);
+    }
 }
