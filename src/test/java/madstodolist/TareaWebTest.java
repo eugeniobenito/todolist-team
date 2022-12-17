@@ -1,6 +1,7 @@
 package madstodolist;
 
 import madstodolist.authentication.ManagerUserSession;
+import madstodolist.controller.exception.StatusNotValidException;
 import madstodolist.model.Tarea;
 import madstodolist.model.Usuario;
 import madstodolist.service.TareaService;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,8 +85,8 @@ public class TareaWebTest {
                 .andExpect((content().string(allOf(
                         containsString("Lavar coche"),
                         containsString("Renovar DNI"),
-                        containsString("Calendario")
-
+                        containsString("Calendario"),
+                        containsString("Tablero")
                 ))));
     }
 
@@ -206,5 +208,47 @@ public class TareaWebTest {
 
         this.mockMvc.perform(get(urlListado))
                 .andExpect(content().string(containsString("Limpiar cristales coche")));
+    }
+
+    @Test
+    public void cambiarStatusTareaDevuelveOKyCambiaEstado() throws Exception {
+        // GIVEN
+        // Un usuario con dos tareas en la BD
+        DosIds dosIds = addUsuarioTareasBD();
+        Long usuarioId = dosIds.usuarioId;
+        Long tareaLavarCocheId = dosIds.tareaId;
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuarioId);
+
+        // WHEN, THEN
+        // realizamos la petición PATCH para modificar el status de una tarea,
+        // se devuelve el código de estado HTTP 200
+
+        String urlPatch = "/tareas/" + tareaLavarCocheId.toString();
+        this.mockMvc.perform(patch(urlPatch)
+                .contentType(MediaType.TEXT_PLAIN)
+                .content("DONE"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void cambiarStatusErroneoTareaException() throws Exception {
+        // GIVEN
+        // Un usuario con dos tareas en la BD
+        DosIds dosIds = addUsuarioTareasBD();
+        Long usuarioId = dosIds.usuarioId;
+        Long tareaLavarCocheId = dosIds.tareaId;
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuarioId);
+
+        // WHEN, THEN
+        // realizamos la petición PATCH para modificar el status de una tarea,
+        // se devuelve el código de estado HTTP 404
+
+        String urlPatch = "/tareas/" + tareaLavarCocheId.toString();
+        this.mockMvc.perform(patch(urlPatch)
+                .contentType(MediaType.TEXT_PLAIN)
+                .content("DoNe"))
+                .andExpect(status().is4xxClientError());
     }
 }
