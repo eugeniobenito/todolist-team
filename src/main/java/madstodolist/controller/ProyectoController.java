@@ -77,6 +77,21 @@ public class ProyectoController {
         return "formNuevoProyecto";
     }
 
+    @DeleteMapping("/equipos/{id}/proyectos/{proyectoId}")
+    @ResponseBody
+    public String eliminarProyecto(@PathVariable(value="id") Long idEquipo,
+                                    @PathVariable(value="proyectoId") Long idProyecto,
+                                    @ModelAttribute ProyectoData proyectoData, Model model,
+                                    HttpSession session) {
+        Equipo equipo = equipoService.recuperarEquipo(idEquipo);
+        if(equipo == null)
+            throw new EquipoNotFoundException();
+        checkAdminOfTeam(equipo);
+
+        proyectoService.eliminarProyecto(idProyecto);
+        return "";
+    }
+
     @PostMapping("/equipos/{id}/proyectos")
     public String nuevoProyecto(@PathVariable(value="id") Long idEquipo,
                                   @ModelAttribute ProyectoData proyectoData,

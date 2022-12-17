@@ -4,9 +4,11 @@ package madstodolist;
 import madstodolist.authentication.ManagerUserSession;
 import madstodolist.model.ComentarioEquipo;
 import madstodolist.model.Equipo;
+import madstodolist.model.Proyecto;
 import madstodolist.model.Usuario;
 import madstodolist.service.ComentarioEquipoService;
 import madstodolist.service.EquipoService;
+import madstodolist.service.ProyectoService;
 import madstodolist.service.UsuarioService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -41,6 +43,9 @@ public class ProyectosWebTest {
 
     @Autowired
     private ComentarioEquipoService comentarioEquipoService;
+
+    @Autowired
+    private ProyectoService proyectoService;
 
     @MockBean
     private ManagerUserSession managerUserSession;
@@ -82,6 +87,26 @@ public class ProyectosWebTest {
                 .andExpect(content().string(containsString("prueba894")));
 
     }
+
+    @Test
+    public void eliminarProyectoWeb() throws Exception{
+        Usuario u = crearUsuario("a@a", false);
+        Equipo e = crearEquipo(u);
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(u.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        Proyecto p = proyectoService.crearProyecto("prueba", e.getId());
+
+
+        MockHttpServletResponse response = this.mockMvc.perform(delete("/equipos/" + e.getId().toString() + "/proyectos/" + p.getId()))
+                .andReturn().getResponse();
+
+        Assertions.assertThat(response.getStatus()).isEqualTo(200);
+
+    }
+
+
 
 
 
