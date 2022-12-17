@@ -1,6 +1,7 @@
 package madstodolist.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Entity
@@ -12,11 +13,23 @@ public class Proyecto {
 
     private String nombre;
 
-    public String getNombre() { return this.nombre; }
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "equipo_id")
+    private Equipo equipo;
 
-    public Proyecto(String nombre) { this.nombre = nombre; }
+    public Proyecto(String nombre, Equipo e) {
+        this.nombre = nombre;
+        this.equipo = e;
+        e.getProyectos().add(this);
+    }
 
     public Proyecto(){}
+
+    public Equipo getEquipo() { return this.equipo; }
+    public String getNombre() { return this.nombre; }
+
+
 
 
     @Override
