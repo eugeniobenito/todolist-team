@@ -30,6 +30,16 @@ public class Proyecto {
     public Equipo getEquipo() { return this.equipo; }
     public String getNombre() { return this.nombre; }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Proyecto proyecto = (Proyecto) o;
+        if(proyecto.getId() == null || this.getId() == null){
+            return false;
+        }
+        return proyecto.getId() == this.getId();
+    }
 
 
 
