@@ -3,6 +3,7 @@ package madstodolist.controller;
 import madstodolist.authentication.ManagerUserSession;
 import madstodolist.controller.exception.UsuarioNoLogeadoException;
 import madstodolist.controller.exception.TareaNotFoundException;
+import madstodolist.model.Status;
 import madstodolist.model.Tarea;
 import madstodolist.model.Usuario;
 import madstodolist.service.TareaService;
@@ -124,5 +125,19 @@ public class TareaController {
         tareaService.borraTarea(idTarea);
         return "";
     }
-}
 
+    @PatchMapping("/tareas/{id}")
+    @ResponseBody
+    public String cambiarEstadoTarea(@PathVariable(value="id") Long idTarea, @RequestBody String status) {
+        Tarea tarea = tareaService.findById(idTarea);
+        if (tarea == null) {
+            throw new TareaNotFoundException();
+        }
+
+        comprobarUsuarioLogeado(tarea.getUsuario().getId());
+
+        tareaService.changeStatus(idTarea, Status.valueOf(status));
+        return "";
+    }
+
+}
