@@ -44,7 +44,7 @@ public class TareaProyectoTest {
         proyectoRepository.save(p);
         TareaProyecto tp = new TareaProyecto("estudiar", p);
         tp = tareaProyectoRepository.save(tp);
-        Assertions.assertThat(tp.getId()).isNotNull(); 
+        Assertions.assertThat(tp.getId()).isNotNull();
     }
 
 
