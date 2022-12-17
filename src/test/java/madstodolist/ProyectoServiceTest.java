@@ -44,4 +44,13 @@ public class ProyectoServiceTest {
         Proyecto p2 = proyectoService.getById(p.getId());
         Assertions.assertThat(p.getId()).isEqualTo(p2.getId());
     }
+
+    @Test
+    public void eliminarProyecto(){
+        Equipo e = new Equipo("aaa");
+        e = equipoRepository.save(e);
+        Proyecto p = proyectoService.crearProyecto("prueba", e.getId());
+        proyectoService.eliminarProyecto(p.getId());
+        Assertions.assertThat(proyectoService.getById(p.getId())).isNull();
+    }
 }
