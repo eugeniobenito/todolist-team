@@ -68,6 +68,11 @@ public class ProyectoController {
         if(equipo == null)
             throw new EquipoNotFoundException();
         checkAdminOfTeam(equipo);
+
+
+
+        Usuario usuario = usuarioService.findById(managerUserSession.usuarioLogeado());
+        model.addAttribute("usuario", usuario);
         model.addAttribute("equipo",equipo);
         return "formNuevoProyecto";
     }
