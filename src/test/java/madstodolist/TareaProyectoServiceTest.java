@@ -35,6 +35,18 @@ public class TareaProyectoServiceTest {
         Assertions.assertThat(tarea.getId()).isNotNull();
     }
 
+    @Test
+    public void findByIdTest(){
+        Equipo e = new Equipo("aaa");
+        e = equipoRepository.save(e);
+        Proyecto p = new Proyecto("prueba", e);
+        p = proyectoRepository.save(p);
+
+        TareaProyecto tarea = tareaProyectoService.crearTareaProyectoService("estudiar", p.getId());
+        Assertions.assertThat(tarea.getId()).isNotNull();
+        Assertions.assertThat(tareaProyectoService.findById(tarea.getId())).isEqualTo(tarea); 
+    }
+
 
 
 

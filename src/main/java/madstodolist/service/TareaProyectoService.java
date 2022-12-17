@@ -21,4 +21,9 @@ public class TareaProyectoService {
         tp = tareaProyectoRepository.save(tp);
         return tp;
     }
+
+    @Transactional(readOnly = true)
+    public TareaProyecto findById(Long tareaId){
+        return tareaProyectoRepository.findById(tareaId).orElse(null);
+    }
 }
