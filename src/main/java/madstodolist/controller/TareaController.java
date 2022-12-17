@@ -2,6 +2,7 @@ package madstodolist.controller;
 
 import madstodolist.authentication.ManagerUserSession;
 import madstodolist.controller.exception.UsuarioNoLogeadoException;
+import madstodolist.controller.exception.StatusNotValidException;
 import madstodolist.controller.exception.TareaNotFoundException;
 import madstodolist.model.Status;
 import madstodolist.model.Tarea;
@@ -36,6 +37,15 @@ public class TareaController {
         Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
         if (!idUsuario.equals(idUsuarioLogeado))
             throw new UsuarioNoLogeadoException();
+    }
+
+    public boolean isEnumValue(String status) {
+        for (Enum value : Status.class.getEnumConstants()) {
+            if (value.name().equals(status)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @GetMapping("/usuarios/{id}/tareas/nueva")
@@ -132,6 +142,10 @@ public class TareaController {
         Tarea tarea = tareaService.findById(idTarea);
         if (tarea == null) {
             throw new TareaNotFoundException();
+        }
+
+        if (!isEnumValue(status)) {
+            throw new StatusNotValidException();            
         }
 
         comprobarUsuarioLogeado(tarea.getUsuario().getId());

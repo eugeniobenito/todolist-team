@@ -1,6 +1,7 @@
 package madstodolist;
 
 import madstodolist.authentication.ManagerUserSession;
+import madstodolist.controller.exception.StatusNotValidException;
 import madstodolist.model.Tarea;
 import madstodolist.model.Usuario;
 import madstodolist.service.TareaService;
@@ -228,5 +229,26 @@ public class TareaWebTest {
                 .contentType(MediaType.TEXT_PLAIN)
                 .content("DONE"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void cambiarStatusErroneoTareaException() throws Exception {
+        // GIVEN
+        // Un usuario con dos tareas en la BD
+        DosIds dosIds = addUsuarioTareasBD();
+        Long usuarioId = dosIds.usuarioId;
+        Long tareaLavarCocheId = dosIds.tareaId;
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuarioId);
+
+        // WHEN, THEN
+        // realizamos la petición PATCH para modificar el status de una tarea,
+        // se devuelve el código de estado HTTP 404
+
+        String urlPatch = "/tareas/" + tareaLavarCocheId.toString();
+        this.mockMvc.perform(patch(urlPatch)
+                .contentType(MediaType.TEXT_PLAIN)
+                .content("DoNe"))
+                .andExpect(status().is4xxClientError());
     }
 }
