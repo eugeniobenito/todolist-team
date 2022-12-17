@@ -88,7 +88,10 @@
                         <td th:text="${proyecto.id}"></td>
                         <td th:text="${proyecto.nombre}"></td>
                         <td><a class="btn btn-primary btn-xs" onmouseover="" style="cursor: pointer;"
-                                    th:href="@{/proyecto/{id}(id=${proyecto.id})}">Ver detalles del proyecto</a></td>
+                                    th:href="@{/proyecto/{id}(id=${proyecto.id})}">Ver detalles del proyecto</a>
+                            <button class="btn btn-danger btn-xs" onmouseover="" style="cursor: pointer;"
+                                    th:onclick="'del(\'/equipos/' + ${equipo.id} + '/proyectos/' + ${proyecto.id} + '\')'">Eliminar</button>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
