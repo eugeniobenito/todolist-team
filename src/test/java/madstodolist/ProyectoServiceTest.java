@@ -32,7 +32,16 @@ public class ProyectoServiceTest {
         e = equipoRepository.save(e);
         Proyecto p = proyectoService.crearProyecto("prueba", e.getId());
         Assertions.assertThat(p.getEquipo()).isEqualTo(e);
-        e = equipoRepository.findById(e.getId()).orElse(null); 
+        e = equipoRepository.findById(e.getId()).orElse(null);
         Assertions.assertThat(e.getProyectos().size()).isEqualTo(1);
+    }
+
+    @Test
+    public void obtenerProyectoPorId(){
+        Equipo e = new Equipo("aaa");
+        e = equipoRepository.save(e);
+        Proyecto p = proyectoService.crearProyecto("prueba", e.getId());
+        Proyecto p2 = proyectoService.getById(p.getId());
+        Assertions.assertThat(p.getId()).isEqualTo(p2.getId());
     }
 }

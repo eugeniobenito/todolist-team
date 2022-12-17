@@ -26,4 +26,9 @@ public class ProyectoService {
         p = proyectoRepository.save(p);
         return p;
     }
+
+    @Transactional(readOnly = true)
+    public Proyecto getById(Long id){
+        return proyectoRepository.findById(id).orElse(null);
+    }
 }
