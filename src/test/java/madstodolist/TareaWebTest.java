@@ -85,8 +85,8 @@ public class TareaWebTest {
                 .andExpect((content().string(allOf(
                         containsString("Lavar coche"),
                         containsString("Renovar DNI"),
-                        containsString("Calendario")
-
+                        containsString("Calendario"),
+                        containsString("Tablero")
                 ))));
     }
 
