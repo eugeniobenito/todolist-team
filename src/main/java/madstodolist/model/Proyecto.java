@@ -24,6 +24,7 @@ public class Proyecto {
         e.getProyectos().add(this);
     }
 
+    public Long getId() { return this.id; }
     public Proyecto(){}
 
     public Equipo getEquipo() { return this.equipo; }
