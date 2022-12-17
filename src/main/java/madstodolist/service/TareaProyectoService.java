@@ -33,4 +33,13 @@ public class TareaProyectoService {
         if(tarea == null) { throw new TareaProyectoServiceException("No se ha encontrado la entidad"); }
         tareaProyectoRepository.delete(tarea);
     }
+
+    @Transactional
+    public TareaProyecto cambiarEstado(Long tareaId, Status status){
+        TareaProyecto tarea = findById(tareaId);
+        if(tarea == null) { throw new TareaProyectoServiceException("No se ha encontrado la entidad"); }
+        tarea.setStatus(status);
+        tarea = tareaProyectoRepository.save(tarea);
+        return tarea; 
+    }
 }

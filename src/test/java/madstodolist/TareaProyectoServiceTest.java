@@ -60,6 +60,19 @@ public class TareaProyectoServiceTest {
         Assertions.assertThat(tareaProyectoService.findById(tarea.getId())).isNull();
     }
 
+    @Test
+    public void modificarStatus(){
+        Equipo e = new Equipo("aaa");
+        e = equipoRepository.save(e);
+        Proyecto p = new Proyecto("prueba", e);
+        p = proyectoRepository.save(p);
+
+        TareaProyecto tarea = tareaProyectoService.crearTareaProyectoService("estudiar", p.getId());
+        Assertions.assertThat(tarea.getStatus()).isEqualTo(Status.TODO);
+        tarea = tareaProyectoService.cambiarEstado(tarea.getId(), Status.DONE);
+        Assertions.assertThat(tarea.getStatus()).isEqualTo(Status.DONE);
+    }
+
 
 
 
