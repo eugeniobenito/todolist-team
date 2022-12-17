@@ -26,4 +26,11 @@ public class TareaProyectoService {
     public TareaProyecto findById(Long tareaId){
         return tareaProyectoRepository.findById(tareaId).orElse(null);
     }
+
+    @Transactional
+    public void eliminarTareaProyecto(Long tareaId){
+        TareaProyecto tarea = findById(tareaId);
+        if(tarea == null) { throw new TareaProyectoServiceException("No se ha encontrado la entidad"); }
+        tareaProyectoRepository.delete(tarea);
+    }
 }

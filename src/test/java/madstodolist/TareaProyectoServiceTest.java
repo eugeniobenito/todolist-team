@@ -44,7 +44,20 @@ public class TareaProyectoServiceTest {
 
         TareaProyecto tarea = tareaProyectoService.crearTareaProyectoService("estudiar", p.getId());
         Assertions.assertThat(tarea.getId()).isNotNull();
-        Assertions.assertThat(tareaProyectoService.findById(tarea.getId())).isEqualTo(tarea); 
+        Assertions.assertThat(tareaProyectoService.findById(tarea.getId())).isEqualTo(tarea);
+    }
+
+    @Test
+    public void eliminarTest(){
+        Equipo e = new Equipo("aaa");
+        e = equipoRepository.save(e);
+        Proyecto p = new Proyecto("prueba", e);
+        p = proyectoRepository.save(p);
+
+        TareaProyecto tarea = tareaProyectoService.crearTareaProyectoService("estudiar", p.getId());
+        Assertions.assertThat(tareaProyectoService.findById(tarea.getId())).isEqualTo(tarea);
+        tareaProyectoService.eliminarTareaProyecto(tarea.getId());
+        Assertions.assertThat(tareaProyectoService.findById(tarea.getId())).isNull();
     }
 
 
