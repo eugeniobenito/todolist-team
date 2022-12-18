@@ -3,10 +3,7 @@ package madstodolist;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import madstodolist.authentication.ManagerUserSession;
-import madstodolist.model.Equipo;
-import madstodolist.model.Proyecto;
-import madstodolist.model.TareaProyecto;
-import madstodolist.model.Usuario;
+import madstodolist.model.*;
 import madstodolist.service.*;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,6 +22,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -122,6 +121,34 @@ public class TareaProyectoWebTest {
                 .andReturn().getResponse();
 
         Assertions.assertThat(response.getStatus()).isEqualTo(404);
+    }
+
+
+    @Test
+    @Transactional
+    public void updateTarea() throws Exception{
+        Usuario u = crearUsuario("a@a", false);
+        Usuario u2 = crearUsuario("a2@a", false);
+        Equipo e = crearEquipo(u);
+        Proyecto p = proyectoService.crearProyecto("proyecto24", e.getId());
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(u.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        TareaProyecto tp = tareaProyectoService.crearTareaProyectoService("nuevaTarea", p.getId());
+        String urlPatch = "/tareasproyecto/" + tp.getId().toString();
+        this.mockMvc.perform(patch(urlPatch)
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .content("DONE"))
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(patch(urlPatch)
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .content("donut"))
+                .andExpect(status().is4xxClientError());
+
+        Assertions.assertThat(tareaProyectoService.findById(tp.getId()).getStatus()).isEqualTo(Status.DONE);
+
     }
 
 

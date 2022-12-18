@@ -89,7 +89,7 @@
             },
             dropEl: async function (el, target, source, sibling) {
                 try {
-                    const response = await fetch('http://localhost:8080/tareas/' + el.getAttribute('data-eid'), {
+                    const response = await fetch('http://localhost:8080/tareasproyecto/' + el.getAttribute('data-eid'), {
                         method: 'PATCH',
                         headers: {
                             'Content-Type': 'text/plain'

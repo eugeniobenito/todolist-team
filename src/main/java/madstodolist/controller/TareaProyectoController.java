@@ -2,10 +2,7 @@ package madstodolist.controller;
 
 import madstodolist.authentication.ManagerUserSession;
 import madstodolist.controller.exception.*;
-import madstodolist.model.Equipo;
-import madstodolist.model.Proyecto;
-import madstodolist.model.TareaProyecto;
-import madstodolist.model.Usuario;
+import madstodolist.model.*;
 import madstodolist.service.EquipoService;
 import madstodolist.service.ProyectoService;
 import madstodolist.service.TareaProyectoService;
@@ -37,6 +34,16 @@ public class TareaProyectoController {
 
     @Autowired
     UsuarioService usuarioService;
+
+
+    public boolean isEnumValue(String status) {
+        for (Enum value : Status.class.getEnumConstants()) {
+            if (value.name().equals(status)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     private void checkAdminOfTeam(Equipo e) {
         if (!managerUserSession.isUsuarioLogeado())
@@ -101,6 +108,24 @@ public class TareaProyectoController {
         userJoinedTeam(equipo);
 
         tareaProyectoService.eliminarTareaProyecto(tareaProyecto.getId());
+        return "";
+    }
+
+    @PatchMapping("/tareasproyecto/{id}")
+    @ResponseBody
+    public String cambiarEstadoTarea(@PathVariable(value="id") Long idTarea, @RequestBody String status) {
+        TareaProyecto tp = tareaProyectoService.findById(idTarea);
+        if (tp == null) {
+            throw new TareaNotFoundException();
+        }
+
+        if (!isEnumValue(status)) {
+            throw new StatusNotValidException();
+        }
+
+        userJoinedTeam(tp.getProyecto().getEquipo());
+
+        tareaProyectoService.cambiarEstado(idTarea, Status.valueOf(status));
         return "";
     }
 
