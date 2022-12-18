@@ -1,7 +1,49 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="fragments :: head (titulo='Login')"></head>
+<head th:replace="fragments :: head (titulo='Proyecto')">
+</head>
+<head>
+    <link rel="stylesheet" th:href="@{/css/jkanban.min.css}">
+    <script th:src="@{/js/jkanban.min.js}"></script>
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/js/popper.min.js}"></script>
+    <style>
+        #tablero {
+            position: absolute;
+            left: 50%;
+            transform: translate(-50%, 0);
+        }
+
+        .success {
+            background: #00b961;
+        }
+
+        .info {
+            background: #2a92bf;
+        }
+
+        .warning {
+            background: #f4ce46;
+        }
+
+        .error {
+            background: #fb7d44;
+        }
+
+        .custom-button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 7px 15px;
+            margin: 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+        }
+    </style>
+</head>
 
 <body>
 <div th:insert="navbar :: navbar"></div>
@@ -9,7 +51,7 @@
 
     <h2 th:text="'Añadir una nueva tarea al proyecto ' + ${proyecto.getNombre()}"></h2>
 
-    <form method="post" th:action="@{/proyectos/{id}/tareas/nueva(id=${proyecto.id})}" th:object="${tareaProyectoData}">
+    <form method="post" th:action="@{/proyectos/{id}/tareas(id=${proyecto.id})}" th:object="${tareaProyectoData}">
         <div class="col-6">
         <div class="form-group">
             <label for="nombre">Título de la tarea:</label>
@@ -18,9 +60,100 @@
         <button class="btn btn-primary" type="submit">Crear tarea</button>
         </div>
     </form>
+    <h3>Tablero del proyecto</h3>
+    <div id="tablero"></div>
 </div>
 
-<div th:replace="fragments::javascript"/>
+<script type="text/javascript">
+        function del(urlBorrar) {
+            if (confirm('¿Estás seguro/a de que quieres borrar la tarea?')) {
+                fetch(urlBorrar, {
+                    method: 'DELETE'
+                }).then((res) => location.reload());
+            }
+        }
+    </script>
+<script type="text/javascript" th:inline="javascript">
+        var KanbanTest = new jKanban({
+            element: "#tablero",
+            gutter: "10px",
+            widthBoard: "450px",
+            itemHandleOptions: {
+                enabled: true,
+            },
+            click: function (el) {
+                console.log("Trigger on all items click!");
+            },
+            context: function (el, e) {
+                console.log("Trigger on all items right-click!");
+            },
+            dropEl: async function (el, target, source, sibling) {
+                try {
+                    const response = await fetch('http://localhost:8080/tareas/' + el.getAttribute('data-eid'), {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'text/plain'
+                        },
+                        body: target.parentElement.getAttribute('data-id')
+                    });
+                } catch (error) {
+                    console.error(error);
+                }
+            },
+            buttonClick: function (el, boardId) {
+                console.log(el);
+                console.log(boardId);
+                // create a form to enter element
+                var formItem = document.createElement("form");
+                formItem.setAttribute("class", "itemform");
+                formItem.innerHTML =
+                    '<div class="form-group"><textarea class="form-control" rows="2" autofocus></textarea></div><div class="form-group"><button type="submit" class="btn btn-primary btn-xs pull-right">Submit</button><button type="button" id="CancelBtn" class="btn btn-default btn-xs pull-right">Cancel</button></div>';
+
+                KanbanTest.addForm(boardId, formItem);
+                formItem.addEventListener("submit", function (e) {
+                    e.preventDefault();
+                    var text = e.target[0].value;
+                    KanbanTest.addElement(boardId, {
+                        title: text
+                    });
+                    formItem.parentNode.removeChild(formItem);
+                });
+                document.getElementById("CancelBtn").onclick = function () {
+                    formItem.parentNode.removeChild(formItem);
+                };
+            },
+            boards: [
+                {
+                    id: "TODO",
+                    title: "To Do",
+                    class: "info,good",
+                    dragTo: ["IN_PROGRESS"],
+                },
+                {
+                    id: "IN_PROGRESS",
+                    title: "In Progress",
+                    class: "warning",
+                },
+                {
+                    id: "DONE",
+                    title: "Done",
+                    class: "success",
+                    dragTo: ["IN_PROGRESS"],
+                }
+            ]
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            /*[# th:each="tarea : ${proyecto.tareasProyecto}"]*/
+            let buttonDelete = `<button type="button" class="close" onclick="del('/proyectos/` + [(${proyecto.id})] + '/tareas/' + [(${tarea.id})] + `')" aria-label="Close"><span aria-hidden="true">&times;</span></button>`
+            console.log("Añadiendo tareas al board");
+            KanbanTest.addElement("[(${tarea.status})]", {
+                id: "[(${tarea.id})]",
+                title: "[(${tarea.nombre})]" + buttonDelete
+            });
+            /*[/]*/
+        });
+    </script>
 
 </body>
 </html>
