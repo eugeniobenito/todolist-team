@@ -66,6 +66,43 @@
                 </tr>
                 </tbody>
             </table>
+            <br />
+            <br />
+            <th:block th:if="${usuarios.contains(usuario) || usuario == equipo.admin }">
+                <b>Proyectos: </b> <br />
+                <div id="proyectos">
+                    <th:block th:if="${usuario == equipo.admin}">
+                        <a class="btn btn-primary btn-xs" onmouseover="" style="cursor: pointer;"
+                                th:href="@{/equipos/{id}/proyectos/nuevo(id=${equipo.id})}">Añadir un nuevo proyecto</a>
+                    </th:block>
+                    <br />
+
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Nombre</th>
+                            <th>Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <th:block th:if="${equipo.proyectos.size() == 0}">
+                            El equipo no tiene proyectos que le pertenecen
+                        </th:block>
+                        <tr th:each="proyecto: ${equipo.proyectos}">
+                            <td th:text="${proyecto.id}"></td>
+                            <td th:text="${proyecto.nombre}"></td>
+                            <td><a class="btn btn-primary btn-xs" onmouseover="" style="cursor: pointer;"
+                                        th:href="@{/proyectos/{id}(id=${proyecto.id})}">Ver detalles del proyecto</a>
+                                <button class="btn btn-danger btn-xs" onmouseover="" style="cursor: pointer;"
+                                        th:onclick="'del(\'/equipos/' + ${equipo.id} + '/proyectos/' + ${proyecto.id} + '\')'">Eliminar</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </th:block>
+            <br />
 
             <div id="comentarios">
                 <br \>

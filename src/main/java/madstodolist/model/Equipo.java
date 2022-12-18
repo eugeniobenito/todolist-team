@@ -62,6 +62,11 @@ public class Equipo {
             inverseJoinColumns = {@JoinColumn(name = "fk_usuario")})
     Set<Usuario> usuarios = new HashSet<>();
 
+    @OneToMany(mappedBy = "equipo", fetch = FetchType.EAGER)
+    Set<Proyecto> proyectos = new HashSet<>();
+
+    public Set<Proyecto> getProyectos() { return this.proyectos; }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
