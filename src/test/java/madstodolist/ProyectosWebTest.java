@@ -107,6 +107,33 @@ public class ProyectosWebTest {
     }
 
 
+    @Test
+    public void paginaProyectoFormAnyadirTarea() throws Exception{
+        Usuario u = crearUsuario("a@a", false);
+        Usuario u2 = crearUsuario("a2@a", false);
+        Equipo e = crearEquipo(u);
+        Proyecto p = proyectoService.crearProyecto("proyecto24", e.getId());
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(u.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        this.mockMvc.perform(get("/proyectos/" + p.getId().toString()))
+                .andExpect(content().string(containsString("proyecto24")));
+
+
+        MockHttpServletResponse response = this.mockMvc.perform(get("/proyectos/200"))
+                .andReturn().getResponse();
+
+        Assertions.assertThat(response.getStatus()).isEqualTo(404);
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(u2.getId());
+        response = this.mockMvc.perform(get("/proyectos/" + p.getId().toString()))
+                .andReturn().getResponse();
+
+        Assertions.assertThat(response.getStatus()).isEqualTo(404);
+    }
+
+
 
 
 

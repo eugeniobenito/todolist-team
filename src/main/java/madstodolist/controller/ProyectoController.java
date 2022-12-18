@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @Controller
 public class ProyectoController {
@@ -54,7 +55,8 @@ public class ProyectoController {
         Usuario u = usuarioService.findById(idUser);
         Long idAdmin = new Long(-1);
         if(e.getAdmin() != null)  idAdmin = e.getAdmin().getId();
-        if(!equipoService.usuarioPerteneceEquipo(e, u) && idUser != idAdmin){
+        List<Usuario> usuarios = equipoService.usuariosEquipo(e.getId());
+        if(!usuarios.contains(u) && idUser != idAdmin){
             throw new UsuarioNotJoinedTeamException();
         }
     }
@@ -107,6 +109,23 @@ public class ProyectoController {
         Proyecto proyecto = proyectoService.crearProyecto(proyectoData.getNombre(), equipo.getId());
 
         return "redirect:/equipos/" + idEquipo;
+    }
+
+    @GetMapping("/proyectos/{id}")
+    public String proyectoData(@PathVariable(value="id") Long idProyecto,
+                                    @ModelAttribute TareaProyectoData tareaProyectoData, Model model,
+                                    HttpSession session) {
+        Proyecto p = proyectoService.getById(idProyecto);
+        if(p == null)
+            throw new ProyectoNotFoundException();
+        Equipo equipo = p.getEquipo();
+
+        userJoinedTeam(equipo);
+
+        Usuario usuario = usuarioService.findById(managerUserSession.usuarioLogeado());
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("proyecto", p);
+        return "detallesProyecto";
     }
 
 }

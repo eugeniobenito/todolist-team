@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: head (titulo='Login')"></head>
+
+<body>
+<div th:insert="navbar :: navbar"></div>
+<div class="container-fluid">
+
+    <h2 th:text="'Añadir una nueva tarea al proyecto ' + ${proyecto.getNombre()}"></h2>
+
+    <form method="post" th:action="@{/proyectos/{id}/tareas/nueva(id=${proyecto.id})}" th:object="${tareaProyectoData}">
+        <div class="col-6">
+        <div class="form-group">
+            <label for="nombre">Título de la tarea:</label>
+            <input class="form-control" id="nombre" name="nombre" required th:field="*{nombre}" type="text"/>
+        </div>
+        <button class="btn btn-primary" type="submit">Crear tarea</button>
+        </div>
+    </form>
+</div>
+
+<div th:replace="fragments::javascript"/>
+
+</body>
+</html>
