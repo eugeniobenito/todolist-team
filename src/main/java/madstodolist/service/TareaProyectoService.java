@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Set;
+
 @Service
 public class TareaProyectoService {
     @Autowired
@@ -29,8 +31,11 @@ public class TareaProyectoService {
 
     @Transactional
     public void eliminarTareaProyecto(Long tareaId){
-        TareaProyecto tarea = findById(tareaId);
+        TareaProyecto tarea = tareaProyectoRepository.findById(tareaId).orElse(null);
         if(tarea == null) { throw new TareaProyectoServiceException("No se ha encontrado la entidad"); }
+        Set<TareaProyecto> tareas = tarea.getProyecto().getTareasProyecto();
+        tareas.remove(tarea);
+        proyectoRepository.save(tarea.getProyecto());
         tareaProyectoRepository.delete(tarea);
     }
 

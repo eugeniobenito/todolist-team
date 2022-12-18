@@ -84,4 +84,24 @@ public class TareaProyectoController {
         return "redirect:/proyectos/" + idProyecto;
     }
 
+    @DeleteMapping("/proyectos/{id}/tareas/{tareaId}")
+    @Transactional
+    @ResponseBody
+    public String eliminarTarea(@PathVariable(value="id") Long idProyecto,
+                                   @PathVariable(value="tareaId") Long idTarea,
+                                   Model model,
+                                   HttpSession session) {
+        Proyecto p = proyectoService.getById(idProyecto);
+        if(p == null)
+            throw new ProyectoNotFoundException();
+        Equipo equipo = p.getEquipo();
+        TareaProyecto tareaProyecto = tareaProyectoService.findById(idTarea);
+        if(tareaProyecto == null ) throw new TareaNotFoundException();
+
+        userJoinedTeam(equipo);
+
+        tareaProyectoService.eliminarTareaProyecto(tareaProyecto.getId());
+        return "";
+    }
+
 }

@@ -25,6 +25,8 @@ public class Proyecto {
 
     public Set<TareaProyecto> getTareasProyecto() { return this.tareasProyecto; }
 
+    public void setTareasProyecto(Set<TareaProyecto> tareasProyecto)  { this.tareasProyecto = tareasProyecto; }
+
     public Proyecto(String nombre, Equipo e) {
         this.nombre = nombre;
         this.equipo = e;

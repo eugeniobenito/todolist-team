@@ -58,6 +58,7 @@ public class TareaProyectoServiceTest {
         Assertions.assertThat(tareaProyectoService.findById(tarea.getId())).isEqualTo(tarea);
         tareaProyectoService.eliminarTareaProyecto(tarea.getId());
         Assertions.assertThat(tareaProyectoService.findById(tarea.getId())).isNull();
+        Assertions.assertThat(p.getTareasProyecto().size()).isEqualTo(0);
     }
 
     @Test

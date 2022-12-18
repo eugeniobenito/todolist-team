@@ -5,11 +5,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import madstodolist.authentication.ManagerUserSession;
 import madstodolist.model.Equipo;
 import madstodolist.model.Proyecto;
+import madstodolist.model.TareaProyecto;
 import madstodolist.model.Usuario;
-import madstodolist.service.ComentarioEquipoService;
-import madstodolist.service.EquipoService;
-import madstodolist.service.ProyectoService;
-import madstodolist.service.UsuarioService;
+import madstodolist.service.*;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +17,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
@@ -41,6 +40,9 @@ public class TareaProyectoWebTest {
 
     @Autowired
     private ComentarioEquipoService comentarioEquipoService;
+
+    @Autowired
+    private TareaProyectoService tareaProyectoService;
 
     @Autowired
     private ProyectoService proyectoService;
@@ -85,6 +87,38 @@ public class TareaProyectoWebTest {
 
         when(managerUserSession.usuarioLogeado()).thenReturn(u2.getId());
         response = this.mockMvc.perform(post("/proyectos/" + p.getId().toString() + "/tareas"))
+                .andReturn().getResponse();
+
+        Assertions.assertThat(response.getStatus()).isEqualTo(404);
+    }
+
+    @Test
+    @Transactional
+    public void eliminarTareaController() throws Exception{
+        Usuario u = crearUsuario("a@a", false);
+        Usuario u2 = crearUsuario("a2@a", false);
+        Equipo e = crearEquipo(u);
+        Proyecto p = proyectoService.crearProyecto("proyecto24", e.getId());
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(u.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        TareaProyecto tp = tareaProyectoService.crearTareaProyectoService("nuevaTarea", p.getId());
+        Assertions.assertThat(p.getTareasProyecto().size()).isEqualTo(1);
+        MockHttpServletResponse response = this.mockMvc.perform(delete("/proyectos/" + p.getId().toString() + "/tareas/" + tp.getId().toString())).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(200);
+
+        p = proyectoService.getById(p.getId());
+        Assertions.assertThat(tareaProyectoService.findById(tp.getId())).isNull();
+
+
+         response = this.mockMvc.perform(delete("/proyectos/" + p.getId().toString() + "/tareas/2000"))
+                .andReturn().getResponse();
+
+        Assertions.assertThat(response.getStatus()).isEqualTo(404);
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(u2.getId());
+        response = this.mockMvc.perform(delete("/proyectos/" + p.getId().toString() + "/tareas/" + tp.getId().toString()))
                 .andReturn().getResponse();
 
         Assertions.assertThat(response.getStatus()).isEqualTo(404);
