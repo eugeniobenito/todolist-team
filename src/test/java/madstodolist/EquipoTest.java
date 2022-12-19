@@ -38,6 +38,12 @@ public class EquipoTest {
     }
 
     @Test
+    public void crearEquipoPublicoPorDefecto() {
+        Equipo equipo = new Equipo("Proyecto P1");
+        assertThat(equipo.isPrivate()).isFalse();
+    }
+
+    @Test
     public void anyadeDescripcionEquipo() {
         // GIVEN
         // Un equipo nuevo
