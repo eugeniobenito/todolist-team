@@ -28,26 +28,27 @@
                 </thead>
                 <tbody>
                 <tr th:each="equipo: ${equipos}">
-                    <td th:text="${equipo.id}"></td>
-                    <td th:text="${equipo.nombre}"></td>
-                    <td th:if="${usuario.isAdmin}">
-                        <button class="btn btn-danger btn-xs" onmouseover="" style="cursor: pointer;"
-                                th:onclick="'del(\'/equipos/' + ${equipo.id} + '\')'">Eliminar</button>
-
-                        <a class="btn btn-warning btn-xs"
-                                th:href="@{/equipos/{equipoId}/editar(equipoId=${equipo.id})}">Editar</a>
-                    </td>
-                    <td th:if="${usuario.perteneceEquipo(equipo)}">
-                        <button class="btn btn-danger btn-xs" onmouseover="" style="cursor: pointer;"
-                                th:onclick="'del(\'/equipos/' + ${equipo.id} + '/usuarios/' + ${usuario.id} + '\')'">Abandonar</button>
-                    </td>
-                    <td th:unless="${usuario.perteneceEquipo(equipo)}">
-                        <form method="post" th:action="@{/equipos/{equipoId}/usuarios/{usuarioId}(equipoId=${equipo.id}, usuarioId=${usuario.id})}">
-                            <button class="btn btn-success" type="submit">Unirse</button>
-                        </form>
-                    </td>
-                    <td><a th:href="@{/equipos/{id}(id=${equipo.id})}">Ver detalles</a></td>
-
+                    <div th:if="${equipo.isPrivate == false} or ${usuario.isAdmin}">
+                        <td th:text="${equipo.id}"></td>
+                        <td th:text="${equipo.nombre}"></td>
+                        <td th:if="${usuario.isAdmin}">
+                            <button class="btn btn-danger btn-xs" onmouseover="" style="cursor: pointer;"
+                                    th:onclick="'del(\'/equipos/' + ${equipo.id} + '\')'">Eliminar</button>
+    
+                            <a class="btn btn-warning btn-xs"
+                                    th:href="@{/equipos/{equipoId}/editar(equipoId=${equipo.id})}">Editar</a>
+                        </td>
+                        <td th:if="${usuario.perteneceEquipo(equipo)}">
+                            <button class="btn btn-danger btn-xs" onmouseover="" style="cursor: pointer;"
+                                    th:onclick="'del(\'/equipos/' + ${equipo.id} + '/usuarios/' + ${usuario.id} + '\')'">Abandonar</button>
+                        </td>
+                        <td th:unless="${usuario.perteneceEquipo(equipo)}">
+                            <form method="post" th:action="@{/equipos/{equipoId}/usuarios/{usuarioId}(equipoId=${equipo.id}, usuarioId=${usuario.id})}">
+                                <button class="btn btn-success" type="submit">Unirse</button>
+                            </form>
+                        </td>
+                        <td><a th:href="@{/equipos/{id}(id=${equipo.id})}">Ver detalles</a></td>
+                    </div>
                 </tr>
                 </tbody>
             </table>
