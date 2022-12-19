@@ -59,6 +59,22 @@ public class EquipoTest {
     }
 
     @Test
+    public void cambiaVisibilidadEquipo() {
+        // GIVEN
+        // Un equipo nuevo
+        Equipo equipo = new Equipo("Proyecto P1");
+
+        // WHEN
+        // Cambiamos la visibilidad
+        equipo.changeVisibility();
+
+        // THEN 
+        // Ahora el equipo es privado
+        assertThat(equipo.isPrivate()).isTrue();
+    }
+
+
+    @Test
     @Transactional
     public void grabarYBuscarEquipo() {
         // GIVEN

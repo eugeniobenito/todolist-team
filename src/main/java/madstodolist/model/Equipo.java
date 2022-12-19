@@ -58,6 +58,10 @@ public class Equipo {
         return id;
     }
 
+    public void changeVisibility() {
+        this.isPrivate = !this.isPrivate;
+    }
+
     public boolean isPrivate() {
         return this.isPrivate;
     }
