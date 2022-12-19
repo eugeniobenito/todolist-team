@@ -106,4 +106,21 @@ public class InvitacionServiceTest {
             invitacionService.invitar(invitacionDTO(equipoNoBD.getId(), usuarioNoBD.getId()));
         });
     }
+
+    @Test
+    public void enviarInvitacionRepetida() {
+        // GIVEN
+        // Un usuario y un equipo existentes
+        Usuario u = crearUsuario("a@a", false);
+        Equipo e = crearEquipo(u);
+
+        // WHEN
+        invitacionService.invitar(invitacionDTO(e.getId(), u.getId()));
+
+        // THEN
+        // Intentamos invitar a un usuario a un equipo otra vez se lanza excepcion
+        Assertions.assertThrows(InvitacionServiceException.class, () -> {
+            invitacionService.invitar(invitacionDTO(e.getId(), u.getId()));
+        });
+    }
 }

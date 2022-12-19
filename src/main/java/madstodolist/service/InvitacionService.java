@@ -27,6 +27,15 @@ public class InvitacionService {
     @Autowired
     private EquipoRepository equipoRepository;
 
+    private void checkInvitacionRepetida(InvitacionData invitacionDTO) {
+        List<Invitacion> invitacion = invitacionRepository.findByIdEquipoAndIdUsuario(invitacionDTO.getIdEquipo(),
+                invitacionDTO.getIdUsuario());
+
+        if (invitacion.size() != 0) {
+            throw new InvitacionServiceException("Ya existe esta invitacion");   
+        }
+    }
+
     @Transactional
     public void invitar(InvitacionData invitacionDTO) {
         Usuario usuario = usuarioRepository.findById(invitacionDTO.getIdUsuario()).orElse(null);
@@ -37,6 +46,8 @@ public class InvitacionService {
 
         if (equipo == null)
             throw new EquipoServiceException("No existe el equipo con id " + invitacionDTO.getIdEquipo());
+
+        checkInvitacionRepetida(invitacionDTO);
 
         Invitacion invitacion = new Invitacion(invitacionDTO.getIdEquipo(), invitacionDTO.getIdUsuario());
         invitacionRepository.save(invitacion);
