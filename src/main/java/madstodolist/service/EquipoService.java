@@ -109,6 +109,15 @@ public class EquipoService {
     }
 
     @Transactional
+    public Equipo cambiarVisibilidadEquipo(Long equipoId){
+        Equipo e = equipoRepository.findById(equipoId).orElse(null);
+        if(e == null) throw new EquipoServiceException("No existe el equipo con id " + equipoId);
+        e.changeVisibility();
+        equipoRepository.save(e);
+        return e;
+    }
+
+    @Transactional
     public void eliminarEquipo(Long equipoId){
         Equipo e = equipoRepository.findById(equipoId).orElse(null);
         if(e == null) throw new EquipoServiceException("No existe el equipo con id " + equipoId);
