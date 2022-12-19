@@ -2,6 +2,8 @@ package madstodolist;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.test.context.jdbc.Sql;
 import madstodolist.controller.InvitacionData;
 import madstodolist.model.Equipo;
 import madstodolist.model.Invitacion;
+import madstodolist.model.InvitacionRepository;
 import madstodolist.model.Usuario;
 import madstodolist.service.EquipoService;
 import madstodolist.service.InvitacionService;
@@ -122,5 +125,27 @@ public class InvitacionServiceTest {
         Assertions.assertThrows(InvitacionServiceException.class, () -> {
             invitacionService.invitar(invitacionDTO(e.getId(), u.getId()));
         });
+    }
+
+    @Test
+    @Transactional
+    public void aceptarInvitacionOK() {
+        // GIVEN
+        // Un usuario con una invitación pendiente
+        Usuario u = crearUsuario("a@a", false);
+        Equipo e = crearEquipo(u);
+        invitacionService.invitar(invitacionDTO(e.getId(), u.getId()));
+
+        // WHEN
+        // El usuario acepta la invitación
+        List<Invitacion> invitacion = invitacionService.obtenerInvitacionesDelUsuario(u.getId());
+        invitacionService.aceptar(invitacion.get(0));
+
+        // THEN
+        // El usuario es miembro del equipo
+        Equipo equipoBD = equipoService.recuperarEquipo(e.getId());
+        Usuario usuarioBD = usuarioService.findById(u.getId());
+        assertThat(equipoBD.getUsuarios()).contains(usuarioBD);
+        assertThat(usuarioBD.getEquipos()).contains(equipoBD);
     }
 }

@@ -27,6 +27,9 @@ public class InvitacionService {
     @Autowired
     private EquipoRepository equipoRepository;
 
+    @Autowired
+    private EquipoService equipoService;
+
     private void checkInvitacionRepetida(InvitacionData invitacionDTO) {
         List<Invitacion> invitacion = invitacionRepository.findByIdEquipoAndIdUsuario(invitacionDTO.getIdEquipo(),
                 invitacionDTO.getIdUsuario());
@@ -64,4 +67,10 @@ public class InvitacionService {
         invitaciones = invitacionRepository.findByIdUsuario(idUsuario);
         return invitaciones;
     }
+
+    @Transactional
+    public void aceptar(Invitacion invitacion) {
+        equipoService.addUsuarioEquipo(invitacion.getUsuarioId(), invitacion.getEquipoId());
+        invitacionRepository.delete(invitacion);
+    }    
 }
