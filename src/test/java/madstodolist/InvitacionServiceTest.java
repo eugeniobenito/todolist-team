@@ -148,4 +148,27 @@ public class InvitacionServiceTest {
         assertThat(equipoBD.getUsuarios()).contains(usuarioBD);
         assertThat(usuarioBD.getEquipos()).contains(equipoBD);
     }
+
+    @Test
+    @Transactional
+    public void denegarInvitacionOK() {
+        // GIVEN
+        // Un usuario con una invitación pendiente
+        Usuario u = crearUsuario("a@a", false);
+        Equipo e = crearEquipo(u);
+        invitacionService.invitar(invitacionDTO(e.getId(), u.getId()));
+
+        // WHEN
+        // El usuario acepta la invitación
+        List<Invitacion> invitacion = invitacionService.obtenerInvitacionesDelUsuario(u.getId());
+        invitacionService.denegar(invitacion.get(0));
+
+        // THEN
+        // El usuario es miembro del equipo
+        Equipo equipoBD = equipoService.recuperarEquipo(e.getId());
+        Usuario usuarioBD = usuarioService.findById(u.getId());
+        assertThat(equipoBD.getUsuarios()).doesNotContain(usuarioBD);
+        assertThat(usuarioBD.getEquipos()).doesNotContain(equipoBD);
+        assertThat(invitacionService.obtenerInvitacionesDelUsuario(usuarioBD.getId())).hasSize(0);
+    }
 }

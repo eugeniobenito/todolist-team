@@ -73,4 +73,9 @@ public class InvitacionService {
         equipoService.addUsuarioEquipo(invitacion.getUsuarioId(), invitacion.getEquipoId());
         invitacionRepository.delete(invitacion);
     }    
+
+    @Transactional
+    public void denegar(Invitacion invitacion) {
+        invitacionRepository.delete(invitacion);
+    }  
 }
