@@ -90,4 +90,20 @@ public class InvitacionServiceTest {
             invitacionService.invitar(invitacionDTO(e.getId(), usuarioNoBD.getId()));
         });
     }
+
+    @Test
+    public void invitarUsuarioNoExistenteAEquipoNoExistenteException() {
+        // GIVEN
+        // Un usuario y un equipo no existentes en BD
+        Usuario usuarioNoBD = new Usuario("pedro@ua.es");
+        usuarioNoBD.setId(8L);
+        Equipo equipoNoBD = new Equipo("Equipo");
+        equipoNoBD.setId(9L);
+
+        // WHEN, THEN
+        // Intentamos invitar a un usuario a un equipo que no existen se lanza excepcion
+        Assertions.assertThrows(InvitacionServiceException.class, () -> {
+            invitacionService.invitar(invitacionDTO(equipoNoBD.getId(), usuarioNoBD.getId()));
+        });
+    }
 }
