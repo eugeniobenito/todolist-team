@@ -7,8 +7,13 @@
 <div th:insert="navbar :: navbar"></div>
 <div class="container-fluid">
 
-    <h2>Detalles del equipo</h2>
-
+    <div style="display: flex;">
+        <h2 style="margin-right: 10px;">Detalles del equipo</h2>
+        <button th:if="${usuario == equipo.admin} and ${equipo.isPrivate}" class="btn btn-outline-success btn-sm" onmouseover="" style="cursor: pointer; padding: 3px 5px;"
+        th:onclick="'patch(\'/equipos/' + ${equipo.id} + '\')'">Hacer público</button>
+        <button th:if="${usuario == equipo.admin} and ${equipo.isPrivate == false}" class="btn btn-outline-danger btn-sm" onmouseover="" style="cursor: pointer; padding: 3px 5px;"
+        th:onclick="'patch(\'/equipos/' + ${equipo.id} + '\')'">Hacer privado</button>
+    </div>
 
     <div class="col-6">
         <td th:if="${usuario == equipo.admin}">
@@ -146,7 +151,7 @@
 
 </div>
 
-<script type="text/javascript">
+<script type="text/javascript" th:inline="javascript">
     function del(urlBorrar) {
         if (confirm('¿Estás seguro/a?')) {
             fetch(urlBorrar, {
@@ -154,8 +159,14 @@
             }).then((res) => location.href = '/equipos');
         }
     }
-</script>
 
+    function patch(url) {
+        console.log(url);
+        fetch(url + '/visibilidad', {
+            method: 'PATCH'
+        }).then((res) => location.href = '/equipos/' + /*[[${equipo.id}]]*/"");
+}
+</script>
 
 </body>
 </html>

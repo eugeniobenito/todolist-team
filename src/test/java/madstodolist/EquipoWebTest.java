@@ -244,6 +244,7 @@ public class EquipoWebTest {
                 .andExpect(content().string
                         (allOf(containsString("Editar"),
                                 containsString("Eliminar del equipo"),
+                                containsString("Hacer privado"),
                                 containsString("Eliminar equipo"))));
     }
     @Test
