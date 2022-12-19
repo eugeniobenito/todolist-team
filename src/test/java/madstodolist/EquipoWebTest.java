@@ -575,4 +575,15 @@ public class EquipoWebTest {
                         (allOf(containsString("PruebaEquipo2"))));
     }
 
+    @Test
+    public void cambiarVisibilidadEquipo() throws Exception{
+        Usuario u = createUser();
+        Equipo e = equipoService.crearEquipo("PruebaEquipo1","Descripcion", u);
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(u.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        this.mockMvc.perform(patch("/equipos/" + e.getId().toString() + "/visibilidad"))
+                .andExpect(status().isOk());
+    }
 }
