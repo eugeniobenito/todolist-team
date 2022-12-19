@@ -71,6 +71,13 @@
                 </tr>
                 </tbody>
             </table>
+            <th:block th:if="${usuario == equipo.admin} and ${equipo.isPrivate}"> 
+                <b>Envia una invitación: </b> <br />
+                    <div class="form-group">
+                        <input class="form-control" id="invitar" type="text" style="margin-right: 10px;">
+                    </div>
+                    <button class="btn btn-success" type="submit" onclick="invitar()">Invitar</button>       
+            </th:block>
             <br />
             <br />
             <th:block th:if="${usuarios.contains(usuario) || usuario == equipo.admin }">
@@ -165,7 +172,17 @@
         fetch(url + '/visibilidad', {
             method: 'PATCH'
         }).then((res) => location.href = '/equipos/' + /*[[${equipo.id}]]*/"");
-}
+    }
+
+    function invitar() {
+        const email = document.getElementById('invitar').value;
+        console.log(email);
+
+        fetch('http://localhost:8080/invitacion/' + + /*[[${equipo.id}]]*/"", {
+            method: 'POST',
+            body: email
+        }).then((res) =>  { document.getElementById('invitar').value = "" })
+    }
 </script>
 
 </body>

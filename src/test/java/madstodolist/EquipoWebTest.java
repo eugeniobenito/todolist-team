@@ -604,5 +604,11 @@ public class EquipoWebTest {
 
         this.mockMvc.perform(patch("/equipos/" + e.getId().toString() + "/visibilidad"))
                 .andExpect(status().isOk());
+
+        this.mockMvc.perform(get("/equipos/" + e.getId().toString()))
+                .andExpect(content().string
+                        (allOf(containsString("Editar"),
+                                containsString("Hacer público"),
+                                containsString("Invitar"))));
     }
 }
