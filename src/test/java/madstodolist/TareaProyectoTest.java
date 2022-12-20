@@ -60,5 +60,19 @@ public class TareaProyectoTest {
         Assertions.assertThat(u.getTareasProyecto()).contains(tp);
     }
 
+    @Test
+    public void tareaCanRemove() {
+        Equipo e = new Equipo("aaa");
+        equipoRepository.save(e);
+        Proyecto p = new Proyecto("prueba", e);
+        proyectoRepository.save(p);
+        TareaProyecto tp = new TareaProyecto("estudiar", p);
+        Usuario u = new Usuario("a@a");
+        tp.addUsuario(u);
+        tp.removeUsuario(u);
+        Assertions.assertThat(tp.getUsuarios()).doesNotContain(u);
+        Assertions.assertThat(u.getTareasProyecto()).doesNotContain(tp);
+    }
+
 
 }

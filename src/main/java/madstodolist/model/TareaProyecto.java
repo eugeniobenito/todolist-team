@@ -60,6 +60,11 @@ public class TareaProyecto {
         u.tareasProyecto.add(this);
     }
 
+    public void removeUsuario(Usuario u){
+        this.usuarios.remove(u);
+        u.tareasProyecto.remove(this);
+    }
+
     public Set<Usuario> getUsuarios() { return this.usuarios; }
 
 
