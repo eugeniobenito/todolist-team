@@ -3,10 +3,7 @@ package madstodolist.controller;
 import madstodolist.authentication.ManagerUserSession;
 import madstodolist.controller.exception.*;
 import madstodolist.model.*;
-import madstodolist.service.EquipoService;
-import madstodolist.service.ProyectoService;
-import madstodolist.service.TareaProyectoService;
-import madstodolist.service.UsuarioService;
+import madstodolist.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,7 +55,7 @@ public class TareaProyectoController {
     }
 
     @Transactional
-    private void userJoinedTeam(Equipo e) {
+    void userJoinedTeam(Equipo e) {
         if (!managerUserSession.isUsuarioLogeado())
             throw new UsuarioNoLogeadoException();
         Long idUser = managerUserSession.usuarioLogeado();
@@ -128,5 +125,60 @@ public class TareaProyectoController {
         tareaProyectoService.cambiarEstado(idTarea, Status.valueOf(status));
         return "";
     }
+
+
+    @PostMapping("/tareaproyecto/{id}/usuarios/{usuarioId}")
+    public String unirseTarea(@PathVariable(value="id") Long idTareaProyecto,
+                             @PathVariable(value="usuarioId") Long usuarioId,
+                             Model model, RedirectAttributes flash,
+                             HttpSession session) {
+
+        TareaProyecto tarea = tareaProyectoService.findById(idTareaProyecto);
+        if(tarea == null) // exception
+            throw new TareaProyectoServiceException("");
+
+
+        // se ha unido al equipo
+        Equipo e = tarea.getProyecto().getEquipo();
+        userJoinedTeam(e);
+
+        // es dueño del recurso
+        Long idUserLogged = managerUserSession.usuarioLogeado();
+
+        if(idUserLogged != usuarioId) throw new NotOwnerOfResourceException();
+
+
+        tareaProyectoService.addUsuario(tarea.getId(), idUserLogged);
+
+        return "redirect:/proyectos/" + tarea.getProyecto().getId().toString();
+    }
+
+    @DeleteMapping("/tareaproyecto/{id}/usuarios/{usuarioId}")
+    public String abandonarTarea(@PathVariable(value="id") Long idTareaProyecto,
+                                 @PathVariable(value="usuarioId") Long usuarioId,
+                                 Model model, RedirectAttributes flash,
+                                 HttpSession session) {
+
+        TareaProyecto tarea = tareaProyectoService.findById(idTareaProyecto);
+        if(tarea == null) // exception
+            throw new TareaProyectoServiceException("");
+
+
+        // se ha unido al equipo
+        Equipo e = tarea.getProyecto().getEquipo();
+        userJoinedTeam(e);
+
+        // es dueño del recurso
+        Long idUserLogged = managerUserSession.usuarioLogeado();
+
+        if(idUserLogged != usuarioId) throw new NotOwnerOfResourceException();
+
+
+        tareaProyectoService.removeUsuario(tarea.getId(), idUserLogged);
+
+        return "redirect:/proyectos/" + tarea.getProyecto().getId().toString();
+    }
+
+
 
 }

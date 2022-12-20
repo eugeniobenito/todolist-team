@@ -151,6 +151,26 @@ public class TareaProyectoWebTest {
 
     }
 
+    @Test
+    @Transactional
+    public void joinAndLeaveUsuarioTarea() throws Exception{
+
+        Usuario u = crearUsuario("a@a", false);
+        Equipo e = crearEquipo(u);
+        Proyecto p = proyectoService.crearProyecto("proyecto24", e.getId());
+        TareaProyecto tareaProyecto = tareaProyectoService.crearTareaProyectoService("prueba", p.getId());
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(u.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+        this.mockMvc.perform(post("/tareaproyecto/" + tareaProyecto.getId().toString() +
+                                            "/usuarios/" + u.getId().toString()));
+        Assertions.assertThat(tareaProyecto.getUsuarios()).contains(u);
+
+        this.mockMvc.perform(delete("/tareaproyecto/" + tareaProyecto.getId().toString() +
+                "/usuarios/" + u.getId().toString()));
+
+        Assertions.assertThat(tareaProyecto.getUsuarios()).doesNotContain(u);
+    }
 
 
 
