@@ -60,4 +60,13 @@ public class TareaProyectoService {
 
         tarea.addUsuario(usuario);
     }
+
+    @Transactional
+    public void removeUsuario(Long tareaProyectoId, Long userId) {
+        Usuario usuario = usuarioRepository.findById(userId).orElse(null);
+        if(usuario == null) throw new TareaProyectoServiceException("No se ha encontrado el usuario");
+        TareaProyecto tarea = tareaProyectoRepository.findById(tareaProyectoId).orElse(null);
+        if(tarea == null) throw new TareaProyectoServiceException("No se ha encontrado la tarea");
+        tarea.removeUsuario(usuario);
+    }
 }

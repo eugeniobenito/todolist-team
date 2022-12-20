@@ -93,9 +93,27 @@ public class TareaProyectoServiceTest {
         TareaProyecto tarea = tareaProyectoService.crearTareaProyectoService("estudiar", p.getId());
         Assertions.assertThat(tarea.getUsuarios()).hasSize(0);
         tareaProyectoService.addUsuario(tarea.getId(), u.getId());
-        // Assertions.assertThat(tarea.getUsuarios()).contains(u);
+        Assertions.assertThat(tarea.getUsuarios()).contains(u);
     }
 
+    @Test
+    @Transactional
+    public void eliminarUsuario(){
+        Equipo e = new Equipo("aaa");
+        e = equipoRepository.save(e);
+        Proyecto p = new Proyecto("prueba", e);
+        p = proyectoRepository.save(p);
+        Usuario u = new Usuario("qa@a");
+        u.setPassword("aaa");
+        u = usuarioRepository.save(u);
+
+        TareaProyecto tarea = tareaProyectoService.crearTareaProyectoService("estudiar", p.getId());
+        Assertions.assertThat(tarea.getUsuarios()).hasSize(0);
+        tareaProyectoService.addUsuario(tarea.getId(), u.getId());
+        Assertions.assertThat(tarea.getUsuarios()).contains(u);
+        tareaProyectoService.removeUsuario(tarea.getId(), u.getId());
+        Assertions.assertThat(tarea.getUsuarios()).doesNotContain(u);
+    }
 
 
 
