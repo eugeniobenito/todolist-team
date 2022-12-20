@@ -2,6 +2,7 @@ package madstodolist.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +13,7 @@ import madstodolist.controller.exception.UsuarioNoAdminException;
 import madstodolist.controller.exception.UsuarioNoLogeadoException;
 import madstodolist.controller.exception.UsuarioNotFoundException;
 import madstodolist.model.Equipo;
+import madstodolist.model.Invitacion;
 import madstodolist.model.Usuario;
 import madstodolist.service.EquipoService;
 import madstodolist.service.InvitacionService;
@@ -44,6 +46,12 @@ public class InvitacionController {
         }
     }
 
+    private void comprobarUsuarioLogeado(Long idUsuario) {
+        Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
+        if (!idUsuario.equals(idUsuarioLogeado))
+            throw new UsuarioNoLogeadoException();
+    }
+
     @PostMapping("/invitacion/{id}")
     @ResponseBody
     public String invitar(@PathVariable(value="id") Long idEquipo, @RequestBody String correoUsuario) {
@@ -64,6 +72,15 @@ public class InvitacionController {
             return "";
         }        
 
+        return "";
+    }
+
+    @DeleteMapping("/invitacion/{id}")
+    @ResponseBody
+    public String denegar(@PathVariable(value="id") Long idInvitacion) {
+        Invitacion invitacion = invitacionService.findById(idInvitacion);
+        comprobarUsuarioLogeado(invitacion.getUsuarioId());
+        invitacionService.denegar(invitacion);
         return "";
     }
 }

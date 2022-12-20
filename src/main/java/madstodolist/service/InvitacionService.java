@@ -68,6 +68,16 @@ public class InvitacionService {
         return invitaciones;
     }
 
+    @Transactional(readOnly = true)
+    public Invitacion findById(Long idInvitacion) {
+        Invitacion invitacion = invitacionRepository.findById(idInvitacion).orElse(null);
+
+        if (invitacion == null)
+            throw new InvitacionServiceException("Invitacion no existe");
+
+        return invitacion;
+    }
+
     @Transactional
     public void aceptar(Invitacion invitacion) {
         equipoService.addUsuarioEquipo(invitacion.getUsuarioId(), invitacion.getEquipoId());

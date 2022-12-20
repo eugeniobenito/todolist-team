@@ -37,4 +37,8 @@ public class Invitacion implements Serializable {
     public Long getEquipoId() {
         return this.idEquipo;
     }
+
+    public Long getId() {
+        return this.id;
+    }
 }
