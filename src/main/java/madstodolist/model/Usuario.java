@@ -6,10 +6,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "usuarios")
@@ -20,6 +17,8 @@ public class Usuario implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private int code = new Random().ints(10000, 99999).findFirst().getAsInt();
     @NotNull
     private String email;
     private String nombre;
@@ -58,6 +57,14 @@ public class Usuario implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
     }
 
     public String getEmail() {
