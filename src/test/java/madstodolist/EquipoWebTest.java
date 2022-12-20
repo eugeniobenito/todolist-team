@@ -563,11 +563,15 @@ public class EquipoWebTest {
     @Test
     public void getMisEquipos() throws Exception{
 
-        Equipo e1 = equipoService.crearEquipo("PruebaEquipo1");
-        Equipo e2 = equipoService.crearEquipo("PruebaEquipo2");
-
-
         Usuario usuario = createUser();
+        Usuario usuario2 = new Usuario("user2@ua");
+        usuario2.setPassword("123");
+        usuario2.setIsAdmin(false);
+        usuario2.setBlocked(false);
+        usuarioService.registrar(usuario2);
+        Equipo e1 = equipoService.crearEquipo("PruebaEquipo1", "", usuario);
+        Equipo e2 = equipoService.crearEquipo("PruebaEquipo2", "", usuario2);
+
         when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
         when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
 
@@ -588,10 +592,32 @@ public class EquipoWebTest {
                         (allOf(containsString("PruebaEquipo1"),
                                 containsString("PruebaEquipo2"))));
 
-        this.mockMvc.perform(delete("/equipos/" + e1.getId().toString() + "/usuarios/" + usuario.getId()));
+        this.mockMvc.perform(delete("/equipos/" + e2.getId().toString() + "/usuarios/" + usuario.getId()));
         this.mockMvc.perform(get("/mis-equipos"))
                 .andExpect(content().string
-                        (allOf(containsString("PruebaEquipo2"))));
+                        (allOf(containsString("PruebaEquipo1"))));
+    }
+
+    @Test
+    public void getMisEquiposAdministrados() throws Exception{
+
+        Usuario usuario = createUser();
+        Equipo e1 = equipoService.crearEquipo("PruebaEquipo1", "", usuario);
+        Equipo e2 = equipoService.crearEquipo("PruebaEquipo2", "", usuario);
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(content().string
+                        (allOf(containsString("PruebaEquipo1"),
+                                containsString("PruebaEquipo2"))));
+
+        this.mockMvc.perform(get("/mis-equipos"))
+                .andExpect(content().string
+                        (allOf(containsString("PruebaEquipo1"),
+                                containsString("PruebaEquipo2"))));
+
     }
 
     @Test
