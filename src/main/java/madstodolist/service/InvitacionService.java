@@ -1,6 +1,7 @@
 package madstodolist.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +67,19 @@ public class InvitacionService {
         List<Invitacion> invitaciones = new ArrayList<Invitacion>();
         invitaciones = invitacionRepository.findByIdUsuario(idUsuario);
         return invitaciones;
+    }
+
+    @Transactional(readOnly = true)
+    public HashMap<Invitacion, String> obtenerInvitacionesConNombreDelEquipo(Long idUsuario) {
+        List<Invitacion> invitaciones = this.obtenerInvitacionesDelUsuario(idUsuario);
+        HashMap<Invitacion, String> invitacionesConNombreDelEquipo = new HashMap<>();
+
+        for (Invitacion invitacion : invitaciones) {
+            String nombreEquipo = equipoService.recuperarEquipo(invitacion.getEquipoId()).getNombre();
+            invitacionesConNombreDelEquipo.put(invitacion, nombreEquipo);
+        }
+
+        return invitacionesConNombreDelEquipo;
     }
 
     @Transactional(readOnly = true)

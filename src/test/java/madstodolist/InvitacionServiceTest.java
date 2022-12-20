@@ -1,5 +1,6 @@
 package madstodolist;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -170,5 +171,25 @@ public class InvitacionServiceTest {
         assertThat(equipoBD.getUsuarios()).doesNotContain(usuarioBD);
         assertThat(usuarioBD.getEquipos()).doesNotContain(equipoBD);
         assertThat(invitacionService.obtenerInvitacionesDelUsuario(usuarioBD.getId())).hasSize(0);
+    }
+
+    @Test
+    @Transactional
+    public void testObtenerInvitacionesConNombreDelEquipo() {
+        // GIVEN
+        // Un usuario y un equipo
+        Usuario u = crearUsuario("a@a", false);
+        Equipo e = crearEquipo(u);
+
+        // WHEN
+        // El usuario tiene una invitacion pendiente
+        invitacionService.invitar(invitacionDTO(e.getId(), u.getId()));
+
+        // THEN
+        // La funcion devuelve el hashmap
+        List<Invitacion> invitacion = invitacionService.obtenerInvitacionesDelUsuario(u.getId());
+        HashMap<Invitacion, String> invitacionesConNombreDelEquipo = invitacionService.obtenerInvitacionesConNombreDelEquipo(u.getId());
+        assertThat(invitacionesConNombreDelEquipo.size()).isEqualTo(1);
+        assertThat(invitacionesConNombreDelEquipo.get(invitacion.get(0))).isEqualTo("equipo");
     }
 }
