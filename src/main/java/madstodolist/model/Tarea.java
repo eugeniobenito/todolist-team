@@ -1,8 +1,13 @@
 package madstodolist.model;
 
+import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
+import org.thymeleaf.util.DateUtils;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Objects;
 
@@ -108,5 +113,19 @@ public class Tarea implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(titulo, usuario);
+    }
+
+    public boolean isToday(){
+        if(fechaLimite == null) return false;
+        Date now = new Date();
+
+        LocalDate localDate1 = now.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+        LocalDate localDate2 = fechaLimite.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+        return localDate1.isEqual(localDate2);
+        // return date.getYear() == now.getYear() && now.getMonth() == date.getMonth() && now.getDayOfMonth() == date.getDayOfMonth();
     }
 }

@@ -46,6 +46,17 @@
             </div>
           </li>          
         </th:block>
+
+
+            <div style="padding: 5px">
+              <div><b>Tareas para hoy:</b></div>
+              <th:block th:each="tarea: ${usuario.tareas}">
+                <th:block th:if="${tarea.isToday()}">
+                  <div>- <th:text="${tarea.titulo}" /></div>
+                </th:block>
+              </th:block>
+            </div>
+          </ul>
     </ul>
     </div>
   </div>
