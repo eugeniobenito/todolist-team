@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: head (titulo='Reset')"></head>
+
+<body>
+<div class="container-fluid">
+
+  <div class="row justify-content-center mb-3">
+    <div class="col-auto">
+      <h2>Restablecer contraseña</h2>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-6">
+      <form method="post" th:action="@{/reset}" th:object="${loginData}">
+        <div class="row justify-content-center">
+          <div class="col-6">
+            <div class="form-group">
+              <label for="eMail">Correo Electrónico</label>
+              <input id="eMail" class="form-control" name="eMail" placeholder="Correo electrónico" type="text" th:field="*{eMail}" required/>
+            </div>
+            <button type="submit" class="btn btn-primary">Enviar</button>
+            <a class="btn btn-link" href="/login">Ir a login</a>
+            <a class="btn btn-link" href="/registro">Ir a registro</a>
+            <a class="btn btn-link" href="/about">Acerca de</a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="row mt-3 justify-content-center">
+    <div class="col-6">
+      <div class="alert alert-danger" th:if="${error != null}" th:text="${error}"></div>
+      <div class="alert alert-success" th:if="${enviado != null}" th:text="${enviado}"></div>
+    </div>
+  </div>
+</div>
+
+<div th:replace="fragments::javascript"/>
+
+</body>
+</html>
