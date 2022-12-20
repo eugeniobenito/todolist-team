@@ -1,10 +1,13 @@
 package madstodolist.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +34,9 @@ public class InvitacionService {
     @Autowired
     private EquipoService equipoService;
 
+    @Autowired
+    private JavaMailSender sender;
+
     private void checkInvitacionRepetida(InvitacionData invitacionDTO) {
         List<Invitacion> invitacion = invitacionRepository.findByIdEquipoAndIdUsuario(invitacionDTO.getIdEquipo(),
                 invitacionDTO.getIdUsuario());
@@ -55,6 +61,25 @@ public class InvitacionService {
 
         Invitacion invitacion = new Invitacion(invitacionDTO.getIdEquipo(), invitacionDTO.getIdUsuario());
         invitacionRepository.save(invitacion);
+        SimpleMailMessage email = new SimpleMailMessage();
+        email.setTo(usuario.getEmail());
+        email.setSubject("Invitación a un equipo");
+        StringBuffer body = new StringBuffer();
+        body.append("****************************************************\n");
+        body.append("Correo electrónico AUTOMATIZADO - No responder a este mensaje\n");
+        body.append("****************************************************\n");
+        body.append("Fecha: ");
+        body.append(new Date());
+        body.append("\n");
+        body.append("________________________________________________________________________________");
+        body.append("\n");
+        body.append("Solicitud de unión del equipo " + equipo.getNombre() + ", para aceptar la invitación haga clic en el siguiente enlace: ");
+        body.append("\n");
+        body.append("http://localhost:8080/login");
+        body.append("\n");
+        body.append("________________________________________________________________________________");
+        email.setText(body.toString());
+        sender.send(email);
     }
 
     @Transactional(readOnly = true)
