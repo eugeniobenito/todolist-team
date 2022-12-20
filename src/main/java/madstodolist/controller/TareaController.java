@@ -21,6 +21,7 @@ import javax.servlet.http.HttpSession;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
 
 @Controller
@@ -85,7 +86,7 @@ public class TareaController {
 
         Usuario usuario = usuarioService.findById(idUsuario);
         List<Tarea> tareas = tareaService.allTareasUsuario(idUsuario);
-        List<Invitacion> invitaciones = invitacionService.obtenerInvitacionesDelUsuario(idUsuario);
+        HashMap<Invitacion, String> invitaciones = invitacionService.obtenerInvitacionesConNombreDelEquipo(idUsuario);
         model.addAttribute("usuario", usuario);
         model.addAttribute("tareas", tareas);
         model.addAttribute("invitaciones", invitaciones);
@@ -103,7 +104,7 @@ public class TareaController {
 
         comprobarUsuarioLogeado(tarea.getUsuario().getId());
 
-        List<Invitacion> invitaciones = invitacionService.obtenerInvitacionesDelUsuario(tarea.getUsuario().getId());        
+        HashMap<Invitacion, String> invitaciones = invitacionService.obtenerInvitacionesConNombreDelEquipo(tarea.getUsuario().getId()); 
         model.addAttribute("invitaciones", invitaciones);
         model.addAttribute("tarea", tarea);
         model.addAttribute("usuario", tarea.getUsuario());
