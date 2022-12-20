@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class TareaService {
@@ -26,6 +23,16 @@ public class TareaService {
     private UsuarioRepository usuarioRepository;
     @Autowired
     private TareaRepository tareaRepository;
+
+    private boolean dateIsToday(Date date){
+        Calendar cal1 = Calendar.getInstance();
+        Calendar cal2 = Calendar.getInstance();
+        cal1.setTime(new Date());
+        cal2.setTime(date);
+        boolean sameDay = cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR) &&
+                cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR);
+        return sameDay;
+    }
 
     @Transactional
     public Tarea nuevaTareaUsuario(Long idUsuario, String tituloTarea) {
@@ -47,7 +54,7 @@ public class TareaService {
             throw new TareaServiceException("Usuario " + idUsuario + " no existe al crear tarea " + tareaDTO.getTitulo());
         }
 
-        if (tareaDTO.getFechaLimite() != null && tareaDTO.getFechaLimite().before(new Date())) {
+       if (tareaDTO.getFechaLimite() != null && tareaDTO.getFechaLimite().before(new Date()) && !dateIsToday(tareaDTO.getFechaLimite())) {
             throw new TareaServiceException("No puedes crear una tarea con fecha límite en pasado");            
         }
 

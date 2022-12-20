@@ -1,6 +1,7 @@
 package madstodolist;
 
 import madstodolist.authentication.ManagerUserSession;
+import madstodolist.controller.TareaData;
 import madstodolist.controller.exception.StatusNotValidException;
 import madstodolist.model.Tarea;
 import madstodolist.model.Usuario;
@@ -16,6 +17,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -251,4 +254,32 @@ public class TareaWebTest {
                 .content("DoNe"))
                 .andExpect(status().is4xxClientError());
     }
+
+    @Test
+    public void revisarTareasHoy() throws Exception {
+        // GIVEN
+        // Un usuario con dos tareas en la BD
+        DosIds dosIds = addUsuarioTareasBD();
+        Long usuarioId = dosIds.usuarioId;
+        Long tareaLavarCocheId = dosIds.tareaId;
+        TareaData tareaData = new TareaData();
+        tareaData.setFechaLimite(new Date());
+        tareaData.setTitulo("tareaHoy");
+        String urlListado = "/usuarios/" + usuarioId + "/tareas";
+
+        this.mockMvc.perform(get(urlListado))
+                .andExpect(content().string(
+                        allOf(not(containsString("- <span>tareaHoy</span>")))));
+        Tarea tareaHoy = tareaService.nuevaTareaUsuario(usuarioId, tareaData);
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuarioId);
+
+
+
+        this.mockMvc.perform(get(urlListado))
+                .andExpect(content().string(
+                        allOf((containsString("- <span>tareaHoy</span>")))));
+
+    }
+
 }
