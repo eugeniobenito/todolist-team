@@ -5,6 +5,7 @@ import madstodolist.model.UsuarioRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailAuthenticationException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -79,25 +80,29 @@ public class UsuarioService {
         else if (usuario.getPassword() == null)
             throw new UsuarioServiceException("El usuario no tiene password");
         else {
-            SimpleMailMessage email = new SimpleMailMessage();
-            email.setTo(usuario.getEmail());
-            email.setSubject("Registro en ToDoList");
-            StringBuffer body = new StringBuffer();
-            body.append("****************************************************\n");
-            body.append("Correo electrónico AUTOMATIZADO - No responder a este mensaje\n");
-            body.append("****************************************************\n");
-            body.append("Fecha: ");
-            body.append(new Date());
-            body.append("\n");
-            body.append("________________________________________________________________________________");
-            body.append("\n");
-            body.append("Te has registrado correctamente en ToDoList con el siguiente usuario: " + usuario.getEmail() + ".");
-            body.append("\n");
-            body.append("http://localhost:8080/login");
-            body.append("\n");
-            body.append("________________________________________________________________________________");
-            email.setText(body.toString());
-            sender.send(email);
+            try {
+                SimpleMailMessage email = new SimpleMailMessage();
+                email.setTo(usuario.getEmail());
+                email.setSubject("Registro en ToDoList");
+                StringBuffer body = new StringBuffer();
+                body.append("****************************************************\n");
+                body.append("Correo electrónico AUTOMATIZADO - No responder a este mensaje\n");
+                body.append("****************************************************\n");
+                body.append("Fecha: ");
+                body.append(new Date());
+                body.append("\n");
+                body.append("________________________________________________________________________________");
+                body.append("\n");
+                body.append("Te has registrado correctamente en ToDoList con el siguiente usuario: " + usuario.getEmail() + ".");
+                body.append("\n");
+                body.append("http://localhost:8080/login");
+                body.append("\n");
+                body.append("________________________________________________________________________________");
+                email.setText(body.toString());
+                sender.send(email);
+            } catch (MailAuthenticationException e){
+                System.out.println("El correo introducido no es valido -> " + e.getMessage());
+            }
             return usuarioRepository.save(usuario);
         }
     }
