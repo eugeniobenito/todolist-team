@@ -41,8 +41,8 @@
           <li style="list-style: none;">
             <div style="display: flex;">
               <a style="flex: 1;" class="dropdown-item">Te han invitado al equipo <strong th:text="${invitacion.getEquipoId()}"></strong></a>
-              <button class="btn btn-outline-success" style="display: inline-block; width: 30px; height: 30px; margin-right: 5px;"></button>
-              <button class="btn btn-outline-danger" style="display: inline-block; width: 30px; height: 30px; margin-right: 10px;" th:onclick="'deleteInvitation(\'/invitacion/' + ${invitacion.getId()} + '\')'"></button>              
+              <button class="btn btn-outline-success" style="display: inline-block; width: 30px; height: 30px; margin-right: 5px;" th:onclick="'aceptInvitacion(\'/invitacion/' + ${invitacion.getId()} + '\')'"></button>
+              <button class="btn btn-outline-danger" style="display: inline-block; width: 30px; height: 30px; margin-right: 10px;" th:onclick="'deleteInvitacion(\'/invitacion/' + ${invitacion.getId()} + '\')'"></button>              
             </div>
           </li>          
         </th:block>
