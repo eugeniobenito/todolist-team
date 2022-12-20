@@ -41,7 +41,7 @@ public class recuperarContraseñaWebTest {
                         .param("eMail", "ana.garcia@gmail.com")
                         .param("password", "12345678"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/usuarios/1/tareas"));
+                .andExpect(redirectedUrl("/usuarios/"+ anaGarcia.getId() + "/tareas"));
 
         this.mockMvc.perform(post("/newPassword/user="+anaGarcia.getId()+"code="+anaGarcia.getCode())
                         .param("password", "1234"))
@@ -52,6 +52,6 @@ public class recuperarContraseñaWebTest {
                         .param("eMail", "ana.garcia@gmail.com")
                         .param("password", "1234"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/usuarios/1/tareas"));
+                .andExpect(redirectedUrl("/usuarios/"+ anaGarcia.getId() + "/tareas"));
     }
 }
