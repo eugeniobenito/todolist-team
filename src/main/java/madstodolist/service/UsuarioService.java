@@ -5,9 +5,12 @@ import madstodolist.model.UsuarioRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +23,9 @@ public class UsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private JavaMailSender sender;
 
     @Transactional
     public Usuario blockUser(Long idUser){
@@ -72,7 +78,28 @@ public class UsuarioService {
             throw new UsuarioServiceException("El usuario no tiene email");
         else if (usuario.getPassword() == null)
             throw new UsuarioServiceException("El usuario no tiene password");
-        else return usuarioRepository.save(usuario);
+        else {
+            SimpleMailMessage email = new SimpleMailMessage();
+            email.setTo(usuario.getEmail());
+            email.setSubject("Registro en ToDoList");
+            StringBuffer body = new StringBuffer();
+            body.append("****************************************************\n");
+            body.append("Correo electrónico AUTOMATIZADO - No responder a este mensaje\n");
+            body.append("****************************************************\n");
+            body.append("Fecha: ");
+            body.append(new Date());
+            body.append("\n");
+            body.append("________________________________________________________________________________");
+            body.append("\n");
+            body.append("Te has registrado correctamente en ToDoList con el siguiente usuario: " + usuario.getEmail() + ".");
+            body.append("\n");
+            body.append("http://localhost:8080/login");
+            body.append("\n");
+            body.append("________________________________________________________________________________");
+            email.setText(body.toString());
+            sender.send(email);
+            return usuarioRepository.save(usuario);
+        }
     }
 
     @Transactional(readOnly = true)
