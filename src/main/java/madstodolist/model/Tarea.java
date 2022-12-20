@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 
@@ -118,14 +119,12 @@ public class Tarea implements Serializable {
     public boolean isToday(){
         if(fechaLimite == null) return false;
         Date now = new Date();
-
-        LocalDate localDate1 = now.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();
-        LocalDate localDate2 = fechaLimite.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();
-        return localDate1.isEqual(localDate2);
-        // return date.getYear() == now.getYear() && now.getMonth() == date.getMonth() && now.getDayOfMonth() == date.getDayOfMonth();
+        Calendar cal1 = Calendar.getInstance();
+        Calendar cal2 = Calendar.getInstance();
+        cal1.setTime(now);
+        cal2.setTime(fechaLimite);
+        boolean sameDay = cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR) &&
+                cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR);
+        return sameDay;
     }
 }
