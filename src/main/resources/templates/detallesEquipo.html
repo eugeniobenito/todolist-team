@@ -106,7 +106,7 @@
                             <td th:text="${proyecto.nombre}"></td>
                             <td><a class="btn btn-primary btn-xs" onmouseover="" style="cursor: pointer;"
                                         th:href="@{/proyectos/{id}(id=${proyecto.id})}">Ver detalles del proyecto</a>
-                                <button class="btn btn-danger btn-xs" onmouseover="" style="cursor: pointer;"
+                                <button th:if="${usuario == equipo.admin}" class="btn btn-danger btn-xs" onmouseover="" style="cursor: pointer;"
                                         th:onclick="'del(\'/equipos/' + ${equipo.id} + '/proyectos/' + ${proyecto.id} + '\')'">Eliminar</button>
                             </td>
                         </tr>
@@ -123,7 +123,7 @@
                 <span><b>Comentarios</b></span>
                 <div class="container" id="form">
                     Añadir un nuevo comentario <br \>
-                    <th:block th:if="${equipo.comentariosEquipo.contains(usuario) || usuario == equipo.admin || usuario.isAdmin}">
+                    <th:block th:if="${usuarios.contains(usuario) || usuario == equipo.admin || usuario.isAdmin}">
                         <form method="post"  th:action="@{/equipos/{equipoId}/comentarios(equipoId=${equipo.id})}" th:object="${comentarioEquipoData}">
                             <div class="col-6">
                                 <div class="form-group">
