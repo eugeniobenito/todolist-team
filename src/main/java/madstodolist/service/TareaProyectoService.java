@@ -15,6 +15,9 @@ public class TareaProyectoService {
     @Autowired
     TareaProyectoRepository tareaProyectoRepository;
 
+    @Autowired
+    UsuarioRepository usuarioRepository;
+
     @Transactional
     public TareaProyecto crearTareaProyectoService(String nombre, Long proyectoId){
         Proyecto p = proyectoRepository.findById(proyectoId).orElse(null);
@@ -46,5 +49,24 @@ public class TareaProyectoService {
         tarea.setStatus(status);
         tarea = tareaProyectoRepository.save(tarea);
         return tarea; 
+    }
+
+    @Transactional
+    public void addUsuario(Long tareaProyectoId, Long userId) {
+        Usuario usuario = usuarioRepository.findById(userId).orElse(null);
+        if(usuario == null) throw new TareaProyectoServiceException("No se ha encontrado el usuario");
+        TareaProyecto tarea = tareaProyectoRepository.findById(tareaProyectoId).orElse(null);
+        if(tarea == null) throw new TareaProyectoServiceException("No se ha encontrado la tarea");
+
+        tarea.addUsuario(usuario);
+    }
+
+    @Transactional
+    public void removeUsuario(Long tareaProyectoId, Long userId) {
+        Usuario usuario = usuarioRepository.findById(userId).orElse(null);
+        if(usuario == null) throw new TareaProyectoServiceException("No se ha encontrado el usuario");
+        TareaProyecto tarea = tareaProyectoRepository.findById(tareaProyectoId).orElse(null);
+        if(tarea == null) throw new TareaProyectoServiceException("No se ha encontrado la tarea");
+        tarea.removeUsuario(usuario);
     }
 }

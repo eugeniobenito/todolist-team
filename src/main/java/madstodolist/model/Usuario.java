@@ -131,4 +131,11 @@ public class Usuario implements Serializable {
     public boolean perteneceEquipo(Equipo e){
         return getEquipos().contains(e);
     }
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "tareaproyecto_usuario", joinColumns = { @JoinColumn(name = "fk_usuario") },
+            inverseJoinColumns = {@JoinColumn(name = "fk_tareaproyecto")})
+    Set<TareaProyecto> tareasProyecto = new HashSet<>();
+
+    public Set<TareaProyecto> getTareasProyecto() { return this.tareasProyecto; }
 }
