@@ -1,6 +1,7 @@
 package madstodolist;
 
 import madstodolist.authentication.ManagerUserSession;
+import madstodolist.controller.LoginData;
 import madstodolist.model.Usuario;
 import madstodolist.service.UsuarioService;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
+
+import javax.validation.constraints.NotNull;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -145,4 +148,5 @@ public class UsuarioWebTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/registrados"));
     }
+
 }
