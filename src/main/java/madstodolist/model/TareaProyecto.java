@@ -57,7 +57,7 @@ public class TareaProyecto {
 
     public void addUsuario(Usuario u) {
         this.usuarios.add(u);
-        u.getTareasProyecto().add(this);
+        // u.getTareasProyecto().add(this);
     }
 
     public void removeUsuario(Usuario u){

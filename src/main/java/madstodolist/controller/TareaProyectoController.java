@@ -132,7 +132,6 @@ public class TareaProyectoController {
                              @PathVariable(value="usuarioId") Long usuarioId,
                              Model model, RedirectAttributes flash,
                              HttpSession session) {
-
         TareaProyecto tarea = tareaProyectoService.findById(idTareaProyecto);
         if(tarea == null) // exception
             throw new TareaProyectoServiceException("");
@@ -146,8 +145,8 @@ public class TareaProyectoController {
         Long idUserLogged = managerUserSession.usuarioLogeado();
 
         if(idUserLogged != usuarioId) throw new NotOwnerOfResourceException();
-
-
+        System.out.println("prueba" +
+                "");
         tareaProyectoService.addUsuario(tarea.getId(), idUserLogged);
 
         return "redirect:/proyectos/" + tarea.getProyecto().getId().toString();
@@ -158,7 +157,7 @@ public class TareaProyectoController {
                                  @PathVariable(value="usuarioId") Long usuarioId,
                                  Model model, RedirectAttributes flash,
                                  HttpSession session) {
-
+        System.out.println(idTareaProyecto + " " + usuarioId);
         TareaProyecto tarea = tareaProyectoService.findById(idTareaProyecto);
         if(tarea == null) // exception
             throw new TareaProyectoServiceException("");

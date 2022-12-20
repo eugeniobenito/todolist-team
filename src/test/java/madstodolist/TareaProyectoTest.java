@@ -59,7 +59,6 @@ public class TareaProyectoTest {
         Usuario u = new Usuario("a@a");
         tp.addUsuario(u);
         Assertions.assertThat(tp.getUsuarios()).contains(u);
-        Assertions.assertThat(u.getTareasProyecto()).contains(tp);
     }
 
     @Test
