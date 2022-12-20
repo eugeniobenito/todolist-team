@@ -51,18 +51,18 @@ public class TareaProyecto {
     }
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "tareapro_usuario", joinColumns = { @JoinColumn(name = "fk_tareapro") },
+    @JoinTable(name = "tareaproyecto_usuario", joinColumns = { @JoinColumn(name = "fk_tareaproyecto") },
             inverseJoinColumns = {@JoinColumn(name = "fk_usuario")})
     Set<Usuario> usuarios = new HashSet<>();
 
     public void addUsuario(Usuario u) {
         this.usuarios.add(u);
-        u.tareasProyecto.add(this);
+        u.getTareasProyecto().add(this);
     }
 
     public void removeUsuario(Usuario u){
         this.usuarios.remove(u);
-        u.tareasProyecto.remove(this);
+        u.getTareasProyecto().remove(this);
     }
 
     public Set<Usuario> getUsuarios() { return this.usuarios; }

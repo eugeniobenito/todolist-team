@@ -133,8 +133,8 @@ public class Usuario implements Serializable {
     }
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "tareapro_usuario", joinColumns = { @JoinColumn(name = "fk_usuario") },
-            inverseJoinColumns = {@JoinColumn(name = "fk_tareapro")})
+    @JoinTable(name = "tareaproyecto_usuario", joinColumns = { @JoinColumn(name = "fk_usuario") },
+            inverseJoinColumns = {@JoinColumn(name = "fk_tareaproyecto")})
     Set<TareaProyecto> tareasProyecto = new HashSet<>();
 
     public Set<TareaProyecto> getTareasProyecto() { return this.tareasProyecto; }

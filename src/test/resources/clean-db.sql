@@ -1,6 +1,6 @@
+DELETE FROM tareaproyecto_usuario;
 DELETE FROM equipo_usuario;
 DELETE FROM comentarios_equipo;
-DELETE FROM tareapro_usuario; 
 DELETE FROM tareas_proyecto;
 DELETE FROM proyectos;
 DELETE FROM tareas;
