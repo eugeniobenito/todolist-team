@@ -16,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.lang.ref.ReferenceQueue;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -227,8 +228,15 @@ public class EquipoController {
         Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
         Usuario usuario = usuarioService.findById(idUsuarioLogeado);
         Set<Equipo> equipos = usuario.getEquipos();
+        List<Equipo> equiposAdministrados = new ArrayList<>();
+        for(Equipo e: equipoService.findAllOrderedByName()){
+            if(e.getAdmin().equals(usuario)){
+                equiposAdministrados.add(e);
+            }
+        }
         model.addAttribute("usuario", usuario);
         model.addAttribute("equipos", equipos);
+        model.addAttribute("equiposAdministrados", equiposAdministrados);
         return "misEquipos";
     }
 
