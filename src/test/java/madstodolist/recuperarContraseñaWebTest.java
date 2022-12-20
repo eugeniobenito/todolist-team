@@ -33,7 +33,6 @@ public class recuperarContraseñaWebTest {
 
         Usuario anaGarcia = new Usuario("ana.garcia@gmail.com");
         anaGarcia.setNombre("Ana");
-        anaGarcia.setId(1L);
         anaGarcia.setPassword("12345678");
         usuarioService.registrar(anaGarcia);
 
