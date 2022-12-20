@@ -56,6 +56,7 @@ public class EquipoWebTest {
         usuario.setBlocked(false);
         return usuarioService.registrar(usuario);
     }
+
     @Test
     public void getSomeEquipos() throws Exception{
 
@@ -72,6 +73,23 @@ public class EquipoWebTest {
                         (allOf(containsString("PruebaEquipo1"),
                                 containsString("PruebaEquipo2"))));
     }
+
+    @Test
+    public void getSomeEquiposPrivados() throws Exception{
+
+        Equipo e1 = equipoService.crearEquipo("PruebaEquipo1");
+        Equipo e2 = equipoService.crearEquipo("PruebaEquipo2");
+        equipoService.cambiarVisibilidadEquipo(e2.getId());
+
+        Usuario usuario = createUser();
+        when(managerUserSession.usuarioLogeado()).thenReturn(usuario.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        this.mockMvc.perform(get("/equipos"))
+                .andExpect(content().string
+                        (not(containsString("PruebaEquipo2"))));
+    }
+
 
     @Test
     public void usuarioNoLogeadoNoVeEquipos() throws Exception {
@@ -244,6 +262,7 @@ public class EquipoWebTest {
                 .andExpect(content().string
                         (allOf(containsString("Editar"),
                                 containsString("Eliminar del equipo"),
+                                containsString("Hacer privado"),
                                 containsString("Eliminar equipo"))));
     }
     @Test
@@ -575,4 +594,21 @@ public class EquipoWebTest {
                         (allOf(containsString("PruebaEquipo2"))));
     }
 
+    @Test
+    public void cambiarVisibilidadEquipo() throws Exception{
+        Usuario u = createUser();
+        Equipo e = equipoService.crearEquipo("PruebaEquipo1","Descripcion", u);
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(u.getId());
+        when(managerUserSession.isUsuarioLogeado()).thenReturn(true);
+
+        this.mockMvc.perform(patch("/equipos/" + e.getId().toString() + "/visibilidad"))
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(get("/equipos/" + e.getId().toString()))
+                .andExpect(content().string
+                        (allOf(containsString("Editar"),
+                                containsString("Hacer público"),
+                                containsString("Invitar"))));
+    }
 }

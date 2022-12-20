@@ -206,6 +206,21 @@ public class EquipoController {
         return "formEditarEquipo";
     }
 
+    @PatchMapping("/equipos/{id}/visibilidad")
+    @ResponseBody
+    public String cambiarVisibilidadEquipo(@PathVariable(value="id") Long idEquipo) {
+        
+        Equipo equipo = equipoService.recuperarEquipo(idEquipo);
+        if(equipo == null)
+            throw new EquipoNotFoundException();
+        
+        checkAdminUserLogged(equipo);
+
+        equipoService.cambiarVisibilidadEquipo(idEquipo);
+
+        return "";
+    }
+
     @GetMapping("/mis-equipos")
     public String listadoMisEquipos(Model model, HttpSession session) {
         isAnyUserLogged();

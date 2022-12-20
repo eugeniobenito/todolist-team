@@ -38,6 +38,12 @@ public class EquipoTest {
     }
 
     @Test
+    public void crearEquipoPublicoPorDefecto() {
+        Equipo equipo = new Equipo("Proyecto P1");
+        assertThat(equipo.isPrivate()).isFalse();
+    }
+
+    @Test
     public void anyadeDescripcionEquipo() {
         // GIVEN
         // Un equipo nuevo
@@ -51,6 +57,22 @@ public class EquipoTest {
         // Obtenemos la descripción del equipo
         assertThat(equipo.getDescripcion()).isEqualTo("Equipo encargado de la asignatura MADS");
     }
+
+    @Test
+    public void cambiaVisibilidadEquipo() {
+        // GIVEN
+        // Un equipo nuevo
+        Equipo equipo = new Equipo("Proyecto P1");
+
+        // WHEN
+        // Cambiamos la visibilidad
+        equipo.changeVisibility();
+
+        // THEN 
+        // Ahora el equipo es privado
+        assertThat(equipo.isPrivate()).isTrue();
+    }
+
 
     @Test
     @Transactional

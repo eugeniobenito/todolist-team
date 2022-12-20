@@ -18,9 +18,12 @@ public class Equipo {
 
     private String descripcion;
 
+    private Boolean isPrivate;
+
     public Equipo(String nombre){
         this.nombre = nombre;
         this.descripcion = null;
+        this.isPrivate = false;
     }
 
     @ManyToOne
@@ -53,6 +56,14 @@ public class Equipo {
 
     public Long getId() {
         return id;
+    }
+
+    public void changeVisibility() {
+        this.isPrivate = !this.isPrivate;
+    }
+
+    public boolean isPrivate() {
+        return this.isPrivate;
     }
 
     public void setId(Long id){ this.id = id; }

@@ -238,4 +238,20 @@ public class EquipoServiceTest {
 
         assertThat(e.getAdmin()).isEqualTo(usuario);
     }
+
+    @Test
+    public void cambiarVisibilidadEquipo() {
+        // GIVEN
+        // Un equipo creado en la base de datos
+        Equipo equipo = equipoService.crearEquipo("Proyecto 1");
+
+        // WHEN
+        // cambiamos la visibilidad y lo Recuperamos
+        equipoService.cambiarVisibilidadEquipo(equipo.getId());
+        Equipo equipoBd = equipoService.recuperarEquipo(equipo.getId());
+
+        // THEN
+        // la visibilidad ha cambiado
+        assertThat(equipoBd.isPrivate()).isTrue();
+    }
 }

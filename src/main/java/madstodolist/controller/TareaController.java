@@ -4,9 +4,11 @@ import madstodolist.authentication.ManagerUserSession;
 import madstodolist.controller.exception.UsuarioNoLogeadoException;
 import madstodolist.controller.exception.StatusNotValidException;
 import madstodolist.controller.exception.TareaNotFoundException;
+import madstodolist.model.Invitacion;
 import madstodolist.model.Status;
 import madstodolist.model.Tarea;
 import madstodolist.model.Usuario;
+import madstodolist.service.InvitacionService;
 import madstodolist.service.TareaService;
 import madstodolist.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import javax.servlet.http.HttpSession;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
 
 @Controller
@@ -29,6 +32,9 @@ public class TareaController {
 
     @Autowired
     TareaService tareaService;
+
+    @Autowired
+    InvitacionService invitacionService;
 
     @Autowired
     ManagerUserSession managerUserSession;
@@ -80,8 +86,10 @@ public class TareaController {
 
         Usuario usuario = usuarioService.findById(idUsuario);
         List<Tarea> tareas = tareaService.allTareasUsuario(idUsuario);
+        HashMap<Invitacion, String> invitaciones = invitacionService.obtenerInvitacionesConNombreDelEquipo(idUsuario);
         model.addAttribute("usuario", usuario);
         model.addAttribute("tareas", tareas);
+        model.addAttribute("invitaciones", invitaciones);
         return "listaTareas";
     }
 
@@ -96,6 +104,8 @@ public class TareaController {
 
         comprobarUsuarioLogeado(tarea.getUsuario().getId());
 
+        HashMap<Invitacion, String> invitaciones = invitacionService.obtenerInvitacionesConNombreDelEquipo(tarea.getUsuario().getId()); 
+        model.addAttribute("invitaciones", invitaciones);
         model.addAttribute("tarea", tarea);
         model.addAttribute("usuario", tarea.getUsuario());
         tareaData.setTitulo(tarea.getTitulo());
