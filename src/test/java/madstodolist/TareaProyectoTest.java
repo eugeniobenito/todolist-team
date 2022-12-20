@@ -22,6 +22,8 @@ public class TareaProyectoTest {
 
     @Autowired
     TareaProyectoRepository tareaProyectoRepository;
+    @Autowired
+    UsuarioRepository usuarioRepository;
 
     @Test
     public void crearTareaProyectoConRelaciones() {
@@ -72,6 +74,21 @@ public class TareaProyectoTest {
         tp.removeUsuario(u);
         Assertions.assertThat(tp.getUsuarios()).doesNotContain(u);
         Assertions.assertThat(u.getTareasProyecto()).doesNotContain(tp);
+    }
+
+    @Test
+    public void tareaCheckRelation() {
+        Equipo e = new Equipo("aaa");
+        equipoRepository.save(e);
+        Proyecto p = new Proyecto("prueba", e);
+        proyectoRepository.save(p);
+        TareaProyecto tp = new TareaProyecto("estudiar", p);
+        Usuario u = new Usuario("a@a");
+        u = usuarioRepository.save(u);
+        tp.addUsuario(u);
+        tareaProyectoRepository.save(tp);
+        tp = tareaProyectoRepository.findById(tp.getId()).orElse(null);
+        Assertions.assertThat(tp.getUsuarios()).contains(u);
     }
 
 
