@@ -2,7 +2,9 @@ package madstodolist.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "tareas_proyecto")
@@ -48,6 +50,17 @@ public class TareaProyecto {
         return tareaProyecto.getId() == this.getId();
     }
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "tareapro_usuario", joinColumns = { @JoinColumn(name = "fk_tareapro") },
+            inverseJoinColumns = {@JoinColumn(name = "fk_usuario")})
+    Set<Usuario> usuarios = new HashSet<>();
+
+    public void addUsuario(Usuario u) {
+        this.usuarios.add(u);
+        u.tareasProyecto.add(this);
+    }
+
+    public Set<Usuario> getUsuarios() { return this.usuarios; }
 
 
     @Override

@@ -47,6 +47,18 @@ public class TareaProyectoTest {
         Assertions.assertThat(tp.getId()).isNotNull();
     }
 
+    @Test
+    public void tareaProyectoContainsUsuarios() {
+        Equipo e = new Equipo("aaa");
+        equipoRepository.save(e);
+        Proyecto p = new Proyecto("prueba", e);
+        proyectoRepository.save(p);
+        TareaProyecto tp = new TareaProyecto("estudiar", p);
+        Usuario u = new Usuario("a@a");
+        tp.addUsuario(u);
+        Assertions.assertThat(tp.getUsuarios()).contains(u);
+        Assertions.assertThat(u.getTareasProyecto()).contains(tp);
+    }
 
 
 }
